@@ -44,13 +44,6 @@ const Manifesto = () => {
             </p>
 
             <p className="text-xl">
-              They'll say it's cheating.<br />
-              So was the calculator.<br />
-              So was YouTube.<br />
-              So is every tech that changes the game.
-            </p>
-
-            <p className="text-xl">
               The smart ones don't fight change — they use it.
             </p>
 
