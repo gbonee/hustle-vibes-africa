@@ -1,27 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users } from "lucide-react";
 
-const languages = ['Pidgin', 'Yoruba', 'Hausa', 'Igbo'];
-
 const Hero = () => {
-  const [currentLanguage, setCurrentLanguage] = useState('Pidgin');
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentLanguage(prevLanguage => {
-        const currentIndex = languages.indexOf(prevLanguage);
-        const nextIndex = (currentIndex + 1) % languages.length;
-        return languages[nextIndex];
-      });
-    }, 3000); // Change language every 3 seconds
-
-    return () => clearInterval(interval);
-  }, []);
-
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked from hero");
+    // Navigate to waitlist page or open modal
+    // For now, we'll scroll to the bottom CTA section
     const ctaSection = document.getElementById('cta-section');
     if (ctaSection) {
       ctaSection.scrollIntoView({ behavior: 'smooth' });
@@ -30,6 +16,7 @@ const Hero = () => {
   
   const handleMeetAIMentors = () => {
     console.log("Meet AI Mentors clicked");
+    // Scroll to AI mentors section
     const avatarsSection = document.getElementById('avatars');
     if (avatarsSection) {
       avatarsSection.scrollIntoView({ behavior: 'smooth' });
@@ -52,7 +39,7 @@ const Hero = () => {
           </h1>
           
           <p className="text-xl md:text-2xl font-rubik mb-10 text-gray-300 animate-slide-up" style={{animationDelay: '0.2s'}}>
-            Learn real-world hustle skills in {currentLanguage} language. 
+            Learn real-world hustle skills in your local language. 
             <span className="block mt-2 font-semibold">No degree. No nonsense. Just knowledge that pays.</span>
           </p>
           
@@ -77,6 +64,33 @@ const Hero = () => {
           <p className="mt-4 text-electric animate-slide-up text-lg font-medium" style={{animationDelay: '0.5s'}}>
             First 1000 users pay what they want! 🔥
           </p>
+          
+          <div className="mt-12 md:mt-16 flex flex-wrap justify-center gap-8 text-sm md:text-base animate-slide-up" style={{animationDelay: '0.6s'}}>
+            <div className="flex items-center">
+              <div className="h-8 w-8 bg-electric rounded-full flex items-center justify-center text-black font-bold">
+                🇳🇬
+              </div>
+              <span className="ml-2 font-medium">Yoruba</span>
+            </div>
+            <div className="flex items-center">
+              <div className="h-8 w-8 bg-electric rounded-full flex items-center justify-center text-black font-bold">
+                🇳🇬
+              </div>
+              <span className="ml-2 font-medium">Pidgin</span>
+            </div>
+            <div className="flex items-center">
+              <div className="h-8 w-8 bg-electric rounded-full flex items-center justify-center text-black font-bold">
+                🇳🇬
+              </div>
+              <span className="ml-2 font-medium">Hausa</span>
+            </div>
+            <div className="flex items-center">
+              <div className="h-8 w-8 bg-electric rounded-full flex items-center justify-center text-black font-bold">
+                🇳🇬
+              </div>
+              <span className="ml-2 font-medium">Igbo</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -84,4 +98,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
