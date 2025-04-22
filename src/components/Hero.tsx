@@ -1,8 +1,28 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users } from "lucide-react";
 
 const Hero = () => {
+  const handleJoinWaitlist = () => {
+    console.log("Join waitlist clicked from hero");
+    // Navigate to waitlist page or open modal
+    // For now, we'll scroll to the bottom CTA section
+    const ctaSection = document.getElementById('cta-section');
+    if (ctaSection) {
+      ctaSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
+  const handleMeetAIMentors = () => {
+    console.log("Meet AI Mentors clicked");
+    // Scroll to AI mentors section
+    const avatarsSection = document.getElementById('avatars');
+    if (avatarsSection) {
+      avatarsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="pt-24 pb-16 md:py-32 relative overflow-hidden">
       <div className="container mx-auto px-4">
@@ -24,11 +44,18 @@ const Hero = () => {
           </p>
           
           <div className="flex flex-col md:flex-row gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
-            <Button className="rebel-button text-lg group">
+            <Button 
+              onClick={handleJoinWaitlist} 
+              className="rebel-button text-lg group"
+            >
               Join Waitlist
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
-            <Button variant="outline" className="rebel-secondary-button text-lg">
+            <Button 
+              variant="outline" 
+              onClick={handleMeetAIMentors}
+              className="rebel-secondary-button text-lg"
+            >
               Meet AI Mentors
               <Users className="ml-2 h-5 w-5" />
             </Button>

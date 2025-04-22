@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -9,6 +10,13 @@ import ProofSection from '@/components/ProofSection';
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
+  const handleJoinWaitlist = () => {
+    console.log("Join waitlist clicked from main CTA");
+    // Here you would typically handle the waitlist signup
+    // For now, we'll just log to the console
+    alert("Thanks for your interest! We'll notify you when we launch.");
+  };
+
   return (
     <div className="bg-black min-h-screen">
       <Navbar />
@@ -30,7 +38,7 @@ const Index = () => {
       
       <ProofSection />
       
-      <section className="py-20 relative overflow-hidden bg-muted">
+      <section id="cta-section" className="py-20 relative overflow-hidden bg-muted">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-4xl md:text-6xl font-oswald uppercase mb-6">
             READY TO <span className="text-electric">HUSTLE</span> FOR REAL?
@@ -38,8 +46,11 @@ const Index = () => {
           <p className="text-xl mb-10 max-w-2xl mx-auto">
             No long talk. Get started now. Choose your AI guide and start learning skills that actually pay.
           </p>
-          <Button className="rebel-button text-lg py-8 px-12 text-2xl">
-            START FOR FREE
+          <Button 
+            className="rebel-button text-lg py-8 px-12 text-2xl"
+            onClick={handleJoinWaitlist}
+          >
+            JOIN WAITLIST
           </Button>
           <p className="mt-6 text-sm text-gray-400">
             No credit card required. Just your brain and your hustle mentality.

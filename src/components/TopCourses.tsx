@@ -47,6 +47,19 @@ const courses = [
 ];
 
 const TopCourses = () => {
+  const handleViewCourse = (courseId: number) => {
+    console.log(`View course ${courseId} clicked`);
+    // Here you would typically navigate to the course page
+    // For now, we'll just log to the console
+    alert(`Course ${courseId} details coming soon!`);
+  };
+
+  const handleViewAllCourses = () => {
+    console.log("View all courses clicked");
+    // Here you would typically navigate to all courses page
+    alert("All courses coming soon!");
+  };
+
   return (
     <section id="courses" className="py-20">
       <div className="container mx-auto px-4">
@@ -69,7 +82,10 @@ const TopCourses = () => {
               </div>
               <h3 className="text-xl font-bold mb-2 pr-6">{course.title}</h3>
               <p className="text-gray-400 mb-6">{course.description}</p>
-              <button className="w-full py-2 text-center bg-electric/10 text-electric rounded font-medium transition-colors hover:bg-electric hover:text-black">
+              <button 
+                className="w-full py-2 text-center bg-electric/10 text-electric rounded font-medium transition-colors hover:bg-electric hover:text-black"
+                onClick={() => handleViewCourse(course.id)}
+              >
                 View Course
               </button>
             </div>
@@ -77,7 +93,10 @@ const TopCourses = () => {
         </div>
         
         <div className="mt-12 text-center">
-          <button className="rebel-secondary-button">
+          <button 
+            className="rebel-secondary-button"
+            onClick={handleViewAllCourses}
+          >
             View All Courses
           </button>
         </div>
