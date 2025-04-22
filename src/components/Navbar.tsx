@@ -1,11 +1,17 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked");
@@ -15,6 +21,7 @@ const Navbar = () => {
     if (ctaSection) {
       ctaSection.scrollIntoView({ behavior: 'smooth' });
     }
+    setOpen(false);
   };
 
   const handleNavigation = (sectionId: string) => {
@@ -22,6 +29,7 @@ const Navbar = () => {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+    setOpen(false);
   };
 
   return (
@@ -59,14 +67,63 @@ const Navbar = () => {
           </Button>
         </div>
         <div className="md:hidden">
-          <Button 
-            variant="ghost" 
-            className="text-white hover:text-electric"
-            onClick={() => console.log("Mobile menu clicked")}
-          >
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Menu</span>
-          </Button>
+          <Sheet open={open} onOpenChange={setOpen}>
+            <SheetTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className="text-white hover:text-electric p-1"
+              >
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="bg-black/95 border-electric/30 p-0">
+              <div className="flex flex-col p-6 h-full">
+                <div className="flex justify-between items-center mb-8">
+                  <a href="/" className="text-3xl font-oswald font-bold text-electric">
+                    USABI<span className="text-white">.AI</span>
+                  </a>
+                  <Button 
+                    variant="ghost" 
+                    className="text-white hover:text-electric p-1"
+                    onClick={() => setOpen(false)}
+                  >
+                    <X className="h-6 w-6" />
+                    <span className="sr-only">Close</span>
+                  </Button>
+                </div>
+                <div className="flex flex-col space-y-6">
+                  <Button 
+                    variant="ghost"
+                    onClick={() => handleNavigation('courses')}
+                    className="text-white hover:text-electric font-medium transition-colors justify-start text-xl"
+                  >
+                    Hustles
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => handleNavigation('avatars')}
+                    className="text-white hover:text-electric font-medium transition-colors justify-start text-xl"
+                  >
+                    AI Mentors
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => handleNavigation('proof')}
+                    className="text-white hover:text-electric font-medium transition-colors justify-start text-xl"
+                  >
+                    Success Proof
+                  </Button>
+                  <Button 
+                    onClick={handleJoinWaitlist} 
+                    className="rebel-button w-full mt-4"
+                  >
+                    Join Waitlist
+                  </Button>
+                </div>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>
