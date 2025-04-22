@@ -14,7 +14,7 @@ const avatars = [
     id: 2,
     name: 'Baker Amara',
     language: 'Yoruba',
-    personality: '"Don't dull. Come and learn what will feed you."',
+    personality: '"Don\'t dull. Come and learn what will feed you."',
     emoji: '👩🏾‍🍳',
     bgColor: 'bg-amber-800'
   },
