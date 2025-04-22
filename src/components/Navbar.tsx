@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 
@@ -16,12 +15,12 @@ const Navbar = () => {
             Hustles
           </a>
           <a href="#avatars" className="text-white hover:text-electric font-medium transition-colors">
-            AI Guides
+            AI Mentors
           </a>
           <a href="#proof" className="text-white hover:text-electric font-medium transition-colors">
             Success Proof
           </a>
-          <Button className="rebel-button">Start For Free</Button>
+          <Button className="rebel-button">Join Waitlist</Button>
         </div>
         <div className="md:hidden">
           <Button variant="ghost" className="text-white hover:text-electric">

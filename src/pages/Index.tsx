@@ -1,8 +1,8 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import AvatarSelector from '@/components/AvatarSelector';
+import WhyWeExist from '@/components/WhyWeExist';
 import TopCourses from '@/components/TopCourses';
 import Testimonials from '@/components/Testimonials';
 import ProofSection from '@/components/ProofSection';
@@ -12,13 +12,14 @@ const Index = () => {
   return (
     <div className="bg-black min-h-screen">
       <Navbar />
-      
       <Hero />
       
       <div className="meme-banner">
         <h3 className="meme-banner-text">DROP SCHOOL. GET THE BAG.</h3>
       </div>
       
+      <AvatarSelector />
+      <WhyWeExist />
       <TopCourses />
       
       <Testimonials />

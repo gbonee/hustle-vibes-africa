@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Users } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -26,13 +25,18 @@ const Hero = () => {
           
           <div className="flex flex-col md:flex-row gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
             <Button className="rebel-button text-lg group">
-              Start For Free
+              Join Waitlist
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
             <Button variant="outline" className="rebel-secondary-button text-lg">
-              Explore Hustles
+              Meet AI Mentors
+              <Users className="ml-2 h-5 w-5" />
             </Button>
           </div>
+          
+          <p className="mt-4 text-electric animate-slide-up text-lg font-medium" style={{animationDelay: '0.5s'}}>
+            First 1000 users pay what they want! 🔥
+          </p>
           
           <div className="mt-12 md:mt-16 flex flex-wrap justify-center gap-8 text-sm md:text-base animate-slide-up" style={{animationDelay: '0.6s'}}>
             <div className="flex items-center">
