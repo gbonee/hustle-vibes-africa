@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   Sheet,
@@ -59,6 +59,13 @@ const Navbar = () => {
           >
             Success Proof
           </button>
+          <button 
+            onClick={() => navigate('/manifesto')}
+            className="text-white hover:text-electric font-medium transition-colors flex items-center gap-2"
+          >
+            <FileText className="w-4 h-4" />
+            <span>Manifesto</span>
+          </button>
           <Button 
             onClick={handleJoinWaitlist} 
             className="rebel-button"
@@ -113,6 +120,17 @@ const Navbar = () => {
                     className="text-white hover:text-electric font-medium transition-colors justify-start text-xl"
                   >
                     Success Proof
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => {
+                      navigate('/manifesto');
+                      setOpen(false);
+                    }}
+                    className="text-white hover:text-electric font-medium transition-colors justify-start text-xl"
+                  >
+                    <FileText className="w-4 h-4 mr-2" />
+                    Manifesto
                   </Button>
                   <Button 
                     onClick={handleJoinWaitlist} 
