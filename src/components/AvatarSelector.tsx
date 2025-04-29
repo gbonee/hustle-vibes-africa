@@ -6,7 +6,7 @@ const avatars = [
     id: 1,
     name: 'Digital Mama',
     language: 'Pidgin',
-    personality: '"You dey craze? Let me show you how to cash out quick."',
+    personality: '"You dey craze? Let me show you how to cash out quick-quick!"',
     emoji: '👩🏾‍💻',
     bgColor: 'bg-purple-900'
   },
@@ -14,7 +14,7 @@ const avatars = [
     id: 2,
     name: 'Baker Amara',
     language: 'Yoruba',
-    personality: '"Don\'t dull. Come and learn what will feed you."',
+    personality: '"Don\'t dull. Come learn weto go feed you!"',
     emoji: '👩🏾‍🍳',
     bgColor: 'bg-amber-800'
   },
@@ -22,7 +22,7 @@ const avatars = [
     id: 3,
     name: 'Uncle Musa',
     language: 'Hausa',
-    personality: '"Wallahi, I go teach you small skill wey go change your life."',
+    personality: '"Wallahi, I go teach you small skill wey go change your life!"',
     emoji: '👨🏾‍🏫',
     bgColor: 'bg-green-900'
   },
@@ -30,7 +30,7 @@ const avatars = [
     id: 4,
     name: 'Aunty Nkem',
     language: 'Igbo',
-    personality: '"Who dey breathe? You go sabi import from China sharp sharp."',
+    personality: '"Who dey breathe? You go sabi import from China sharp-sharp!"',
     emoji: '👩🏾‍💼',
     bgColor: 'bg-red-900'
   },
@@ -44,7 +44,7 @@ const avatars = [
   },
   {
     id: 6,
-    name: 'Professor Lagbala',
+    name: 'Professor CheatCode',
     language: 'English',
     personality: '"Formal English, but make e still dey street."',
     emoji: '🧙🏾‍♂️',

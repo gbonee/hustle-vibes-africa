@@ -49,17 +49,17 @@ const ProofSection = () => {
             <div className="border-2 border-electric p-6 rounded-lg bg-gradient-to-r from-black to-gray-900">
               <h3 className="text-2xl font-bold font-oswald mb-4 flex items-center">
                 <BadgeCheck className="text-electric mr-2" size={28} />
-                VERIFIED EARNINGS
+                GAMIFICATION REWARDS
               </h3>
               
               <div className="relative overflow-hidden mb-6">
                 <div className="bg-muted/50 p-4 rounded">
-                  <h4 className="font-bold mb-2">Top Earner Progress 🚀</h4>
+                  <h4 className="font-bold mb-2">Rewards & Prizes 🎁</h4>
                   <div className="space-y-3">
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Pastry Business</span>
-                        <span>₦65K/mo</span>
+                        <span>₦100 Bonus Per Lesson</span>
+                        <span>Daily</span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
                         <div className="bg-electric h-2 rounded-full" style={{width: '65%'}}></div>
@@ -68,8 +68,8 @@ const ProofSection = () => {
                     
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Hair Vendor</span>
-                        <span>₦120K/mo</span>
+                        <span>₦10K Weekly Prize</span>
+                        <span>Leaderboard</span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
                         <div className="bg-electric h-2 rounded-full" style={{width: '85%'}}></div>
@@ -78,8 +78,8 @@ const ProofSection = () => {
                     
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span>Tech Job</span>
-                        <span>$1.5K/mo</span>
+                        <span>Android Phone</span>
+                        <span>Most Improved</span>
                       </div>
                       <div className="w-full bg-gray-700 rounded-full h-2">
                         <div className="bg-electric h-2 rounded-full" style={{width: '95%'}}></div>
@@ -89,7 +89,7 @@ const ProofSection = () => {
                 </div>
                 
                 <div className="absolute top-0 right-0 bg-electric text-black transform rotate-12 translate-x-2 -translate-y-2 py-1 px-4 text-xs font-bold">
-                  REAL NUMBERS!
+                  WIN REAL PRIZES!
                 </div>
               </div>
               
