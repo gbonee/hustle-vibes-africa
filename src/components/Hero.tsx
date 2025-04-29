@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Flag } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   const handleJoinWaitlist = () => {
@@ -29,16 +30,18 @@ const Hero = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-electric/20 rounded-full blur-3xl -z-10"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-neon/20 rounded-full blur-3xl -z-10"></div>
         
-        {/* Banned hook */}
-        <div className="mb-8 animate-pulse bg-red-900/50 border border-red-500 p-3 rounded-md max-w-md mx-auto flex items-center gap-2">
-          <Flag className="text-red-500" size={20} />
-          <p className="text-sm font-medium">🔥 BANNED! NUC says our AI tutors "too disruptive" for education</p>
-        </div>
+        {/* Updated Banned hook - prettier with round edges and clickable */}
+        <Link to="/manifesto">
+          <div className="mb-8 bg-red-900/70 hover:bg-red-800/80 transition-colors border border-red-500 p-3 rounded-full max-w-md mx-auto flex items-center justify-center gap-2 cursor-pointer animate-pulse shadow-lg">
+            <Flag className="text-red-400" size={20} />
+            <p className="text-sm font-medium text-white">🔥 BANNED! NUC says our AI tutors "too disruptive" for education</p>
+          </div>
+        </Link>
         
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="font-oswald uppercase font-bold text-5xl md:text-7xl lg:text-8xl tracking-tight mb-6 leading-none animate-slide-up">
             <span className="block">SCHOOL IS <span className="relative text-white line-through">DEAD</span></span> 
-            <span className="block">HUSTLE IS <span className="text-electric highlight-text">ALIVE</span></span>
+            <span className="block">HUSTLE IS <span className="text-electric">ALIVE</span></span>
           </h1>
           
           <p className="text-xl md:text-2xl font-rubik mb-10 text-gray-300 animate-slide-up" style={{animationDelay: '0.2s'}}>
