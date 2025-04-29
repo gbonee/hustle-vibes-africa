@@ -1,113 +1,68 @@
 
 import React from 'react';
-import { BadgeCheck } from "lucide-react";
+import { Award, TrendingUp, Trophy } from "lucide-react";
 
 const ProofSection = () => {
   return (
     <section id="proof" className="py-20 relative overflow-hidden">
       <div className="container mx-auto px-4">
         <h2 className="section-title text-center">
-          WE GOT THE <span className="text-electric">RECEIPTS</span>
+          <span className="text-electric">LEARN, EARN</span> & COMPETE
         </h2>
+        <p className="text-xl text-center mb-12 max-w-2xl mx-auto">
+          Your learning journey is rewarded! Earn points, climb the leaderboard, and win real prizes.
+        </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16">
-          <div className="space-y-8">
-            <div className="border-2 border-electric p-6 rounded-lg bg-gradient-to-r from-black to-gray-900">
-              <h3 className="text-2xl font-bold font-oswald mb-4 flex items-center">
-                <BadgeCheck className="text-electric mr-2" size={28} />
-                VERIFIED JOB OFFERS
-              </h3>
-              <div className="space-y-4">
-                <div className="bg-muted/50 p-4 rounded transform rotate-1">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-bold text-electric">Frontend Dev Offer</span>
-                    <span className="text-xs bg-green-900 text-green-200 py-1 px-2 rounded">$1,200/mo</span>
-                  </div>
-                  <p className="text-sm">Offered to Tobi A. after 8 weeks on Usabi AI</p>
-                </div>
-                
-                <div className="bg-muted/50 p-4 rounded transform -rotate-1">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-bold text-electric">Digital Marketing</span>
-                    <span className="text-xs bg-green-900 text-green-200 py-1 px-2 rounded">₦280K/mo</span>
-                  </div>
-                  <p className="text-sm">Nneka J. landed after 6 weeks of Usabi training</p>
-                </div>
-                
-                <div className="bg-muted/50 p-4 rounded transform rotate-1">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-bold text-electric">E-Commerce Manager</span>
-                    <span className="text-xs bg-green-900 text-green-200 py-1 px-2 rounded">₦350K/mo</span>
-                  </div>
-                  <p className="text-sm">Halima M. after completing Import Hustle course</p>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
+          <div className="border-2 border-electric p-6 rounded-lg bg-gradient-to-r from-black to-gray-900 transform transition-all hover:scale-105">
+            <div className="w-16 h-16 rounded-full bg-electric flex items-center justify-center mb-5 mx-auto">
+              <Award className="text-black w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold font-oswald mb-4 text-center">₦100 Per Lesson</h3>
+            <p className="text-center text-gray-300">
+              Complete lessons to earn ₦100 bonus credits towards future courses.
+            </p>
+          </div>
+          
+          <div className="border-2 border-electric p-6 rounded-lg bg-gradient-to-r from-black to-gray-900 transform transition-all hover:scale-105">
+            <div className="w-16 h-16 rounded-full bg-electric flex items-center justify-center mb-5 mx-auto">
+              <TrendingUp className="text-black w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold font-oswald mb-4 text-center">₦10K Weekly Prize</h3>
+            <p className="text-center text-gray-300">
+              Top student on our weekly leaderboard wins ₦10,000 cash.
+            </p>
+            <div className="mt-4 bg-muted/30 rounded-md p-3">
+              <div className="flex justify-between text-xs mb-1">
+                <span>Current Leader:</span>
+                <span className="text-electric">Chioma D.</span>
               </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div className="bg-electric h-2 rounded-full" style={{width: '85%'}}></div>
+              </div>
+              <p className="text-xs text-right mt-1">8,500 points</p>
             </div>
           </div>
           
-          <div className="space-y-8">
-            <div className="border-2 border-electric p-6 rounded-lg bg-gradient-to-r from-black to-gray-900">
-              <h3 className="text-2xl font-bold font-oswald mb-4 flex items-center">
-                <BadgeCheck className="text-electric mr-2" size={28} />
-                GAMIFICATION REWARDS
-              </h3>
-              
-              <div className="relative overflow-hidden mb-6">
-                <div className="bg-muted/50 p-4 rounded">
-                  <h4 className="font-bold mb-2">Rewards & Prizes 🎁</h4>
-                  <div className="space-y-3">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>₦100 Bonus Per Lesson</span>
-                        <span>Daily</span>
-                      </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className="bg-electric h-2 rounded-full" style={{width: '65%'}}></div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>₦10K Weekly Prize</span>
-                        <span>Leaderboard</span>
-                      </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className="bg-electric h-2 rounded-full" style={{width: '85%'}}></div>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>Android Phone</span>
-                        <span>Most Improved</span>
-                      </div>
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className="bg-electric h-2 rounded-full" style={{width: '95%'}}></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="absolute top-0 right-0 bg-electric text-black transform rotate-12 translate-x-2 -translate-y-2 py-1 px-4 text-xs font-bold">
-                  WIN REAL PRIZES!
-                </div>
-              </div>
-              
-              <div className="flex flex-wrap gap-3">
-                <div className="bg-electric/20 py-1 px-3 rounded text-sm">
-                  <span className="text-electric font-bold">100+</span> Jobs Secured
-                </div>
-                <div className="bg-electric/20 py-1 px-3 rounded text-sm">
-                  <span className="text-electric font-bold">78%</span> Income Increase
-                </div>
-                <div className="bg-electric/20 py-1 px-3 rounded text-sm">
-                  <span className="text-electric font-bold">3,500+</span> Students
-                </div>
-                <div className="bg-electric/20 py-1 px-3 rounded text-sm">
-                  <span className="text-electric font-bold">14</span> Countries
-                </div>
+          <div className="border-2 border-electric p-6 rounded-lg bg-gradient-to-r from-black to-gray-900 transform transition-all hover:scale-105">
+            <div className="w-16 h-16 rounded-full bg-electric flex items-center justify-center mb-5 mx-auto">
+              <Trophy className="text-black w-8 h-8" />
+            </div>
+            <h3 className="text-2xl font-bold font-oswald mb-4 text-center">Android Phone Prize</h3>
+            <p className="text-center text-gray-300">
+              Monthly "Most Improved Learner" wins a new Android phone.
+            </p>
+            <div className="mt-4 text-center">
+              <div className="inline-block bg-electric/20 py-1 px-3 rounded text-sm">
+                <span className="text-electric font-bold">Next Draw:</span> 14 days
               </div>
             </div>
+          </div>
+        </div>
+        
+        <div className="mt-12 text-center">
+          <div className="inline-block border border-electric text-electric py-2 px-4 rounded-md transform transition-all hover:scale-105 hover:bg-electric hover:text-black cursor-pointer">
+            View Full Leaderboard
           </div>
         </div>
       </div>

@@ -23,7 +23,7 @@ const Index = () => {
       <Hero />
       
       <div className="meme-banner">
-        <h3 className="meme-banner-text">DROP SCHOOL. GET THE BAG.</h3>
+        <h3 className="meme-banner-text">SCHOOL DEY WASTE TIME. HUSTLE DEY PAY BILLS.</h3>
       </div>
       
       <AvatarSelector />
@@ -33,7 +33,7 @@ const Index = () => {
       <Testimonials />
       
       <div className="meme-banner bg-electric">
-        <h3 className="meme-banner-text text-black">EDUCATION DEY STREET, NO BE CLASSROOM.</h3>
+        <h3 className="meme-banner-text text-black">NO DEGREE NEEDED, JUST SKILLS WEY GO PAY.</h3>
       </div>
       
       <ProofSection />

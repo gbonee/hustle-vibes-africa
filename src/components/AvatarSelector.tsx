@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Laptop, Book, ShoppingBag, GraduationCap, Code, MessageSquare } from "lucide-react";
 
 const avatars = [
   {
@@ -8,7 +9,9 @@ const avatars = [
     language: 'Pidgin',
     personality: '"You dey craze? Let me show you how to cash out quick-quick!"',
     emoji: '👩🏾‍💻',
-    bgColor: 'bg-purple-900'
+    bgColor: 'bg-purple-900',
+    expertise: 'Digital Marketing & Social Media',
+    icon: <ShoppingBag className="h-5 w-5 text-electric" />
   },
   {
     id: 2,
@@ -16,7 +19,9 @@ const avatars = [
     language: 'Yoruba',
     personality: '"Don\'t dull. Come learn weto go feed you!"',
     emoji: '👩🏾‍🍳',
-    bgColor: 'bg-amber-800'
+    bgColor: 'bg-amber-800',
+    expertise: 'Baking & Catering Business',
+    icon: <Book className="h-5 w-5 text-electric" />
   },
   {
     id: 3,
@@ -24,7 +29,9 @@ const avatars = [
     language: 'Hausa',
     personality: '"Wallahi, I go teach you small skill wey go change your life!"',
     emoji: '👨🏾‍🏫',
-    bgColor: 'bg-green-900'
+    bgColor: 'bg-green-900',
+    expertise: 'Practical Skills & Side Hustles',
+    icon: <GraduationCap className="h-5 w-5 text-electric" />
   },
   {
     id: 4,
@@ -32,7 +39,9 @@ const avatars = [
     language: 'Igbo',
     personality: '"Who dey breathe? You go sabi import from China sharp-sharp!"',
     emoji: '👩🏾‍💼',
-    bgColor: 'bg-red-900'
+    bgColor: 'bg-red-900',
+    expertise: 'Importation & WhatsApp Business',
+    icon: <ShoppingBag className="h-5 w-5 text-electric" />
   },
   {
     id: 5,
@@ -40,7 +49,9 @@ const avatars = [
     language: 'Pidgin + English',
     personality: '"I go teach you code wey go blow your mind."',
     emoji: '👨🏾‍💻',
-    bgColor: 'bg-blue-900'
+    bgColor: 'bg-blue-900',
+    expertise: 'Tech, AI & Cybersecurity',
+    icon: <Laptop className="h-5 w-5 text-electric" />
   },
   {
     id: 6,
@@ -48,7 +59,9 @@ const avatars = [
     language: 'English',
     personality: '"Formal English, but make e still dey street."',
     emoji: '🧙🏾‍♂️',
-    bgColor: 'bg-gray-800'
+    bgColor: 'bg-gray-800',
+    expertise: 'Professional Skills & Remote Jobs',
+    icon: <MessageSquare className="h-5 w-5 text-electric" />
   }
 ];
 
@@ -57,7 +70,7 @@ const AvatarSelector = () => {
     <section id="avatars" className="py-20 slant-bg">
       <div className="container mx-auto px-4">
         <h2 className="section-title text-center">
-          <span className="text-electric">AI AVATARS</span> WITH BIG VIBES
+          MEET YOUR <span className="text-electric">AI MENTORS</span>
         </h2>
         <p className="text-xl text-center mb-12 max-w-2xl mx-auto">
           Choose your guide. Learn in your language. Get the knowledge from someone who gets you.
@@ -74,7 +87,11 @@ const AvatarSelector = () => {
                   </span>
                 </div>
                 <h3 className="text-2xl font-bold font-oswald mb-2">{avatar.name}</h3>
-                <p className="text-gray-300 italic">{avatar.personality}</p>
+                <p className="text-gray-300 italic mb-4">{avatar.personality}</p>
+                <div className="flex items-center gap-2 text-sm text-gray-300">
+                  {avatar.icon}
+                  <span>{avatar.expertise}</span>
+                </div>
                 <div className="h-12"></div>
                 <div className="absolute bottom-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button className="text-sm py-2 px-4 bg-electric text-black rounded-md font-bold transform transition-all hover:scale-105">
