@@ -41,11 +41,12 @@ const Hero = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="font-oswald uppercase font-bold text-5xl md:text-7xl lg:text-8xl tracking-tight mb-6 leading-none animate-slide-up">
             <span className="block">SCHOOL IS <span className="relative text-white line-through">DEAD</span></span> 
-            <span className="block">HUSTLE IS <span className="text-yellow-300">ALIVE</span></span>
+            <span className="block">HUSTLE IS <span className="text-electric">ALIVE</span></span>
           </h1>
           
           <p className="text-xl md:text-2xl font-rubik mb-10 text-gray-300 animate-slide-up" style={{animationDelay: '0.2s'}}>
-            Practical courses in Pidgin, Yoruba, Hausa & Igbo to help you make money. No theory, just real hustle skills.
+            Learn real-world hustle skills in your local language. 
+            <span className="block mt-2 font-semibold">No degree. No nonsense. Just knowledge that pays.</span>
           </p>
           
           <div className="flex flex-col md:flex-row gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
@@ -70,7 +71,7 @@ const Hero = () => {
             First 1000 users pay what they want! 🔥
           </p>
           
-          <div className="mt-8 md:mt-12 flex flex-wrap justify-center gap-8 text-sm md:text-base animate-slide-up" style={{animationDelay: '0.6s'}}>
+          <div className="mt-12 md:mt-16 flex flex-wrap justify-center gap-8 text-sm md:text-base animate-slide-up" style={{animationDelay: '0.6s'}}>
             <div className="flex items-center">
               <div className="h-8 w-8 bg-electric rounded-full flex items-center justify-center text-black font-bold">
                 🇳🇬
