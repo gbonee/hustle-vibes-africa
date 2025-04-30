@@ -36,8 +36,15 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 bg-black/90 backdrop-blur-sm z-50 border-b border-electric/30">
       <div className="container mx-auto flex justify-between items-center py-4 px-4">
         <div className="flex items-center">
-          <a href="/" className="text-3xl font-oswald font-bold text-electric">
-            USABI<span className="text-white">.AI</span>
+          <a href="/" className="flex items-center gap-2">
+            <img 
+              src="/lovable-uploads/20591bbc-87c9-4bbc-8159-3e4becbee8c8.png" 
+              alt="USABI.AI Owl Mascot" 
+              className="h-9 w-auto" 
+            />
+            <span className="text-3xl font-oswald font-bold text-electric">
+              USABI<span className="text-white">.AI</span>
+            </span>
           </a>
         </div>
         <div className="hidden md:flex items-center space-x-8">
@@ -87,8 +94,15 @@ const Navbar = () => {
             <SheetContent side="right" className="bg-black/95 border-electric/30 p-0">
               <div className="flex flex-col p-6 h-full">
                 <div className="flex justify-between items-center mb-8">
-                  <a href="/" className="text-3xl font-oswald font-bold text-electric">
-                    USABI<span className="text-white">.AI</span>
+                  <a href="/" className="flex items-center gap-2">
+                    <img 
+                      src="/lovable-uploads/20591bbc-87c9-4bbc-8159-3e4becbee8c8.png" 
+                      alt="USABI.AI Owl Mascot" 
+                      className="h-9 w-auto" 
+                    />
+                    <span className="text-3xl font-oswald font-bold text-electric">
+                      USABI<span className="text-white">.AI</span>
+                    </span>
                   </a>
                   <Button 
                     variant="ghost" 
