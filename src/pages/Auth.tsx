@@ -7,42 +7,155 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Facebook, Mail } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/use-toast";
 
 const Auth = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
   
   // Handle signup process
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signup with:", { name, email, password });
-    // In a real app, you would authenticate with your backend
-    // For now, navigate to onboarding
-    navigate('/onboarding');
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
+      });
+      
+      if (error) {
+        toast({
+          title: "Registration failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Registration successful",
+          description: "Your account has been created. You can now log in.",
+        });
+        
+        // Create a profile for the user
+        if (data.user) {
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .insert([
+              { 
+                id: data.user.id,
+                display_name: name,
+              },
+            ]);
+            
+          if (profileError) {
+            console.error('Error creating profile:', profileError);
+          }
+        }
+        
+        navigate('/onboarding');
+      }
+    } catch (error) {
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+      console.error('Error during signup:', error);
+    } finally {
+      setLoading(false);
+    }
   };
   
   // Handle login process
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login with:", { email, password });
-    // In a real app, you would authenticate with your backend
-    // For now, navigate to dashboard
-    navigate('/dashboard');
+    setLoading(true);
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      
+      if (error) {
+        toast({
+          title: "Login failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Login successful",
+          description: "Welcome back!",
+        });
+        navigate('/dashboard');
+      }
+    } catch (error) {
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+      console.error('Error during login:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Social login handlers
-  const handleGoogleLogin = () => {
-    console.log("Google login clicked");
-    // Normally would use OAuth here
-    navigate('/onboarding');
+  const handleGoogleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+      });
+      
+      if (error) {
+        toast({
+          title: "Login failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+      console.error('Error during Google login:', error);
+    }
   };
 
-  const handleFacebookLogin = () => {
-    console.log("Facebook login clicked");
-    // Normally would use OAuth here
-    navigate('/onboarding');
+  const handleFacebookLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'facebook',
+      });
+      
+      if (error) {
+        toast({
+          title: "Login failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "An error occurred",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+      console.error('Error during Facebook login:', error);
+    }
   };
 
   return (
@@ -97,8 +210,8 @@ const Auth = () => {
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full rebel-button">
-                    Login
+                  <Button type="submit" className="w-full rebel-button" disabled={loading}>
+                    {loading ? 'Logging in...' : 'Login'}
                   </Button>
                 </form>
               </CardContent>
@@ -144,8 +257,8 @@ const Auth = () => {
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full rebel-button">
-                    Create Account
+                  <Button type="submit" className="w-full rebel-button" disabled={loading}>
+                    {loading ? 'Creating Account...' : 'Create Account'}
                   </Button>
                 </form>
               </CardContent>
@@ -167,6 +280,7 @@ const Auth = () => {
                   variant="outline" 
                   onClick={handleGoogleLogin}
                   className="bg-black border-gray-700 hover:bg-gray-900"
+                  disabled={loading}
                 >
                   <Mail className="mr-2 h-5 w-5" />
                   Google
@@ -176,6 +290,7 @@ const Auth = () => {
                   variant="outline" 
                   onClick={handleFacebookLogin}
                   className="bg-black border-gray-700 hover:bg-gray-900"
+                  disabled={loading}
                 >
                   <Facebook className="mr-2 h-5 w-5" />
                   Facebook
