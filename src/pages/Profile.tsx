@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { 
-  Settings, Video, Trophy, Award, CircleUser, Languages, LogIn
+  Settings, Video, Trophy, Award, CircleUser, Languages, LogIn, Pencil
 } from "lucide-react";
 
 interface UserPreferences {
@@ -112,8 +111,7 @@ const Profile = () => {
                   size="icon" 
                   className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-electric text-black"
                 >
-                  <pencil-icon className="h-4 w-4" />
-                  <span>+</span>
+                  <Pencil className="h-4 w-4" />
                 </Button>
               </div>
               

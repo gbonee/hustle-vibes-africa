@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { Facebook, Google } from "lucide-react";
+import { Facebook, Mail } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
@@ -168,7 +168,7 @@ const Auth = () => {
                   onClick={handleGoogleLogin}
                   className="bg-black border-gray-700 hover:bg-gray-900"
                 >
-                  <Google className="mr-2 h-5 w-5" />
+                  <Mail className="mr-2 h-5 w-5" />
                   Google
                 </Button>
                 <Button 
