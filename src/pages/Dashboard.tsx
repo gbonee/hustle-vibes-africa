@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -112,7 +111,7 @@ const Dashboard = () => {
       answer: 3
     },
     {
-      question: 'What's the most important skill for digital marketing in Nigeria?',
+      question: "What is the most important skill for digital marketing in Nigeria?",
       options: ['Programming', 'Persuasive copywriting', 'Graphic design', 'Video editing'],
       answer: 1
     },
@@ -122,7 +121,7 @@ const Dashboard = () => {
       answer: 2
     },
     {
-      question: 'What's the best way to handle customer complaints?',
+      question: "What is the best way to handle customer complaints?",
       options: ['Ignore them', 'Argue back', 'Respond promptly and solve the problem', 'Offer free products'],
       answer: 2
     }
