@@ -8,13 +8,15 @@ import TopCourses from '@/components/TopCourses';
 import Testimonials from '@/components/Testimonials';
 import ProofSection from '@/components/ProofSection';
 import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
+  const navigate = useNavigate();
+  
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked from main CTA");
-    // Here you would typically handle the waitlist signup
-    // For now, we'll just log to the console
-    alert("Thanks for your interest! We'll notify you when we launch.");
+    // Direct the user to the auth page instead of showing an alert
+    navigate('/auth');
   };
 
   return (
@@ -50,7 +52,7 @@ const Index = () => {
             className="rebel-button text-lg py-8 px-12 text-2xl"
             onClick={handleJoinWaitlist}
           >
-            JOIN WAITLIST
+            JOIN NOW
           </Button>
           <p className="mt-6 text-sm text-gray-400">
             No credit card required. Just your brain and your hustle mentality.

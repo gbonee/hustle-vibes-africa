@@ -15,12 +15,8 @@ const Navbar = () => {
 
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked");
-    // Navigate to waitlist page or open modal
-    // For now, we'll scroll to the bottom CTA section
-    const ctaSection = document.getElementById('cta-section');
-    if (ctaSection) {
-      ctaSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Navigate to auth page
+    navigate('/auth');
     setOpen(false);
   };
 
@@ -77,7 +73,7 @@ const Navbar = () => {
             onClick={handleJoinWaitlist} 
             className="rebel-button"
           >
-            Join Waitlist
+            Join Now
           </Button>
         </div>
         <div className="md:hidden">
@@ -150,7 +146,7 @@ const Navbar = () => {
                     onClick={handleJoinWaitlist} 
                     className="rebel-button w-full mt-4"
                   >
-                    Join Waitlist
+                    Join Now
                   </Button>
                 </div>
               </div>
