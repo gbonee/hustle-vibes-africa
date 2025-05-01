@@ -7,6 +7,8 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Trophy, Video, MessageSquare, Star, CircleCheck, CircleX } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
+import { supabase } from "@/integrations/supabase/client";
+import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 // Define types for our content
 interface Module {
@@ -31,30 +33,47 @@ interface Quiz {
   answer: number;
 }
 
-interface UserPreferences {
-  language: string;
-  avatar: string;
-  course: string;
-}
-
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { userPrefs } = useUserPreferences();
   const [activeTab, setActiveTab] = useState("lessons");
-  const [userPrefs, setUserPrefs] = useState<UserPreferences | null>(null);
   const [message, setMessage] = useState("");
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [showQuiz, setShowQuiz] = useState(false);
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [quizResult, setQuizResult] = useState<'correct' | 'incorrect' | null>(null);
+  const [user, setUser] = useState({
+    id: '',
+    name: '',
+    email: '',
+    avatar: ''
+  });
   
-  // Load user preferences from localStorage
+  // Fetch user data
   useEffect(() => {
-    const savedPrefs = localStorage.getItem('userPreferences');
-    if (savedPrefs) {
-      setUserPrefs(JSON.parse(savedPrefs));
-    }
+    const fetchUserData = async () => {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      
+      if (!authUser) return;
+      
+      // Get the user's profile if it exists
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', authUser.id)
+        .maybeSingle();
+      
+      setUser({
+        id: authUser.id,
+        name: profile?.display_name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
+        email: authUser.email || '',
+        avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" // Default avatar
+      });
+    };
+    
+    fetchUserData();
   }, []);
-
+  
   // Mock course data based on user's selection
   const courses: Record<string, Course> = {
     'digital-marketing': {
@@ -234,8 +253,8 @@ const Dashboard = () => {
             className="rounded-full w-10 h-10 p-0"
           >
             <Avatar>
-              <AvatarImage src="https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" />
-              <AvatarFallback>US</AvatarFallback>
+              <AvatarImage src={user.avatar} />
+              <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('') || 'U'}</AvatarFallback>
             </Avatar>
           </Button>
         </div>
@@ -436,7 +455,7 @@ const Dashboard = () => {
                   </Avatar>
                   <div>
                     <CardTitle>Chat with Your AI Coach</CardTitle>
-                    <CardDescription>Ask me anything about your course</CardDescription>
+                    <CardDescription>Hey {user.name}, ask me anything about your course</CardDescription>
                   </div>
                 </div>
               </CardHeader>
@@ -450,7 +469,7 @@ const Dashboard = () => {
                       <img src={userCourse.avatar} alt="AI Avatar" className="w-full h-full object-cover" />
                     </div>
                     <div className="bg-muted p-3 rounded-lg max-w-[80%]">
-                      <p>Hey there! I'm your AI coach. How can I help you with your {userCourse.title} journey today?</p>
+                      <p>Hey {user.name}! I'm your AI coach. How can I help you with your {userCourse.title} journey today?</p>
                     </div>
                   </div>
                 </div>

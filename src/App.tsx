@@ -21,19 +21,41 @@ const queryClient = new QueryClient();
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_, session) => {
+      async (event, session) => {
         setSession(session);
+        
+        if (event === 'SIGNED_IN') {
+          // Check if this is the user's first time logging in
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session?.user?.id)
+            .maybeSingle();
+          
+          // If we don't have user preferences stored, consider them a new user
+          const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${session?.user?.id}`);
+          setIsNewUser(!hasCompletedOnboarding);
+        }
+        
         setLoading(false);
       }
     );
 
     // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
+      
+      if (session) {
+        // Check if this is the user's first time logging in
+        const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${session?.user?.id}`);
+        setIsNewUser(!hasCompletedOnboarding);
+      }
+      
       setLoading(false);
     });
 
@@ -56,29 +78,41 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/manifesto" element={<Manifesto />} />
-            <Route path="/auth" element={session ? <Navigate to="/dashboard" /> : <Auth />} />
+            <Route path="/auth" element={session ? (
+              isNewUser ? <Navigate to="/onboarding" /> : <Navigate to="/dashboard" />
+            ) : <Auth />} />
             <Route 
               path="/onboarding" 
               element={
-                session ? <Onboarding /> : <Navigate to="/auth" />
+                session ? <Onboarding onComplete={() => {
+                  // Mark onboarding as completed for this user
+                  localStorage.setItem(`onboarding_completed_${session.user.id}`, 'true');
+                  setIsNewUser(false);
+                }} /> : <Navigate to="/auth" />
               }
             />
             <Route 
               path="/dashboard" 
               element={
-                session ? <Dashboard /> : <Navigate to="/auth" />
+                session ? (
+                  isNewUser ? <Navigate to="/onboarding" /> : <Dashboard />
+                ) : <Navigate to="/auth" />
               }
             />
             <Route 
               path="/leaderboard" 
               element={
-                session ? <Leaderboard /> : <Navigate to="/auth" />
+                session ? (
+                  isNewUser ? <Navigate to="/onboarding" /> : <Leaderboard />
+                ) : <Navigate to="/auth" />
               }
             />
             <Route 
               path="/profile" 
               element={
-                session ? <Profile /> : <Navigate to="/auth" />
+                session ? (
+                  isNewUser ? <Navigate to="/onboarding" /> : <Profile />
+                ) : <Navigate to="/auth" />
               }
             />
             <Route path="*" element={<NotFound />} />

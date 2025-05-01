@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
 type Avatar = 'digital-mama' | 'baker-amara' | 'uncle-musa';
@@ -24,7 +24,11 @@ interface AvatarInfo {
   };
 }
 
-const Onboarding = () => {
+interface OnboardingProps {
+  onComplete?: () => void;
+}
+
+const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [language, setLanguage] = useState<Language | null>(null);
@@ -85,22 +89,47 @@ const Onboarding = () => {
     setTimeout(() => setStep(2), 500);
   };
 
-  const handleAvatarSelect = (selectedAvatar: Avatar) => {
+  const handleAvatarSelect = async (selectedAvatar: Avatar) => {
     setAvatar(selectedAvatar);
     setAnimateMessage(true);
     
-    // Wait for animation to complete before redirecting to dashboard
-    setTimeout(() => {
-      // In a real app, save these preferences to user's profile
-      const selectedAvatarObj = avatars.find(a => a.id === selectedAvatar);
-      localStorage.setItem('userPreferences', JSON.stringify({
-        language,
-        avatar: selectedAvatar,
-        course: selectedAvatarObj?.course
-      }));
-      
-      navigate('/dashboard');
-    }, 5000);
+    // Get the current user
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (user) {
+      try {
+        // Save user preferences to Supabase
+        const selectedAvatarObj = avatars.find(a => a.id === selectedAvatar);
+        const userPreferences = {
+          language,
+          avatar: selectedAvatar,
+          course: selectedAvatarObj?.course
+        };
+        
+        // Save to localStorage too for fast access
+        localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+        
+        // Mark onboarding as completed for this user
+        localStorage.setItem(`onboarding_completed_${user.id}`, 'true');
+        
+        // Wait for animation to complete before redirecting to dashboard
+        setTimeout(() => {
+          if (onComplete) {
+            onComplete();
+          }
+          navigate('/dashboard');
+        }, 5000);
+      } catch (error) {
+        console.error("Error saving user preferences:", error);
+        // Still navigate to dashboard even if error occurs
+        setTimeout(() => {
+          if (onComplete) {
+            onComplete();
+          }
+          navigate('/dashboard');
+        }, 5000);
+      }
+    }
   };
 
   const selectedAvatarInfo = avatar ? avatars.find(a => a.id === avatar) : null;

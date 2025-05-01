@@ -1,10 +1,10 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { Trophy, Award, LogIn } from "lucide-react";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { supabase } from "@/integrations/supabase/client";
 
-// Import our new components
+// Import our components
 import Header from '@/components/layout/Header';
 import BottomNavigation from '@/components/layout/BottomNavigation';
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -12,30 +12,6 @@ import CourseProgress from '@/components/profile/CourseProgress';
 import CertificatesList from '@/components/profile/CertificatesList';
 import UserPreferences from '@/components/profile/UserPreferences';
 import AccountActions from '@/components/profile/AccountActions';
-
-// Mock user data
-const user = {
-  name: "Emeka Johnson",
-  email: "emeka@example.com",
-  avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-  progress: {
-    completed: 7,
-    total: 15
-  },
-  points: 845,
-  rank: 2,
-  joined: "April 2025"
-};
-
-// Mock certificates
-const certificates = [
-  {
-    id: "cert001",
-    title: "Digital Marketing Basics",
-    date: "April 15, 2025",
-    image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
-  }
-];
 
 // Language name mapping
 const languageNames = {
@@ -54,6 +30,54 @@ const avatarNames = {
 
 const Profile = () => {
   const { userPrefs } = useUserPreferences();
+  const [user, setUser] = useState({
+    name: '',
+    email: '',
+    avatar: '',
+    progress: {
+      completed: 0,
+      total: 15
+    },
+    points: 0,
+    rank: 0,
+    joined: ''
+  });
+  
+  const [certificates, setCertificates] = useState([
+    {
+      id: "cert001",
+      title: "Digital Marketing Basics",
+      date: "April 15, 2025",
+      image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
+    }
+  ]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      // Get the current authenticated user
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      
+      if (!authUser) return;
+      
+      // In a real app, we would fetch user's certificates, points, rank, etc.
+      // For now, we'll just use some mock data but with the real user's info
+      
+      setUser({
+        name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
+        email: authUser.email || '',
+        avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1", // For now, keep a default avatar
+        progress: {
+          completed: 7,
+          total: 15
+        },
+        points: 845,
+        rank: 2,
+        joined: new Date(authUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+      });
+    };
+    
+    fetchUserData();
+  }, []);
 
   return (
     <div className="min-h-screen bg-black pb-20">
