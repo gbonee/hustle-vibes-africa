@@ -29,10 +29,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setChatMessages([
       { 
         isUser: false, 
-        text: `Hey ${userName}! I'm your AI coach. How can I help you with your ${userPrefs?.courseName || 'course'} journey today?` 
+        text: `Hey ${userName}! I'm your AI coach. How can I help you with your ${userPrefs?.course || 'course'} journey today?` 
       }
     ]);
-  }, [userName, userPrefs?.courseName]);
+  }, [userName, userPrefs?.course]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
