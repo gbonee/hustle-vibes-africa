@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -8,15 +7,12 @@ import TopCourses from '@/components/TopCourses';
 import Testimonials from '@/components/Testimonials';
 import ProofSection from '@/components/ProofSection';
 import { Button } from "@/components/ui/button";
-import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
-  const navigate = useNavigate();
-  
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked from main CTA");
-    // Direct the user to the auth page instead of showing an alert
-    navigate('/auth');
+    // Open the Google Form in a new tab
+    window.open("https://docs.google.com/forms/d/e/1FAIpQLSddajKguRwE_0pfsDpHM6T3xIg26G89kQlvtn2uQK9P1IqTZA/viewform", "_blank");
   };
 
   return (

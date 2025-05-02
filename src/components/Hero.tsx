@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Flag } from "lucide-react";
@@ -7,12 +6,8 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked from hero");
-    // Navigate to waitlist page or open modal
-    // For now, we'll scroll to the bottom CTA section
-    const ctaSection = document.getElementById('cta-section');
-    if (ctaSection) {
-      ctaSection.scrollIntoView({ behavior: 'smooth' });
-    }
+    // Open the Google Form in a new tab
+    window.open("https://docs.google.com/forms/d/e/1FAIpQLSddajKguRwE_0pfsDpHM6T3xIg26G89kQlvtn2uQK9P1IqTZA/viewform", "_blank");
   };
   
   const handleMeetAIMentors = () => {

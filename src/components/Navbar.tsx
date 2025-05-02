@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, FileText } from "lucide-react";
@@ -15,8 +14,8 @@ const Navbar = () => {
 
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked");
-    // Navigate to auth page
-    navigate('/auth');
+    // Open the Google Form in a new tab
+    window.open("https://docs.google.com/forms/d/e/1FAIpQLSddajKguRwE_0pfsDpHM6T3xIg26G89kQlvtn2uQK9P1IqTZA/viewform", "_blank");
     setOpen(false);
   };
 
