@@ -11,8 +11,8 @@ import { useNavigate } from "react-router-dom";
 const Enterprise = () => {
   const handleRequestDemo = () => {
     console.log("Request demo clicked");
-    // Open the Google Form in a new tab
-    window.open("https://docs.google.com/forms/d/e/1FAIpQLSddajKguRwE_0pfsDpHM6T3xIg26G89kQlvtn2uQK9P1IqTZA/viewform", "_blank");
+    // Open Calendly in a new tab
+    window.open("https://calendly.com/ella-usabi/30min", "_blank");
   };
 
   return (
