@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
@@ -41,8 +40,6 @@ const Index = () => {
       
       <ProofSection />
       
-      {/* Removed the Enterprise Section */}
-      
       {/* Pricing Section */}
       <section id="pricing" className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
@@ -76,7 +73,7 @@ const Index = () => {
                   </li>
                   <li className="flex">
                     <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
-                    <span>English-only content</span>
+                    <span>Content in ALL Nigerian languages</span>
                   </li>
                   <li className="flex">
                     <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
@@ -116,7 +113,7 @@ const Index = () => {
                   </li>
                   <li className="flex">
                     <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
-                    <span>Content in 2 Nigerian languages</span>
+                    <span>Content in ALL Nigerian languages</span>
                   </li>
                   <li className="flex">
                     <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
@@ -125,6 +122,10 @@ const Index = () => {
                   <li className="flex">
                     <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
                     <span>Weekly group coaching</span>
+                  </li>
+                  <li className="flex">
+                    <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
+                    <span className="text-yellow-300">Eligible for weekly giveaways</span>
                   </li>
                 </ul>
               </div>
@@ -180,6 +181,10 @@ const Index = () => {
                   <li className="flex">
                     <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
                     <span>Business launch toolkit</span>
+                  </li>
+                  <li className="flex">
+                    <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
+                    <span className="text-yellow-300">Eligible for all prizes & monthly phone giveaway</span>
                   </li>
                 </ul>
               </div>
