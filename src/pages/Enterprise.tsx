@@ -137,22 +137,22 @@ const Enterprise = () => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center justify-center">
               <div className="flex items-center justify-center h-20 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition">
                 <div className="p-4 rounded-full bg-white/10">
-                  <span className="text-2xl font-bold text-electric">Company 1</span>
+                  <span className="text-lg font-bold text-electric">Create Her Future Initiative</span>
                 </div>
               </div>
               <div className="flex items-center justify-center h-20 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition">
                 <div className="p-4 rounded-full bg-white/10">
-                  <span className="text-2xl font-bold text-electric">Company 2</span>
+                  <span className="text-lg font-bold text-electric">Leap Africa</span>
                 </div>
               </div>
               <div className="flex items-center justify-center h-20 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition">
                 <div className="p-4 rounded-full bg-white/10">
-                  <span className="text-2xl font-bold text-electric">Company 3</span>
+                  <span className="text-lg font-bold text-electric">Wave Academics</span>
                 </div>
               </div>
               <div className="flex items-center justify-center h-20 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition">
                 <div className="p-4 rounded-full bg-white/10">
-                  <span className="text-2xl font-bold text-electric">Company 4</span>
+                  <span className="text-lg font-bold text-electric">Warri South Local Government</span>
                 </div>
               </div>
             </div>
