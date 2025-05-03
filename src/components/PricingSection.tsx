@@ -2,15 +2,16 @@
 import React from 'react';
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from 'react-router-dom';
 
 const PricingSection = () => {
-  const navigate = useNavigate();
-  
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked from pricing section");
     // Open the Google Form in a new tab
     window.open("https://docs.google.com/forms/d/e/1FAIpQLSddajKguRwE_0pfsDpHM6T3xIg26G89kQlvtn2uQK9P1IqTZA/viewform", "_blank");
+  };
+
+  const handleRequestDemo = () => {
+    window.open("https://calendly.com/ella-usabi/30min", "_blank");
   };
 
   return (
@@ -94,10 +95,6 @@ const PricingSection = () => {
                 </li>
                 <li className="flex">
                   <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
-                  <span>Weekly group coaching</span>
-                </li>
-                <li className="flex">
-                  <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
                   <span className="text-yellow-300">Eligible for weekly giveaways</span>
                 </li>
               </ul>
@@ -142,10 +139,6 @@ const PricingSection = () => {
                 <li className="flex">
                   <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
                   <span>Premium certificates</span>
-                </li>
-                <li className="flex">
-                  <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
-                  <span>1-on-1 coaching (2 sessions/month)</span>
                 </li>
                 <li className="flex">
                   <Check className="h-5 w-5 text-electric shrink-0 mr-2" />
@@ -211,7 +204,7 @@ const PricingSection = () => {
             <div className="p-6 border-t border-gray-800">
               <Button 
                 className="w-full bg-muted text-white hover:bg-gray-800"
-                onClick={() => navigate('/enterprise')}
+                onClick={handleRequestDemo}
               >
                 Request Demo
               </Button>
