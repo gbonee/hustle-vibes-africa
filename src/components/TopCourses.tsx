@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 const courses = [{
@@ -113,18 +114,14 @@ const TopCourses = () => {
               <CardContent className="pt-0">
                 <p className="text-sm text-gray-300 mb-4">{course.description}</p>
                 
-                <div className="grid grid-cols-3 gap-2 mt-4 bg-black/20 rounded-md p-3">
+                <div className="grid grid-cols-2 gap-2 mt-4 bg-black/20 rounded-md p-3">
                   <div className="text-center">
                     <p className="text-xs text-gray-400">Income Potential</p>
                     <p className="font-bold text-electric">{course.income}</p>
                   </div>
-                  <div className="text-center border-x border-gray-700">
+                  <div className="text-center border-l border-gray-700">
                     <p className="text-xs text-gray-400">Lessons</p>
                     <p className="font-bold">{course.lessons}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400">Price</p>
-                    <p className="font-bold text-white">{course.price}</p>
                   </div>
                 </div>
               </CardContent>
