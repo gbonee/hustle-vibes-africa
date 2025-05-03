@@ -8,7 +8,6 @@ import TopCourses from '@/components/TopCourses';
 import Testimonials from '@/components/Testimonials';
 import ProofSection from '@/components/ProofSection';
 import { Button } from "@/components/ui/button";
-import { Building2, ArrowRight } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
@@ -41,56 +40,7 @@ const Index = () => {
       
       <ProofSection />
       
-      {/* Enterprise Section */}
-      <section className="py-20 bg-muted/50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-10 items-center">
-            <div className="md:w-1/2">
-              <Building2 className="h-16 w-16 text-electric mb-6" />
-              <h2 className="text-4xl md:text-5xl font-oswald uppercase mb-4">
-                FOR <span className="text-electric">ENTERPRISE</span>
-              </h2>
-              <p className="text-xl mb-6">
-                Equip your workforce with practical skills in their native languages. Custom training programs for Nigerian businesses.
-              </p>
-              <ul className="mb-8 space-y-2">
-                <li className="flex items-center">
-                  <span className="text-electric mr-2">✓</span> Customized training programs
-                </li>
-                <li className="flex items-center">
-                  <span className="text-electric mr-2">✓</span> Bulk enrollment discounts
-                </li>
-                <li className="flex items-center">
-                  <span className="text-electric mr-2">✓</span> Progress tracking & analytics
-                </li>
-              </ul>
-              <Button 
-                onClick={() => navigate('/enterprise')}
-                variant="outline" 
-                className="rebel-secondary-button text-lg"
-              >
-                Learn More
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
-            <div className="md:w-1/2">
-              <div className="relative border-2 border-electric rounded-xl overflow-hidden">
-                <div className="aspect-video bg-black/50">
-                  <div className="flex items-center justify-center h-full flex-col">
-                    <img 
-                      src="/lovable-uploads/20591bbc-87c9-4bbc-8159-3e4becbee8c8.png" 
-                      alt="uSabi AI Enterprise" 
-                      className="h-20 w-auto mb-4" 
-                    />
-                    <h3 className="text-2xl font-bold">Enterprise Solutions</h3>
-                    <p className="text-gray-400 mt-2">Training for Nigerian businesses</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Removed the Enterprise Section */}
       
       <section id="cta-section" className="py-20 relative overflow-hidden bg-muted">
         <div className="container mx-auto px-4 text-center">
