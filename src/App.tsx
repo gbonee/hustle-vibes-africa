@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import Index from "./pages/Index";
 import Manifesto from "./pages/Manifesto";
+import Enterprise from "./pages/Enterprise";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Onboarding from "./pages/Onboarding";
@@ -78,6 +79,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/manifesto" element={<Manifesto />} />
+            <Route path="/enterprise" element={<Enterprise />} />
             <Route path="/auth" element={session ? (
               isNewUser ? <Navigate to="/onboarding" /> : <Navigate to="/dashboard" />
             ) : <Auth />} />

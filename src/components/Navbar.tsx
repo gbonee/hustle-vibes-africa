@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X, FileText } from "lucide-react";
@@ -60,6 +61,12 @@ const Navbar = () => {
             className="text-white hover:text-electric font-medium transition-colors"
           >
             Success Proof
+          </button>
+          <button 
+            onClick={() => navigate('/enterprise')}
+            className="text-white hover:text-electric font-medium transition-colors"
+          >
+            Enterprise
           </button>
           <button 
             onClick={() => navigate('/manifesto')}
@@ -129,6 +136,16 @@ const Navbar = () => {
                     className="text-white hover:text-electric font-medium transition-colors justify-start text-xl"
                   >
                     Success Proof
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => {
+                      navigate('/enterprise');
+                      setOpen(false);
+                    }}
+                    className="text-white hover:text-electric font-medium transition-colors justify-start text-xl"
+                  >
+                    Enterprise
                   </Button>
                   <Button 
                     variant="ghost"
