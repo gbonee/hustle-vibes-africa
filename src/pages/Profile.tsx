@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -29,6 +30,7 @@ const avatarNames = {
 const Profile = () => {
   const { userPrefs } = useUserPreferences();
   const [user, setUser] = useState({
+    id: '', // Adding the missing id property with default empty string
     name: '',
     email: '',
     avatar: '',
@@ -61,6 +63,7 @@ const Profile = () => {
       // For now, we'll just use some mock data but with the real user's info
       
       setUser({
+        id: authUser.id, // Make sure to set the id from the auth user
         name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
         email: authUser.email || '',
         avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1", // For now, keep a default avatar
