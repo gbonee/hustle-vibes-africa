@@ -27,16 +27,22 @@ export const useUserPreferences = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           // Get user preferences from profiles table
+          // Note: We're storing preferences in localStorage and in user metadata
+          // since the profiles table doesn't have language_preference and avatar_preference columns
+          
           const { data: profile } = await supabase
             .from('profiles')
-            .select('language_preference, avatar_preference')
+            .select('*')
             .eq('id', user.id)
             .single();
             
+          // Get preferences from user metadata or local storage
+          const userMetadata = user.user_metadata || {};
+          
           if (profile) {
             const dbPrefs = {
-              language: profile.language_preference || userPrefs?.language || 'pidgin',
-              avatar: profile.avatar_preference || userPrefs?.avatar || null,
+              language: userMetadata.language_preference || userPrefs?.language || 'pidgin',
+              avatar: userMetadata.avatar_preference || userPrefs?.avatar || null,
               course: userPrefs?.course || 'digital-marketing'
             };
             
@@ -64,13 +70,13 @@ export const useUserPreferences = () => {
       // Update in Supabase if user is logged in
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        await supabase
-          .from('profiles')
-          .update({
+        // Update user metadata with preferences
+        await supabase.auth.updateUser({
+          data: {
             language_preference: newPrefs.language !== undefined ? newPrefs.language : userPrefs?.language,
             avatar_preference: newPrefs.avatar !== undefined ? newPrefs.avatar : userPrefs?.avatar
-          })
-          .eq('id', user.id);
+          }
+        });
       }
       
       return true;
