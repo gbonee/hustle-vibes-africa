@@ -1,12 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { supabase } from "@/integrations/supabase/client";
+import DashboardLayout from '@/components/layout/DashboardLayout';
 
 // Import our components
-import Header from '@/components/layout/Header';
-import BottomNavigation from '@/components/layout/BottomNavigation';
 import ProfileHeader from '@/components/profile/ProfileHeader';
 import CourseProgress from '@/components/profile/CourseProgress';
 import CertificatesList from '@/components/profile/CertificatesList';
@@ -80,52 +78,44 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black pb-20">
-      {/* Top Navigation Bar */}
-      <Header />
+    <DashboardLayout currentPath="/profile" user={user}>
+      {/* Profile Header */}
+      <Card className="border-electric bg-muted mb-6">
+        <CardContent className="p-6">
+          <ProfileHeader user={user} />
+        </CardContent>
+      </Card>
       
-      <main className="container mx-auto px-4 py-6">
-        {/* Profile Header */}
-        <Card className="border-electric bg-muted mb-6">
-          <CardContent className="p-6">
-            <ProfileHeader user={user} />
-          </CardContent>
-        </Card>
-        
-        {/* Course Progress */}
-        <h2 className="text-xl font-bold mb-4">Your Progress</h2>
-        <Card className="bg-black mb-6">
-          <CardContent className="p-6">
-            <CourseProgress progress={user.progress} />
-          </CardContent>
-        </Card>
-        
-        {/* Certificates */}
-        <h2 className="text-xl font-bold mb-4">Your Certificates</h2>
-        <CertificatesList certificates={certificates} />
-        
-        {/* Preferences */}
-        <h2 className="text-xl font-bold mb-4">Your Preferences</h2>
-        <Card className="bg-black mb-6">
-          <CardContent className="p-6">
-            <UserPreferences 
-              userName={user.name}
-              userPrefs={userPrefs}
-              languageNames={languageNames}
-              avatarNames={avatarNames}
-            />
-          </CardContent>
-        </Card>
-        
-        {/* Account Actions */}
-        <Card className="bg-black mb-6">
-          <AccountActions />
-        </Card>
-      </main>
+      {/* Course Progress */}
+      <h2 className="text-xl font-bold mb-4">Your Progress</h2>
+      <Card className="bg-black mb-6">
+        <CardContent className="p-6">
+          <CourseProgress progress={user.progress} />
+        </CardContent>
+      </Card>
       
-      {/* Bottom Navigation */}
-      <BottomNavigation currentPath="/profile" />
-    </div>
+      {/* Certificates */}
+      <h2 className="text-xl font-bold mb-4">Your Certificates</h2>
+      <CertificatesList certificates={certificates} />
+      
+      {/* Preferences */}
+      <h2 className="text-xl font-bold mb-4">Your Preferences</h2>
+      <Card className="bg-black mb-6">
+        <CardContent className="p-6">
+          <UserPreferences 
+            userName={user.name}
+            userPrefs={userPrefs}
+            languageNames={languageNames}
+            avatarNames={avatarNames}
+          />
+        </CardContent>
+      </Card>
+      
+      {/* Account Actions */}
+      <Card className="bg-black mb-6">
+        <AccountActions />
+      </Card>
+    </DashboardLayout>
   );
 };
 
