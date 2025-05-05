@@ -23,7 +23,7 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
 }) => {
   return (
     <div className="bg-black p-6 rounded-lg border border-gray-800">
-      <h3 className="text-xl font-bold mb-4">Quick Quiz: {moduleTopic}</h3>
+      <h3 className="text-xl font-bold mb-4">Quick Quiz: {moduleTopic || 'Module Knowledge'}</h3>
       <p className="text-gray-400 mb-4">Question {quizNumber} of {totalQuizzes}</p>
       
       <div className="mb-6">

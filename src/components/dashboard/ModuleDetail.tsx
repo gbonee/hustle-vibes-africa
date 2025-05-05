@@ -6,7 +6,7 @@ import { Module } from './ModulesList';
 import { Quiz } from '@/types/quiz';
 import VideoPlayer from './VideoPlayer';
 import QuizSection from './QuizSection';
-import VideoUploader from './VideoUploader';
+import VideoUploader from '../dashboard/VideoUploader';
 
 interface ModuleDetailProps {
   module: Module;

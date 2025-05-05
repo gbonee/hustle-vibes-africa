@@ -11,6 +11,7 @@ interface VideoUploaderProps {
 
 const VideoUploader: React.FC<VideoUploaderProps> = ({ moduleTitle }) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -45,17 +46,37 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ moduleTitle }) => {
 
     try {
       setIsUploading(true);
+      setProgress(0);
       
       // In a real app, upload to Supabase storage
       // For demo, we'll create a local URL
       const videoObjectUrl = URL.createObjectURL(file);
       setVideoUrl(videoObjectUrl);
       
-      toast({
-        title: "Video uploaded successfully",
-        description: "Your practice video has been uploaded.",
-        variant: "default"
-      });
+      // Simulate progress
+      const interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 10;
+        });
+      }, 300);
+      
+      // Simulate upload completion after 3 seconds
+      setTimeout(() => {
+        clearInterval(interval);
+        setProgress(100);
+        setIsUploading(false);
+        
+        toast({
+          title: "Video uploaded successfully",
+          description: "Your practice video has been uploaded.",
+          variant: "default"
+        });
+      }, 3000);
+      
     } catch (error) {
       console.error("Error uploading video:", error);
       toast({
@@ -63,14 +84,14 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ moduleTitle }) => {
         description: "There was a problem uploading your video. Please try again.",
         variant: "destructive"
       });
-    } finally {
+      setProgress(0);
       setIsUploading(false);
     }
   };
 
   return (
     <div>
-      <h3 className="text-lg font-bold mb-2">Mini-Challenge</h3>
+      <h3 className="text-lg font-bold mb-2">Mini-Challenge: {moduleTitle}</h3>
       <div className="bg-black p-4 rounded-lg border border-gray-800">
         <p>Post your practice video and tag @UsabiAI to win 500MB data!</p>
         
@@ -95,15 +116,26 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ moduleTitle }) => {
             onChange={handleFileChange}
           />
           
-          <Button 
-            onClick={handleUploadClick}
-            variant="outline"
-            disabled={isUploading}
-            className="w-full flex items-center justify-center gap-2"
-          >
-            <Upload size={16} />
-            {isUploading ? "Uploading..." : "Upload Video"}
-          </Button>
+          {isUploading ? (
+            <div className="space-y-2">
+              <div className="w-full bg-gray-800 rounded-full h-2.5">
+                <div 
+                  className="bg-electric h-2.5 rounded-full transition-all duration-300" 
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+              <p className="text-sm text-center text-gray-400">Uploading... {progress}%</p>
+            </div>
+          ) : (
+            <Button 
+              onClick={handleUploadClick}
+              variant="outline"
+              className="w-full flex items-center justify-center gap-2"
+            >
+              <Upload size={16} />
+              Upload Your Practice Video
+            </Button>
+          )}
         </div>
       </div>
     </div>

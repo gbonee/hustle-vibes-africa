@@ -71,7 +71,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
     };
     
     fetchModuleVideo();
-  }, [module.id, module.title, userPrefs?.course]);
+  }, [module, userPrefs?.course]);
 
   if (isLoading) {
     return (
