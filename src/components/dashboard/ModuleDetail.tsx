@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,14 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // YouTube video for the specific module
+  const getYoutubeEmbed = () => {
+    if (module.id === 1 && module.title === "Intro to Digital Marketing the Naija Way") {
+      return "https://www.youtube.com/embed/tlCqenvEmNg";
+    }
+    return null;
+  };
 
   const handleStartQuiz = () => {
     setShowQuiz(true);
@@ -106,13 +113,26 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
     }
   };
 
+  const youtubeEmbedUrl = getYoutubeEmbed();
+
   return (
     <Card className="bg-muted border-electric">
       <CardHeader>
         <CardTitle>{module.title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {module.hasVideo ? (
+        {youtubeEmbedUrl ? (
+          <div className="aspect-video bg-black rounded-lg flex items-center justify-center border border-gray-800">
+            <iframe 
+              className="w-full h-full"
+              src={youtubeEmbedUrl}
+              title={module.title}
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
+        ) : module.hasVideo ? (
           <div className="aspect-video bg-black rounded-lg flex items-center justify-center border border-gray-800">
             {/* In a real app this would be a video player */}
             <div className="text-center">
