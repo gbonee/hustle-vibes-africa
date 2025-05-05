@@ -40,6 +40,7 @@ const App = () => {
   useEffect(() => {
     // Skip auth checking if in preview mode
     if (forcePreview) {
+      console.log("Preview mode active, skipping auth check");
       setLoading(false);
       return;
     }
@@ -107,55 +108,20 @@ const App = () => {
             <Route path="/enterprise" element={<Enterprise />} />
             <Route 
               path="/auth" 
-              element={
-                forcePreview ? <Auth /> : (
-                  session ? (
-                    isNewUser ? <Navigate to="/onboarding" /> : <Navigate to="/dashboard" />
-                  ) : <Auth />
-                )
-              } 
+              element={<Auth />} 
             />
             <Route 
               path="/onboarding" 
-              element={
-                forcePreview ? <Onboarding /> : (
-                  session ? (
-                    <Onboarding onComplete={() => {
-                      // Mark onboarding as completed for this user
-                      if (session) {
-                        localStorage.setItem(`onboarding_completed_${session.user.id}`, 'true');
-                        setIsNewUser(false);
-                      }
-                    }} />
-                  ) : <Navigate to="/auth" />
-                )
-              }
+              element={<Onboarding onComplete={() => {
+                if (session) {
+                  localStorage.setItem(`onboarding_completed_${session.user.id}`, 'true');
+                  setIsNewUser(false);
+                }
+              }} />} 
             />
-            <Route 
-              path="/dashboard" 
-              element={
-                forcePreview || session ? (
-                  isNewUser && !forcePreview ? <Navigate to="/onboarding" /> : <Dashboard />
-                ) : <Navigate to="/auth" />
-              }
-            />
-            <Route 
-              path="/leaderboard" 
-              element={
-                forcePreview || session ? (
-                  isNewUser && !forcePreview ? <Navigate to="/onboarding" /> : <Leaderboard />
-                ) : <Navigate to="/auth" />
-              }
-            />
-            <Route 
-              path="/profile" 
-              element={
-                forcePreview || session ? (
-                  isNewUser && !forcePreview ? <Navigate to="/onboarding" /> : <Profile />
-                ) : <Navigate to="/auth" />
-              }
-            />
-            {/* Admin route no longer requires authentication */}
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
