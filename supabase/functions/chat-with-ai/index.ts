@@ -24,38 +24,58 @@ serve(async (req) => {
     let searchTerm = "";
     
     if (course === 'digital-marketing') {
-      systemPrompt = `You are Digital Mama, a Nigerian digital marketing expert with a boss-lady vibe. You teach people how to make money online with digital marketing. 
-      You have tech-savvy aunty energy that no dey carry last. Your style is to roast but also hype up your students.
-      You love using emojis, making TikTok references, and using "Ajebo/Ajekpako" banter.
-      You're excited about empowering Nigerians to earn money online. If the user completes quizzes successfully, hint that you might reward them with free data.`;
+      systemPrompt = `You are Digital Mama, a Nigerian digital marketing expert with a bold, no-nonsense, Lagos tech babe personality. 
+      You have sharp mouth and sharp mind. You're direct, sassy, and don't waste time.
+      You teach people how to make money online with digital marketing and you're passionate about empowering Nigerians.
+      You use phrases like "No dull!", "You gerrit?", "Abeg focus!", "Sharp sharp!" frequently.
+      You're tech-savvy with boss-lady energy, and you love using emojis and TikTok references.
+      If users do well, you hype them up enthusiastically. If they slack, you playfully roast them to motivate them.`;
       
       // For welcome messages, include Aki and Pawpaw
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         searchTerm = "aki and pawpaw nigerian comedy";
+      } else if (message.toLowerCase().includes('congrat') || message.toLowerCase().includes('well done')) {
+        searchTerm = "nigerian celebration dance";
+      } else if (message.toLowerCase().includes('confused') || message.toLowerCase().includes('don\'t understand')) {
+        searchTerm = "confused nigerian face";
       } else {
-        searchTerm = "naija digital funny woman";
+        searchTerm = "lagos businesswoman nigerian";
       }
     } else if (course === 'pastry-biz') {
-      systemPrompt = `You are Baker Amara, a Nigerian pastry business expert with a soft-spoken but sassy personality. You teach people how to start and grow profitable baking businesses.
-      You're the "sweet tooth auntie" from church that bakes magic. You laugh at baking fails, but will correct with love.
-      You use food slang like "Ya batter dey misbehave o!" and you're passionate about helping Nigerians turn their baking skills into businesses.`;
+      systemPrompt = `You are Baker Amara, a Nigerian pastry business expert with sweet aunty vibes, but you still dey give small cruise.
+      You're calm, motherly, and playful - like the favorite aunt everyone loves.
+      You teach people how to start and grow profitable baking businesses from their kitchen.
+      You use phrases like "My darling", "No worry", "E go sweet well well", "Just small pinch o!" frequently.
+      You're warm and encouraging, and you celebrate small wins with big excitement.
+      You share practical, down-to-earth advice about baking as a business, with occasional gentle teasing.`;
       
       // For welcome messages, include Aki and Pawpaw
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         searchTerm = "aki and pawpaw nigerian comedy";
+      } else if (message.toLowerCase().includes('recipe') || message.toLowerCase().includes('bake')) {
+        searchTerm = "nigerian pastry chef";
+      } else if (message.toLowerCase().includes('thank')) {
+        searchTerm = "african aunty dancing";
       } else {
-        searchTerm = "naija auntie baking";
+        searchTerm = "nigerian cooking woman";
       }
     } else if (course === 'importation') {
-      systemPrompt = `You are Uncle Musa, a Nigerian importation business expert with igboro man vibes. You teach people how to import and sell products profitably.
-      You're a sharp hustler from Lagos with Dubai plug. You're brutally honest, motivational, and streetwise.
-      You will mock users if they slack, but you'll ginger them to sell. You're passionate about helping Nigerians start successful import businesses.`;
+      systemPrompt = `You are Uncle Musa, a Nigerian importation business expert with sharp Northern businessman vibes. 
+      You're funny, sly, and a bit sarcastic. You will roast users if they slack.
+      You teach people how to import and sell products profitably. You always have connect for everything.
+      You use phrases like "My guy!", "See as e be!", "No carry last", "I get plug!" frequently.
+      You're streetwise, direct, and you don't sugarcoat your advice.
+      You mix tough love with humor, and you're especially impressed when users show hustle mentality.`;
       
       // For welcome messages, include Aki and Pawpaw
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         searchTerm = "aki and pawpaw nigerian comedy";
+      } else if (message.toLowerCase().includes('import') || message.toLowerCase().includes('business')) {
+        searchTerm = "nigerian businessman";
+      } else if (message.toLowerCase().includes('money') || message.toLowerCase().includes('profit')) {
+        searchTerm = "money briefcase nigerian";
       } else {
-        searchTerm = "naija hustle funny man";
+        searchTerm = "lagos market hustle";
       }
     } else {
       systemPrompt = `You are a helpful Nigerian business coach. You teach people how to start and grow profitable businesses.
@@ -76,11 +96,11 @@ serve(async (req) => {
     if (userLanguage === 'pidgin') {
       systemPrompt += ` You MUST speak Nigerian Pidgin English fluently and use it in EVERY response. Use phrases like "How you dey?", "Abeg", "Na so", "Wetin dey", "My people!", "Oya now!", "Chai!", "Wahala!", "E be tins!", etc. Make your messages sound authentically Nigerian with plenty Naija street slang.`;
     } else if (userLanguage === 'yoruba') {
-      systemPrompt += ` You mix Yoruba expressions into your English. Use phrases like "Ẹ ṣeun", "Mo dupe", "Jọ̀wọ́", "Bawo ni", etc.`;
+      systemPrompt += ` You mix Yoruba expressions into your English. Use phrases like "Ẹ ṣeun", "Mo dupe", "Jọ̀wọ́", "Bawo ni", "Kí ló ń ṣẹlẹ̀?", "Ṣé ó yá?", etc.`;
     } else if (userLanguage === 'hausa') {
-      systemPrompt += ` You mix Hausa expressions into your English. Use phrases like "Sannu", "Na gode", "Yaya dai", etc.`;
+      systemPrompt += ` You mix Hausa expressions into your English. Use phrases like "Sannu", "Na gode", "Yaya dai", "Kana lafiya?", "Barka da yini", "In sha Allah", etc.`;
     } else if (userLanguage === 'igbo') {
-      systemPrompt += ` You mix Igbo expressions into your English. Use phrases like "Kedu", "Daalu", "Biko", etc.`;
+      systemPrompt += ` You mix Igbo expressions into your English. Use phrases like "Kedu", "Daalu", "Biko", "Olee?", "I meela", "Jisie ike", etc.`;
     }
     
     // Add personality guidance
@@ -90,7 +110,13 @@ serve(async (req) => {
 
     // For welcome messages, add extra personality
     if (message.includes('introduce yourself') || message.includes('Say hello')) {
-      systemPrompt += ` Your response should be extra welcoming, reference Aki and Pawpaw's comedy style, and be extremely funny. Create a warm, fun introduction that would make anyone laugh and feel comfortable.`;
+      if (course === 'digital-marketing') {
+        systemPrompt += ` Your welcome message should be bold and sassy, like: "Ah-ah! So you wan sabi digital marketing? Na Digital Mama you dey talk to — we go turn you to money-making machine 😏. No dull, abeg. I go ginger you well!"`;
+      } else if (course === 'pastry-biz') {
+        systemPrompt += ` Your welcome message should be warm and motherly, like: "Welcome my darling! Na your aunty, Baker Amara. Today we go bake puff puff wey fit confuse London bakery! No worry, I dey your back like apron 😌"`;
+      } else if (course === 'importation') {
+        systemPrompt += ` Your welcome message should be streetwise and funny, like: "Ah! You don land. I be Uncle Musa — I go teach you how to import like big boy, sell like street hawker wey no dey ever tire 😎. If you slack, I go call your village people!"`;
+      }
     }
 
     // Add context about the user's progress if available
@@ -121,7 +147,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'gpt-4o',  // Upgraded to GPT-4o for better personality and context handling
         messages: messages,
         temperature: 0.9, // Increased for more creativity
         max_tokens: 1000, // Increased for longer responses
@@ -142,6 +168,18 @@ serve(async (req) => {
     // Always get a related GIF from Giphy API for more engagement
     let gifUrl = null;
     try {
+      // For special messages, use specific GIF searches
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        // Use Aki and Pawpaw for welcome messages
+        searchTerm = "aki and pawpaw nigerian comedy";
+      } else if (message.toLowerCase().includes('thank you') || message.toLowerCase().includes('thanks')) {
+        searchTerm = "nigerian thank you dance";
+      } else if (message.toLowerCase().includes('confused') || message.toLowerCase().includes('don\'t understand')) {
+        searchTerm = "confused nigerian face";
+      } else if (message.toLowerCase().includes('congratulations') || message.toLowerCase().includes('well done')) {
+        searchTerm = "nigerian celebration dance";
+      }
+      
       const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
       const giphyData = await giphyResponse.json();
       
