@@ -48,6 +48,16 @@ export const useChallengeSubmission = () => {
       
       if (error) {
         console.error("Error checking challenge status:", error);
+        
+        // Check if the table doesn't exist and handle it gracefully
+        if (error.message.includes('does not exist')) {
+          toast({
+            title: "Database setup required",
+            description: "Challenge submissions table is not configured. Please contact an administrator.",
+            variant: "destructive",
+          });
+        }
+        
         return { hasSubmitted: false, isApproved: false };
       }
       
@@ -98,6 +108,32 @@ export const useChallengeSubmission = () => {
       const fileName = `${user.id}-${Date.now()}.${fileExt}`;
       const filePath = `challenge_submissions/${fileName}`;
       
+      // Check if the challenges bucket exists
+      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+      
+      if (bucketsError) {
+        console.error("Error checking storage buckets:", bucketsError);
+        toast({
+          title: "Storage error",
+          description: "Could not access storage. Please contact an administrator.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      // Check if the challenges bucket exists
+      const challengesBucketExists = buckets?.some(bucket => bucket.name === 'challenges');
+      
+      if (!challengesBucketExists) {
+        console.error("Challenges bucket does not exist");
+        toast({
+          title: "Storage error",
+          description: "Storage is not properly configured. Please contact an administrator.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
       const { error: uploadError } = await supabase.storage
         .from('challenges')
         .upload(filePath, file);
@@ -105,7 +141,6 @@ export const useChallengeSubmission = () => {
       if (uploadError) {
         console.error("Error uploading file:", uploadError);
         
-        // Check if the storage bucket exists
         if (uploadError.message.includes('storage bucket') || uploadError.message.includes('not found')) {
           toast({
             title: "Storage error",
@@ -131,6 +166,30 @@ export const useChallengeSubmission = () => {
         toast({
           title: "Upload failed",
           description: "Could not get public URL for the file.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      try {
+        // Check if the challenge_submissions table exists by trying to count records
+        const { count, error: tableCheckError } = await supabase
+          .from('challenge_submissions')
+          .select('*', { count: 'exact', head: true });
+          
+        if (tableCheckError && tableCheckError.message.includes('does not exist')) {
+          toast({
+            title: "Database error",
+            description: "The challenge submissions table is not configured. Please contact an administrator.",
+            variant: "destructive",
+          });
+          return false;
+        }
+      } catch (error) {
+        console.error("Error checking if table exists:", error);
+        toast({
+          title: "Database error",
+          description: "Could not verify database setup. Please contact an administrator.",
           variant: "destructive",
         });
         return false;

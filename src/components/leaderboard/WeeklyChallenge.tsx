@@ -88,9 +88,8 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
         
         setUploadOpen(false);
         setSelectedFile(null);
-      } else {
-        setUploadError("There was an error uploading your file. Please try again later.");
       }
+      // If not successful, the error will be shown by the useChallengeSubmission hook
     } catch (error) {
       console.error('Error uploading file:', error);
       setUploadError("An unexpected error occurred during upload. Please try again.");
