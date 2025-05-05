@@ -1,20 +1,15 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Trophy, Star } from "lucide-react";
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import { getLeaderboard, getUserLeaderboardEntry, addPointsForModuleCompletion } from '@/utils/progressTracker';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { useUserPreferences } from '@/hooks/useUserPreferences';
-import { useChallengeSubmission } from '@/hooks/useChallengeSubmission';
-import { getLeaderboard, getUserLeaderboardEntry, addPointsForModuleCompletion } from '@/utils/progressTracker';
-
-// Import our new components
-import LeaderboardHeader from '@/components/leaderboard/LeaderboardHeader';
-import TopUsersGrid from '@/components/leaderboard/TopUsersGrid';
-import CurrentUserCard from '@/components/leaderboard/CurrentUserCard';
-import RankingsList from '@/components/leaderboard/RankingsList';
-import WeeklyChallenge from '@/components/leaderboard/WeeklyChallenge';
-import SubmissionsList from '@/components/leaderboard/SubmissionsList';
-import LeaderboardSkeleton from '@/components/leaderboard/LeaderboardSkeleton';
 
 interface LeaderboardUser {
   id: number | string;
@@ -28,31 +23,12 @@ interface LeaderboardUser {
   badge?: string;
 }
 
-interface ChallengeSubmission {
-  id: string;
-  user_id: string;
-  challenge_id: string;
-  submission_url: string;
-  submission_type: string;
-  submitted_at: string;
-  is_approved: boolean;
-  user_name: string;
-  avatar_url: string;
-}
-
 const Leaderboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
   const [currentUser, setCurrentUser] = useState<LeaderboardUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { getChallengeStatus } = useChallengeSubmission();
-  const [challengeStatus, setChallengeStatus] = useState({ hasSubmitted: false, isApproved: false });
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [showSubmissions, setShowSubmissions] = useState(false);
-  const [submissions, setSubmissions] = useState<ChallengeSubmission[]>([]);
-  const WEEKLY_CHALLENGE_ID = 'weekly-challenge-1';
-  
   const [user, setUser] = useState({
     id: '',
     name: 'User',
@@ -79,14 +55,6 @@ const Leaderboard = () => {
             email: authUser.email || '',
             avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1"
           });
-          
-          // Check if user is admin
-          const isUserAdmin = authUser.email === 'admin@example.com' || authUser.user_metadata?.is_admin === true;
-          setIsAdmin(isUserAdmin);
-          
-          // Check challenge status
-          const status = await getChallengeStatus(WEEKLY_CHALLENGE_ID);
-          setChallengeStatus(status);
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -94,7 +62,7 @@ const Leaderboard = () => {
     };
     
     fetchUserData();
-  }, [getChallengeStatus]);
+  }, []);
   
   useEffect(() => {
     const fetchLeaderboardData = async () => {
@@ -156,115 +124,191 @@ const Leaderboard = () => {
     return courses[Math.floor(Math.random() * courses.length)];
   };
   
-  const fetchSubmissions = async () => {
+  const handleTakeChallenge = async () => {
     try {
-      const { data, error } = await supabase
-        .from('challenge_submissions' as any)
-        .select(`
-          id,
-          user_id,
-          challenge_id,
-          submission_url,
-          submission_type,
-          submitted_at,
-          is_approved,
-          profiles(display_name, avatar_url)
-        `)
-        .eq('challenge_id', WEEKLY_CHALLENGE_ID)
-        .order('submitted_at', { ascending: false });
-      
-      if (error) throw error;
-      
-      if (data) {
-        const formattedSubmissions = data.map((submission: any) => ({
-          id: submission.id,
-          user_id: submission.user_id,
-          challenge_id: submission.challenge_id,
-          submission_url: submission.submission_url,
-          submission_type: submission.submission_type,
-          submitted_at: submission.submitted_at,
-          is_approved: submission.is_approved,
-          user_name: submission.profiles?.display_name || 'Unknown User',
-          avatar_url: submission.profiles?.avatar_url || ''
-        }));
-        
-        setSubmissions(formattedSubmissions);
-        setShowSubmissions(true);
-      }
-    } catch (error) {
-      console.error('Error fetching submissions:', error);
-      toast({
-        title: "Error",
-        description: "Failed to fetch challenge submissions.",
-        variant: "destructive",
-      });
-    }
-  };
-  
-  const approveSubmission = async (submissionId: string, userId: string) => {
-    try {
-      // First update the submission to approved
-      const { error: updateError } = await supabase
-        .from('challenge_submissions' as any)
-        .update({ is_approved: true })
-        .eq('id', submissionId);
-      
-      if (updateError) throw updateError;
-      
-      // Then award points to the user
-      await addPointsForModuleCompletion(1000, userId);
+      // Award points for taking the challenge
+      await addPointsForModuleCompletion(1000);
       
       toast({
-        title: "Submission approved",
-        description: "The user has been awarded 1000 points for their submission.",
+        title: "Challenge Completed!",
+        description: "You've earned 1000 bonus points for taking the weekly challenge!",
         variant: "default",
       });
       
-      // Refresh the submissions list
-      await fetchSubmissions();
+      // Refresh data
+      const leaderboardData = await getLeaderboard(10);
+      const userEntry = await getUserLeaderboardEntry();
+      
+      if (userEntry && currentUser) {
+        setCurrentUser({
+          ...currentUser,
+          score: userEntry.points,
+          completedChallenges: userEntry.completed_challenges,
+          rank: userEntry.rank || 0
+        });
+      }
+      
+      setUsers(leaderboardData.map(user => {
+        let badge;
+        if (user.rank === 1) badge = "🏆 Top Hustler";
+        else if (user.rank === 2) badge = "🔥 Rising Star";
+        
+        return {
+          ...user,
+          badge,
+          course: user.course || getRandomCourse(),
+          progress: user.progress || Math.floor(Math.random() * 30) + 70,
+        };
+      }));
       
     } catch (error) {
-      console.error('Error approving submission:', error);
+      console.error('Error taking challenge:', error);
       toast({
         title: "Error",
-        description: "Failed to approve submission.",
+        description: "There was an error taking the challenge. Please try again.",
         variant: "destructive",
       });
     }
   };
   
   if (isLoading) {
-    return <LeaderboardSkeleton user={user} />;
+    return (
+      <DashboardLayout currentPath="/leaderboard" user={user}>
+        <h1 className="text-3xl font-bold mb-6">Leaderboard</h1>
+        <div className="space-y-4">
+          <Card className="bg-muted border border-gray-700 animate-pulse">
+            <CardContent className="h-40"></CardContent>
+          </Card>
+          <Card className="bg-muted border border-gray-700 animate-pulse">
+            <CardContent className="h-20"></CardContent>
+          </Card>
+          <Card className="bg-muted border border-gray-700 animate-pulse">
+            <CardContent className="h-60"></CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    );
   }
 
   return (
     <DashboardLayout currentPath="/leaderboard" user={user}>
-      <LeaderboardHeader title="Leaderboard" />
+      <h1 className="text-3xl font-bold mb-6">Leaderboard</h1>
       
-      {/* Top 3 Users */}
-      <TopUsersGrid users={users} />
+      {/* Top 3 Section */}
+      <div className="grid grid-cols-3 gap-2 mb-8">
+        {users.slice(0, 3).map((user) => (
+          <Card key={user.id} className={`bg-muted border ${user.rank === 1 ? 'border-2 border-electric' : 'border-gray-700'}`}>
+            <CardContent className="p-4 flex flex-col items-center">
+              <div className="relative mt-2 mb-2">
+                <Avatar className={`w-16 h-16 border-2 ${user.rank === 1 ? 'border-electric' : user.rank === 2 ? 'border-gray-300' : 'border-amber-700'}`}>
+                  <AvatarImage src={user.avatar} />
+                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className={`absolute -bottom-2 -right-2 rounded-full w-8 h-8 flex items-center justify-center text-black ${
+                  user.rank === 1 ? 'bg-electric' : user.rank === 2 ? 'bg-gray-300' : 'bg-amber-700'
+                }`}>
+                  {user.rank === 1 ? '🥇' : user.rank === 2 ? '🥈' : '🥉'}
+                </div>
+              </div>
+              <h3 className="font-bold text-center mt-2 truncate max-w-full">{user.name}</h3>
+              <p className="text-xs text-gray-400 text-center">{user.course}</p>
+              <p className="font-bold text-center mt-1">{user.score} pts</p>
+              {user.badge && (
+                <span className="text-xs bg-electric/20 text-electric px-2 py-1 rounded-full mt-1">
+                  {user.badge}
+                </span>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
       
-      {/* Current User */}
-      <CurrentUserCard user={currentUser} />
+      {/* Current User Card */}
+      {currentUser && (
+        <Card className="bg-black border border-electric mb-6">
+          <CardContent className="p-4">
+            <div className="flex items-center">
+              <div className="mr-4 w-8 flex justify-center">
+                <span className="font-bold">{currentUser.rank}</span>
+              </div>
+              <Avatar className="w-10 h-10 mr-3">
+                <AvatarImage src={currentUser.avatar} />
+                <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-bold">{currentUser.name} <span className="text-electric">(You)</span></h3>
+                  <span className="font-bold">{currentUser.score} pts</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <Progress value={currentUser.progress} className="h-1.5 flex-1" />
+                  <span className="text-xs text-gray-400">{currentUser.progress}%</span>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
-      {/* Full Rankings */}
-      <RankingsList users={users} currentUserId={currentUser?.id} />
+      {/* Full Leaderboard */}
+      <Card className="bg-muted border border-gray-800">
+        <CardHeader className="py-4 px-6">
+          <CardTitle>Weekly Rankings</CardTitle>
+        </CardHeader>
+        <CardContent className="px-2 py-0">
+          <div className="space-y-1">
+            {users.map((user) => (
+              <div 
+                key={user.id} 
+                className={`flex items-center p-3 rounded-md ${
+                  user.id === currentUser?.id ? 'bg-black border border-electric/30' : ''
+                }`}
+              >
+                <div className="mr-4 w-8 flex justify-center">
+                  <span className={`font-bold ${user.rank <= 3 ? 'text-electric' : ''}`}>{user.rank}</span>
+                </div>
+                <Avatar className="w-10 h-10 mr-3">
+                  <AvatarImage src={user.avatar} />
+                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <div className="flex justify-between">
+                    <h3 className="font-bold">
+                      {user.name}
+                      {user.id === currentUser?.id && <span className="text-electric ml-1">(You)</span>}
+                    </h3>
+                    <span className="font-bold">{user.score} pts</span>
+                  </div>
+                  <div className="flex justify-between items-center mt-1">
+                    <div className="text-xs text-gray-400">{user.course}</div>
+                    <div className="flex items-center text-xs text-gray-400">
+                      <Trophy className="w-3 h-3 mr-1" />
+                      <span>{user.completedChallenges} challenges</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
       
       {/* Weekly Challenge */}
-      <WeeklyChallenge 
-        challengeId={WEEKLY_CHALLENGE_ID}
-        challengeStatus={challengeStatus}
-        isAdmin={isAdmin}
-        onFetchSubmissions={fetchSubmissions}
-      />
-      
-      {/* Submissions List Dialog (for admins) */}
-      <SubmissionsList 
-        open={showSubmissions}
-        onOpenChange={setShowSubmissions}
-        submissions={submissions}
-        onApprove={approveSubmission}
-      />
+      <Card className="bg-black border border-electric mt-6">
+        <CardContent className="p-5">
+          <h3 className="text-lg font-bold mb-2 flex items-center">
+            <Star className="w-5 h-5 mr-2 text-electric" />
+            Weekly Challenge
+          </h3>
+          <p className="mb-4">Record a 30-second pitch for your business idea and upload it to earn 1000 bonus points!</p>
+          <Button 
+            className="w-full rebel-button"
+            onClick={handleTakeChallenge}
+          >
+            Take Challenge
+          </Button>
+        </CardContent>
+      </Card>
     </DashboardLayout>
   );
 };

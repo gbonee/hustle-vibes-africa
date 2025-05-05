@@ -13,9 +13,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import PreviewMode from '@/components/common/PreviewMode';
 import { updateModuleCompletion, updateCourseProgress, getUserCourseProgress, getModuleCompletionData, awardQuizPoints } from '@/utils/progressTracker';
 import { useToast } from '@/hooks/use-toast';
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { avatars } from '@/components/onboarding/AvatarData';
 
 // Define types
 interface Course {
@@ -80,7 +77,7 @@ const uiTranslations = {
 };
 
 const Dashboard = () => {
-  const { userPrefs, updateUserPreferences } = useUserPreferences();
+  const { userPrefs } = useUserPreferences();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("lessons");
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
@@ -100,29 +97,6 @@ const Dashboard = () => {
   // Get current language for translations (default to English if not set)
   const currentLanguage = userPrefs?.language || 'pidgin';
   const texts = uiTranslations[currentLanguage as keyof typeof uiTranslations] || uiTranslations.english;
-  
-  // Add the missing handleAvatarChange function
-  const handleAvatarChange = async (course: string) => {
-    try {
-      // Update the user's course preference
-      const success = await updateUserPreferences({ course });
-      
-      if (success) {
-        toast({
-          title: "Coach changed!",
-          description: `Your learning coach has been updated.`,
-          variant: "default",
-        });
-      }
-    } catch (error) {
-      console.error("Error changing avatar/course:", error);
-      toast({
-        title: "Error",
-        description: "Failed to change your learning coach. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
   
   // Check for preview mode
   useEffect(() => {
@@ -629,32 +603,6 @@ const Dashboard = () => {
   return (
     <DashboardLayout currentPath="/dashboard" user={user}>
       {isPreviewMode && <PreviewMode />}
-      
-      {/* Avatar Toggle Group */}
-      <div className="mb-6">
-        <h3 className="text-sm text-gray-400 mb-2">Choose Your Coach</h3>
-        <ToggleGroup 
-          type="single" 
-          value={userPrefs?.course || 'digital-marketing'}
-          onValueChange={(value) => value && handleAvatarChange(value)}
-          className="justify-start"
-        >
-          {avatars.map((avatar) => (
-            <ToggleGroupItem 
-              key={avatar.id} 
-              value={avatar.course}
-              className="flex flex-col items-center gap-1 p-2 data-[state=on]:border-electric"
-              aria-label={`Switch to ${avatar.name}`}
-            >
-              <Avatar className="h-12 w-12 border-2 data-[state=on]:border-electric">
-                <AvatarImage src={avatar.image} alt={avatar.name} />
-                <AvatarFallback>{avatar.name.substring(0, 2)}</AvatarFallback>
-              </Avatar>
-              <span className="text-xs">{avatar.name}</span>
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-      </div>
       
       {/* Course Info Card */}
       <CourseHeader 

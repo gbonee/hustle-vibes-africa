@@ -199,25 +199,17 @@ export const updateCourseProgress = async (courseId: string) => {
 
 /**
  * Add points to the user's leaderboard entry for completing a module
- * Optionally specify a user ID to add points to a specific user (admin only)
  */
-export const addPointsForModuleCompletion = async (pointsToAdd = 100, specificUserId?: string) => {
-  // If a specific user ID is provided, use that, otherwise use the current user
-  let userId: string;
+export const addPointsForModuleCompletion = async (pointsToAdd = 100) => {
+  const { data: { user } } = await supabase.auth.getUser();
   
-  if (specificUserId) {
-    userId = specificUserId;
-  } else {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { success: false, error: 'User not authenticated' };
-    userId = user.id;
-  }
+  if (!user) return { success: false, error: 'User not authenticated' };
   
   // Check if user has a leaderboard entry
   const { data: existingEntry } = await supabase
     .from('leaderboard_entries')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', user.id)
     .maybeSingle();
   
   let result;
@@ -231,13 +223,13 @@ export const addPointsForModuleCompletion = async (pointsToAdd = 100, specificUs
         completed_challenges: existingEntry.completed_challenges + 1,
         updated_at: new Date().toISOString()
       })
-      .eq('user_id', userId);
+      .eq('user_id', user.id);
   } else {
     // Create new entry
     result = await supabase
       .from('leaderboard_entries')
       .insert({
-        user_id: userId,
+        user_id: user.id,
         points: pointsToAdd,
         completed_challenges: 1
       });
