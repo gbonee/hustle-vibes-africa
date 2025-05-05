@@ -27,6 +27,34 @@ interface Progress {
   percentage: number;
 }
 
+// Map course types to coach names
+const getCoachName = (course: string): string => {
+  switch (course) {
+    case 'digital-marketing':
+      return 'Digital Mama';
+    case 'pastry-biz':
+      return 'Baker Amara';
+    case 'importation':
+      return 'Uncle Musa';
+    default:
+      return 'Digital Mama';
+  }
+};
+
+// Get course-specific greeting
+const getCourseSpecificGreeting = (course: string): string => {
+  switch (course) {
+    case 'digital-marketing':
+      return 'digital marketing';
+    case 'pastry-biz':
+      return 'pastry business';
+    case 'importation':
+      return 'importation business';
+    default:
+      return 'digital marketing';
+  }
+};
+
 const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -35,6 +63,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  
+  const coachName = getCoachName(userPrefs?.course || 'digital-marketing');
+  const courseSpecificGreeting = getCourseSpecificGreeting(userPrefs?.course || 'digital-marketing');
+  const language = userPrefs?.language || 'pidgin';
 
   // Initialize user ID
   useEffect(() => {
@@ -90,7 +122,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Call the edge function for AI welcome message
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
-          message: `Say hello to ${name} and introduce yourself as their AI coach for the ${course} course. Be very welcoming and cheerful. Speak in Pidgin English with lots of Nigerian flavor.`,
+          message: `Say hello to ${name} and introduce yourself as ${coachName} for the ${course} course. Be very welcoming, funny and cheerful. Speak in Pidgin English with lots of Nigerian flavor. Include a Nigerian Aki and Pawpaw reference if possible.`,
           course: course || 'digital-marketing',
           language: userPrefs?.language || 'pidgin', // Default to pidgin
           userName: name,
@@ -114,7 +146,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Add fallback welcome message
       setChatMessages([{ 
         isUser: false, 
-        text: `Wetin dey happen, ${name}! How you dey? I be your AI coach for this ${course} journey. Make we hammer together! Ask me anything, I go show you the way!`,
+        text: `Wetin dey sup ${name}! Na me be ${coachName} wey go teach you ${courseSpecificGreeting}! I go show you road like Aki and Pawpaw for film! Ask me anything, I go burst your brain with knowledge!`,
         timestamp: Date.now()
       }]);
     } finally {
@@ -220,6 +252,22 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setMessage(actionMessage);
   };
 
+  // Generate language-specific greeting
+  const getLanguageSpecificGreeting = (): string => {
+    switch (language) {
+      case 'pidgin':
+        return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
+      case 'yoruba':
+        return `Bawo ni ${userName}, o le bi mi ohunkohun nipa ${courseSpecificGreeting}`;
+      case 'hausa':
+        return `Sannu ${userName}, za ka iya tambaye ni komai game da ${courseSpecificGreeting}`;
+      case 'igbo':
+        return `Kedu ${userName}, ị nwere ike ịjụ m ihe ọ bụla gbasara ${courseSpecificGreeting}`;
+      default:
+        return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
+    }
+  };
+
   return (
     <Card className="bg-muted border-electric">
       <CardHeader>
@@ -229,8 +277,8 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             <AvatarFallback>AI</AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle>Chat with Your AI Coach</CardTitle>
-            <CardDescription>Hey {userName}, ask me anything about your course</CardDescription>
+            <CardTitle>Chat with {coachName}</CardTitle>
+            <CardDescription>{getLanguageSpecificGreeting()}</CardDescription>
           </div>
         </div>
       </CardHeader>

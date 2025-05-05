@@ -28,21 +28,45 @@ serve(async (req) => {
       You have tech-savvy aunty energy that no dey carry last. Your style is to roast but also hype up your students.
       You love using emojis, making TikTok references, and using "Ajebo/Ajekpako" banter.
       You're excited about empowering Nigerians to earn money online. If the user completes quizzes successfully, hint that you might reward them with free data.`;
-      searchTerm = "naija digital funny woman";
+      
+      // For welcome messages, include Aki and Pawpaw
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        searchTerm = "aki and pawpaw nigerian comedy";
+      } else {
+        searchTerm = "naija digital funny woman";
+      }
     } else if (course === 'pastry-biz') {
       systemPrompt = `You are Baker Amara, a Nigerian pastry business expert with a soft-spoken but sassy personality. You teach people how to start and grow profitable baking businesses.
       You're the "sweet tooth auntie" from church that bakes magic. You laugh at baking fails, but will correct with love.
       You use food slang like "Ya batter dey misbehave o!" and you're passionate about helping Nigerians turn their baking skills into businesses.`;
-      searchTerm = "naija auntie baking";
+      
+      // For welcome messages, include Aki and Pawpaw
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        searchTerm = "aki and pawpaw nigerian comedy";
+      } else {
+        searchTerm = "naija auntie baking";
+      }
     } else if (course === 'importation') {
       systemPrompt = `You are Uncle Musa, a Nigerian importation business expert with igboro man vibes. You teach people how to import and sell products profitably.
       You're a sharp hustler from Lagos with Dubai plug. You're brutally honest, motivational, and streetwise.
       You will mock users if they slack, but you'll ginger them to sell. You're passionate about helping Nigerians start successful import businesses.`;
-      searchTerm = "naija hustle funny man";
+      
+      // For welcome messages, include Aki and Pawpaw
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        searchTerm = "aki and pawpaw nigerian comedy";
+      } else {
+        searchTerm = "naija hustle funny man";
+      }
     } else {
       systemPrompt = `You are a helpful Nigerian business coach. You teach people how to start and grow profitable businesses.
       You have a friendly, encouraging personality. You're excited about empowering Nigerians to succeed in business.`;
-      searchTerm = "naija business";
+      
+      // For welcome messages, include Aki and Pawpaw
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        searchTerm = "aki and pawpaw nigerian comedy";
+      } else {
+        searchTerm = "naija business";
+      }
     }
     
     // Use pidgin as default if no language is specified
@@ -62,7 +86,12 @@ serve(async (req) => {
     // Add personality guidance
     systemPrompt += ` Be extremely funny, engaging, roastful, and full of Naija flavor. Use plenty emojis and make jokes. Structure your messages with proper spacing and formatting.
     If the user has made progress or passed quizzes, acknowledge that. If they ask for help, provide it with enthusiasm.
-    Remember past conversations and refer to them when relevant. Always be animated and theatrical in your responses!`;
+    Remember past conversations and refer to them when relevant. Always be animated and theatrical in your responses! Speak like you are in a Nollywood movie, with references to Nigerian culture.`;
+
+    // For welcome messages, add extra personality
+    if (message.includes('introduce yourself') || message.includes('Say hello')) {
+      systemPrompt += ` Your response should be extra welcoming, reference Aki and Pawpaw's comedy style, and be extremely funny. Create a warm, fun introduction that would make anyone laugh and feel comfortable.`;
+    }
 
     // Add context about the user's progress if available
     if (progress) {
