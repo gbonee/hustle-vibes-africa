@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Upload } from "lucide-react";
+import { Star, Upload, AlertCircle } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { useChallengeSubmission } from '@/hooks/useChallengeSubmission';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface WeeklyChallengeProps {
   challengeId: string;
@@ -26,6 +28,7 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
   const [uploadOpen, setUploadOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const { submitChallengeFile } = useChallengeSubmission();
   
   const handleUploadClick = () => {
@@ -47,36 +50,31 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
       return;
     }
     
+    setUploadError(null);
     setUploadOpen(true);
   };
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
+      setUploadError(null);
     }
   };
   
   const handleFileUpload = async () => {
     if (!selectedFile) {
-      toast({
-        title: "No file selected",
-        description: "Please select a file to upload.",
-        variant: "destructive",
-      });
+      setUploadError("Please select a file to upload.");
       return;
     }
     
     // Check file size (max 50MB)
     if (selectedFile.size > 50 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Maximum file size is 50MB.",
-        variant: "destructive",
-      });
+      setUploadError("Maximum file size is 50MB.");
       return;
     }
     
     setIsUploading(true);
+    setUploadError(null);
     
     try {
       const success = await submitChallengeFile(challengeId, selectedFile);
@@ -91,22 +89,20 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
         setUploadOpen(false);
         setSelectedFile(null);
       } else {
-        toast({
-          title: "Upload failed",
-          description: "There was an error uploading your file. Please try again.",
-          variant: "destructive",
-        });
+        setUploadError("There was an error uploading your file. Please try again later.");
       }
     } catch (error) {
       console.error('Error uploading file:', error);
-      toast({
-        title: "Upload failed",
-        description: "There was an error uploading your file. Please try again.",
-        variant: "destructive",
-      });
+      setUploadError("An unexpected error occurred during upload. Please try again.");
     } finally {
       setIsUploading(false);
     }
+  };
+  
+  const closeDialog = () => {
+    setUploadOpen(false);
+    setSelectedFile(null);
+    setUploadError(null);
   };
   
   return (
@@ -155,7 +151,7 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
       </Card>
       
       {/* File Upload Dialog */}
-      <Dialog open={uploadOpen} onOpenChange={setUploadOpen}>
+      <Dialog open={uploadOpen} onOpenChange={closeDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Upload Your Pitch</DialogTitle>
@@ -163,6 +159,14 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
               Submit a video or document showcasing your 30-second business pitch.
             </DialogDescription>
           </DialogHeader>
+          
+          {uploadError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4 mr-2" />
+              <AlertDescription>{uploadError}</AlertDescription>
+            </Alert>
+          )}
+          
           <div className="flex items-center space-x-2">
             <div className="grid w-full gap-2">
               <label htmlFor="pitch-file" className="cursor-pointer border-2 border-dashed border-gray-600 rounded-md p-6 flex flex-col items-center justify-center">
@@ -181,6 +185,7 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
                   className="hidden" 
                   accept="video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/*"
                   onChange={handleFileChange}
+                  disabled={isUploading}
                 />
               </label>
             </div>
@@ -188,7 +193,7 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
           <DialogFooter>
             <Button 
               type="button" 
-              onClick={() => setUploadOpen(false)} 
+              onClick={closeDialog} 
               variant="outline"
               disabled={isUploading}
             >

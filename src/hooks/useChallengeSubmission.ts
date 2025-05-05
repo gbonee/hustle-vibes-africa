@@ -26,12 +26,21 @@ export const useChallengeSubmission = () => {
   
   const getChallengeStatus = async (challengeId: string): Promise<ChallengeStatus> => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { hasSubmitted: false, isApproved: false };
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
       
-      // Use type assertion to handle the response
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        return { hasSubmitted: false, isApproved: false };
+      }
+      
+      if (!user) {
+        return { hasSubmitted: false, isApproved: false };
+      }
+      
+      // Check for existing submissions
       const { data: submission, error } = await supabase
-        .from('challenge_submissions' as any)
+        .from('challenge_submissions')
         .select('*')
         .eq('user_id', user.id)
         .eq('challenge_id', challengeId)
@@ -62,8 +71,27 @@ export const useChallengeSubmission = () => {
   
   const submitChallengeFile = async (challengeId: string, file: File): Promise<boolean> => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return false;
+      // Get the current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error("Error fetching user:", userError);
+        toast({
+          title: "Authentication error",
+          description: "Please make sure you are logged in and try again.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "You need to be logged in to submit a challenge.",
+          variant: "destructive",
+        });
+        return false;
+      }
       
       // First upload the file to storage
       const fileExt = file.name.split('.').pop();
@@ -76,11 +104,21 @@ export const useChallengeSubmission = () => {
       
       if (uploadError) {
         console.error("Error uploading file:", uploadError);
-        toast({
-          title: "Upload failed",
-          description: "There was an error uploading your file. Please try again.",
-          variant: "destructive",
-        });
+        
+        // Check if the storage bucket exists
+        if (uploadError.message.includes('storage bucket') || uploadError.message.includes('not found')) {
+          toast({
+            title: "Storage error",
+            description: "Storage bucket not configured. Please contact an administrator.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Upload failed",
+            description: "There was an error uploading your file. Please try again.",
+            variant: "destructive",
+          });
+        }
         return false;
       }
       
@@ -100,7 +138,7 @@ export const useChallengeSubmission = () => {
       
       // Check if a submission already exists
       const { data: existingSubmission, error: queryError } = await supabase
-        .from('challenge_submissions' as any)
+        .from('challenge_submissions')
         .select('*')
         .eq('user_id', user.id)
         .eq('challenge_id', challengeId)
@@ -108,11 +146,21 @@ export const useChallengeSubmission = () => {
         
       if (queryError) {
         console.error("Error checking existing submission:", queryError);
-        toast({
-          title: "Upload failed",
-          description: "There was an error checking for existing submissions.",
-          variant: "destructive",
-        });
+        
+        // Check if the table exists
+        if (queryError.message.includes('does not exist')) {
+          toast({
+            title: "Database error",
+            description: "The challenge submissions table is not configured. Please contact an administrator.",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Upload failed",
+            description: "There was an error checking for existing submissions.",
+            variant: "destructive",
+          });
+        }
         return false;
       }
         
@@ -122,7 +170,7 @@ export const useChallengeSubmission = () => {
         
         // Update existing submission
         const { error: updateError } = await supabase
-          .from('challenge_submissions' as any)
+          .from('challenge_submissions')
           .update({
             submission_url: publicURL.publicUrl,
             submission_type: file.type,
@@ -143,7 +191,7 @@ export const useChallengeSubmission = () => {
       } else {
         // Create new submission
         const { error: insertError } = await supabase
-          .from('challenge_submissions' as any)
+          .from('challenge_submissions')
           .insert({
             user_id: user.id,
             challenge_id: challengeId,
