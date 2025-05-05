@@ -55,6 +55,12 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
         yoruba: 'Ah, tani fun ọ ni ọpọlọ loni? Oya gbiyanju lẹẹkansi!',
         hausa: 'Ah, wa ya baka kwakwalwa yau? Kawai sake gwadawa!',
         igbo: 'Ah, onye nyere gị uche taa? Ngwa gbalịa ọzọ!',
+      },
+      earnedPoints: {
+        pidgin: 'You don earn 50 points!',
+        yoruba: 'O ti gba 50 ọrọ́!',
+        hausa: 'Ka sami 50 kyauta!',
+        igbo: 'Ị nwetala 50 ọtụtụ!',
       }
     };
     
@@ -64,6 +70,7 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
       of: (texts.of as any)[language] || texts.of.pidgin,
       correctAnswer: (texts.correctAnswer as any)[language] || texts.correctAnswer.pidgin,
       wrongAnswer: (texts.wrongAnswer as any)[language] || texts.wrongAnswer.pidgin,
+      earnedPoints: (texts.earnedPoints as any)[language] || texts.earnedPoints.pidgin,
     };
   };
   
@@ -92,21 +99,32 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
       </div>
       
       {result && (
-        <div className={`p-4 rounded-lg mb-4 flex items-center gap-2 ${
+        <div className={`p-4 rounded-lg mb-4 flex flex-col gap-2 ${
           result === 'correct' 
             ? 'bg-green-900/30 border border-green-500/30' 
             : 'bg-red-900/30 border border-red-500/30'
         }`}>
-          {result === 'correct' ? (
-            <>
-              <CircleCheck className="text-green-400 h-5 w-5" />
-              <p>{localizedText.correctAnswer}</p>
-            </>
-          ) : (
-            <>
-              <CircleX className="text-red-400 h-5 w-5" />
-              <p>{localizedText.wrongAnswer}</p>
-            </>
+          <div className="flex items-center gap-2">
+            {result === 'correct' ? (
+              <>
+                <CircleCheck className="text-green-400 h-5 w-5" />
+                <p>{localizedText.correctAnswer}</p>
+              </>
+            ) : (
+              <>
+                <CircleX className="text-red-400 h-5 w-5" />
+                <p>{localizedText.wrongAnswer}</p>
+              </>
+            )}
+          </div>
+          
+          {result === 'correct' && (
+            <div className="flex items-center gap-2 text-sm text-electric mt-2">
+              <div className="bg-electric/20 px-2 py-1 rounded-full">
+                +50 points
+              </div>
+              <p>{localizedText.earnedPoints}</p>
+            </div>
           )}
         </div>
       )}

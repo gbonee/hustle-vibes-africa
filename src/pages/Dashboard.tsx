@@ -11,6 +11,8 @@ import AIChat from '@/components/dashboard/AIChat';
 import { Quiz } from '@/types/quiz';
 import { Skeleton } from '@/components/ui/skeleton';
 import PreviewMode from '@/components/common/PreviewMode';
+import { updateModuleCompletion, updateCourseProgress, getUserCourseProgress, getModuleCompletionData, awardQuizPoints } from '@/utils/progressTracker';
+import { useToast } from '@/hooks/use-toast';
 
 // Define types
 interface Course {
@@ -76,6 +78,7 @@ const uiTranslations = {
 
 const Dashboard = () => {
   const { userPrefs } = useUserPreferences();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("lessons");
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -85,6 +88,10 @@ const Dashboard = () => {
     name: 'Preview User',
     email: 'preview@example.com',
     avatar: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1'
+  });
+  const [courseProgress, setCourseProgress] = useState({
+    progress: 0,
+    completedModules: [] as number[]
   });
   
   // Get current language for translations (default to English if not set)
@@ -126,6 +133,9 @@ const Dashboard = () => {
           email: authUser.email || '',
           avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1"
         });
+        
+        // Fetch course progress if available for the current user
+        await fetchCourseProgress();
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
@@ -135,6 +145,31 @@ const Dashboard = () => {
     
     fetchUserData();
   }, []);
+  
+  // Fetch course progress
+  const fetchCourseProgress = async () => {
+    try {
+      const courseId = userPrefs?.course || 'digital-marketing';
+      
+      // Get overall course progress
+      const courseProgressData = await getUserCourseProgress(courseId);
+      
+      // Get individual module completion data
+      const moduleCompletionData = await getModuleCompletionData(courseId);
+      
+      // Extract completed module IDs
+      const completedModuleIds = moduleCompletionData
+        .filter(module => module.completed)
+        .map(module => module.module_id);
+      
+      setCourseProgress({
+        progress: courseProgressData?.progress_percentage || 0,
+        completedModules: completedModuleIds
+      });
+    } catch (error) {
+      console.error("Error fetching course progress:", error);
+    }
+  };
   
   // Mock course data with translations
   const courses: Record<string, Course> = {
@@ -443,14 +478,92 @@ const Dashboard = () => {
 
   const handleCloseModule = () => {
     setSelectedModule(null);
+    // Refresh course progress when closing a module
+    fetchCourseProgress();
+  };
+  
+  // Handle module completion
+  const handleModuleComplete = async (moduleId: number) => {
+    try {
+      const courseId = userPrefs?.course || 'digital-marketing';
+      
+      // Update module completion in the database
+      await updateModuleCompletion({
+        courseId,
+        moduleId,
+        completed: true,
+        progress: 100
+      });
+      
+      // Update overall course progress
+      await updateCourseProgress(courseId);
+      
+      // Refresh course progress data
+      await fetchCourseProgress();
+      
+      toast({
+        title: "Module Completed!",
+        description: "Your progress has been updated.",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error("Error updating module completion:", error);
+      toast({
+        title: "Error",
+        description: "There was an error updating your progress.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // Handle quiz completion
+  const handleQuizComplete = async (moduleId: number, correct: boolean) => {
+    if (!correct) return;
+    
+    try {
+      const courseId = userPrefs?.course || 'digital-marketing';
+      
+      // Award points for completing the quiz
+      await awardQuizPoints(moduleId, courseId);
+      
+      // Refresh course progress
+      await fetchCourseProgress();
+      
+      toast({
+        title: "Quiz Completed!",
+        description: "You've earned points for completing the quiz!",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error("Error handling quiz completion:", error);
+    }
   };
 
   // Use digital marketing as default course if no preference is set
   const userCourse = userPrefs?.course ? courses[userPrefs.course] : courses['digital-marketing'];
   
-  // Get translated course content
-  const getTranslatedCourse = () => {
+  // Apply completion status to modules based on database data
+  const getCoursesWithCompletionStatus = () => {
     const course = { ...userCourse };
+    
+    // Apply completion status from database
+    course.modules = course.modules.map(module => {
+      const isCompleted = courseProgress.completedModules.includes(module.id);
+      return {
+        ...module,
+        completed: isCompleted
+      };
+    });
+    
+    // Update progress percentage
+    course.progress = courseProgress.progress;
+    
+    return course;
+  };
+  
+  // Get translated course content with updated completion status
+  const getTranslatedCourse = () => {
+    const course = getCoursesWithCompletionStatus();
     
     // Apply translations if available
     if (currentLanguage && course.translations && course.translations[currentLanguage]) {
@@ -518,6 +631,8 @@ const Dashboard = () => {
               module={selectedModule} 
               quizzes={getTranslatedQuizzes(selectedModule.id)} 
               onClose={handleCloseModule}
+              onModuleComplete={() => handleModuleComplete(selectedModule.id)}
+              onQuizComplete={(correct) => handleQuizComplete(selectedModule.id, correct)}
               language={currentLanguage}
               texts={texts}
             />

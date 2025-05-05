@@ -12,6 +12,8 @@ interface ModuleDetailProps {
   module: Module;
   quizzes: Quiz[];
   onClose: () => void;
+  onModuleComplete?: () => void;
+  onQuizComplete?: (correct: boolean) => void;
   language?: string;
   texts?: {
     back?: string;
@@ -23,22 +25,28 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
   module, 
   quizzes, 
   onClose,
+  onModuleComplete,
+  onQuizComplete,
   language = 'pidgin',
   texts = { back: 'Back to All Modules', loading: 'Loading...' }
 }) => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [quizResult, setQuizResult] = useState<'correct' | 'incorrect' | null>(null);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   const handleStartQuiz = useCallback(() => {
     setShowQuiz(true);
     setCurrentQuizIndex(0);
     setQuizResult(null);
+    setQuizCompleted(false);
   }, []);
 
   const handleAnswerSelect = useCallback((answerIndex: number) => {
     if (quizzes && quizzes.length > 0) {
-      if (answerIndex === quizzes[currentQuizIndex].answer) {
+      const isCorrect = answerIndex === quizzes[currentQuizIndex].answer;
+      
+      if (isCorrect) {
         setQuizResult('correct');
       } else {
         setQuizResult('incorrect');
@@ -50,14 +58,25 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
           setQuizResult(null);
         } else {
           // End of quiz
+          setQuizCompleted(true);
+          
+          // Call onQuizComplete callback with result
+          if (onQuizComplete) {
+            onQuizComplete(isCorrect);
+          }
+          
+          // Mark module as completed
+          if (isCorrect && onModuleComplete) {
+            onModuleComplete();
+          }
+          
           setTimeout(() => {
             setShowQuiz(false);
-            // Update progress (in a real app)
           }, 1500);
         }
       }, 2000);
     }
-  }, [currentQuizIndex, quizzes]);
+  }, [currentQuizIndex, quizzes, onQuizComplete, onModuleComplete]);
 
   // Check if there are quizzes available for this module
   const hasQuizzes = quizzes && quizzes.length > 0;
@@ -85,6 +104,13 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
     };
     
     return (texts as any)[language] || texts.pidgin;
+  };
+  
+  // Handle manual module completion
+  const handleMarkAsComplete = () => {
+    if (onModuleComplete) {
+      onModuleComplete();
+    }
   };
 
   return (
@@ -116,6 +142,12 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
           ) : (
             <div className="p-4 bg-gray-800 rounded-lg text-center">
               <p>{getNoQuizText()}</p>
+              <Button 
+                onClick={handleMarkAsComplete}
+                className="mt-4 bg-electric text-black hover:bg-electric/90"
+              >
+                Mark as Complete
+              </Button>
             </div>
           )
         )}

@@ -47,6 +47,42 @@ export type Database = {
           },
         ]
       }
+      course_progress: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          id: string
+          last_module_completed: number | null
+          modules_completed: number
+          progress_percentage: number
+          total_modules: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          id?: string
+          last_module_completed?: number | null
+          modules_completed?: number
+          progress_percentage?: number
+          total_modules?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          last_module_completed?: number | null
+          modules_completed?: number
+          progress_percentage?: number
+          total_modules?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       demo_requests: {
         Row: {
           company: string
@@ -74,6 +110,36 @@ export type Database = {
           message?: string | null
           name?: string
           role?: string
+        }
+        Relationships: []
+      }
+      leaderboard_entries: {
+        Row: {
+          completed_challenges: number
+          created_at: string | null
+          id: string
+          points: number
+          rank: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_challenges?: number
+          created_at?: string | null
+          id?: string
+          points?: number
+          rank?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_challenges?: number
+          created_at?: string | null
+          id?: string
+          points?: number
+          rank?: number | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -148,6 +214,39 @@ export type Database = {
           mentor?: string
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      module_completion: {
+        Row: {
+          completed: boolean
+          course_id: string
+          created_at: string | null
+          id: string
+          module_id: number
+          progress: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          course_id: string
+          created_at?: string | null
+          id?: string
+          module_id: number
+          progress?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          module_id?: number
+          progress?: number
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }

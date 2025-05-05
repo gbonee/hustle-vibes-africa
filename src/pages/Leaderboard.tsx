@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,9 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Trophy, Star } from "lucide-react";
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import { getLeaderboard, getUserLeaderboardEntry, addPointsForModuleCompletion } from '@/utils/progressTracker';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface LeaderboardUser {
-  id: number;
+  id: number | string;
   name: string;
   avatar: string;
   course: string;
@@ -21,78 +25,173 @@ interface LeaderboardUser {
 
 const Leaderboard = () => {
   const navigate = useNavigate();
-
-  // Sample leaderboard data
-  const users: LeaderboardUser[] = [
-    {
-      id: 1,
-      name: "Chioma Eze",
-      avatar: "https://images.unsplash.com/photo-1518495973542-4542c06a5843",
-      course: "Digital Marketing",
-      progress: 85,
-      score: 950,
-      completedChallenges: 7,
-      rank: 1,
-      badge: "🏆 Top Hustler"
-    },
-    {
-      id: 2,
-      name: "Emeka Johnson",
-      avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-      course: "Import & Sell",
-      progress: 76,
-      score: 845,
-      completedChallenges: 6,
-      rank: 2,
-      badge: "🔥 Rising Star"
-    },
-    {
-      id: 3,
-      name: "Amina Mohammed",
-      avatar: "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
-      course: "Pastry Biz",
-      progress: 72,
-      score: 790,
-      completedChallenges: 5,
-      rank: 3
-    },
-    {
-      id: 4,
-      name: "Tunde Bakare",
-      avatar: "",
-      course: "Digital Marketing",
-      progress: 65,
-      score: 720,
-      completedChallenges: 4,
-      rank: 4
-    },
-    {
-      id: 5,
-      name: "Ngozi Okafor",
-      avatar: "",
-      course: "Pastry Biz",
-      progress: 58,
-      score: 650,
-      completedChallenges: 4,
-      rank: 5
-    },
-    {
-      id: 6,
-      name: "Ibrahim Suleiman",
-      avatar: "",
-      course: "Import & Sell",
-      progress: 52,
-      score: 590,
-      completedChallenges: 3,
-      rank: 6
+  const { toast } = useToast();
+  const [users, setUsers] = useState<LeaderboardUser[]>([]);
+  const [currentUser, setCurrentUser] = useState<LeaderboardUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState({
+    id: '',
+    name: 'User',
+    email: '',
+    avatar: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1'
+  });
+  
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        
+        if (authUser) {
+          // Get the user's profile if it exists
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', authUser.id)
+            .maybeSingle();
+          
+          setUser({
+            id: authUser.id,
+            name: profile?.display_name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
+            email: authUser.email || '',
+            avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1"
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+    
+    fetchUserData();
+  }, []);
+  
+  useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      setIsLoading(true);
+      try {
+        // Fetch top users
+        const leaderboardData = await getLeaderboard(10);
+        
+        // Add badges to top users
+        const usersWithBadges = leaderboardData.map(user => {
+          let badge;
+          if (user.rank === 1) badge = "🏆 Top Hustler";
+          else if (user.rank === 2) badge = "🔥 Rising Star";
+          
+          // Add default course info if missing
+          return {
+            ...user,
+            badge,
+            course: user.course || getRandomCourse(),
+            progress: user.progress || Math.floor(Math.random() * 30) + 70, // Random progress between 70-100%
+          };
+        });
+        
+        setUsers(usersWithBadges);
+        
+        // Fetch current user's data
+        const userEntry = await getUserLeaderboardEntry();
+        if (userEntry) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', userEntry.user_id)
+            .maybeSingle();
+            
+          setCurrentUser({
+            id: userEntry.user_id,
+            name: profile?.display_name || 'You',
+            avatar: profile?.avatar_url || '',
+            course: getRandomCourse(),
+            progress: 75, // Default progress
+            score: userEntry.points,
+            completedChallenges: userEntry.completed_challenges,
+            rank: userEntry.rank || 0
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching leaderboard data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchLeaderboardData();
+  }, []);
+  
+  // Helper function to get a random course for users without course data
+  const getRandomCourse = () => {
+    const courses = ['Digital Marketing', 'Import & Sell', 'Pastry Biz'];
+    return courses[Math.floor(Math.random() * courses.length)];
+  };
+  
+  const handleTakeChallenge = async () => {
+    try {
+      // Award points for taking the challenge
+      await addPointsForModuleCompletion(1000);
+      
+      toast({
+        title: "Challenge Completed!",
+        description: "You've earned 1000 bonus points for taking the weekly challenge!",
+        variant: "default",
+      });
+      
+      // Refresh data
+      const leaderboardData = await getLeaderboard(10);
+      const userEntry = await getUserLeaderboardEntry();
+      
+      if (userEntry && currentUser) {
+        setCurrentUser({
+          ...currentUser,
+          score: userEntry.points,
+          completedChallenges: userEntry.completed_challenges,
+          rank: userEntry.rank || 0
+        });
+      }
+      
+      setUsers(leaderboardData.map(user => {
+        let badge;
+        if (user.rank === 1) badge = "🏆 Top Hustler";
+        else if (user.rank === 2) badge = "🔥 Rising Star";
+        
+        return {
+          ...user,
+          badge,
+          course: user.course || getRandomCourse(),
+          progress: user.progress || Math.floor(Math.random() * 30) + 70,
+        };
+      }));
+      
+    } catch (error) {
+      console.error('Error taking challenge:', error);
+      toast({
+        title: "Error",
+        description: "There was an error taking the challenge. Please try again.",
+        variant: "destructive",
+      });
     }
-  ];
-
-  // Get the current user (In a real app, this would come from auth state)
-  const currentUser = users.find(user => user.id === 2);
+  };
+  
+  if (isLoading) {
+    return (
+      <DashboardLayout currentPath="/leaderboard" user={user}>
+        <h1 className="text-3xl font-bold mb-6">Leaderboard</h1>
+        <div className="space-y-4">
+          <Card className="bg-muted border border-gray-700 animate-pulse">
+            <CardContent className="h-40"></CardContent>
+          </Card>
+          <Card className="bg-muted border border-gray-700 animate-pulse">
+            <CardContent className="h-20"></CardContent>
+          </Card>
+          <Card className="bg-muted border border-gray-700 animate-pulse">
+            <CardContent className="h-60"></CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
-    <DashboardLayout currentPath="/leaderboard">
+    <DashboardLayout currentPath="/leaderboard" user={user}>
       <h1 className="text-3xl font-bold mb-6">Leaderboard</h1>
       
       {/* Top 3 Section */}
@@ -202,7 +301,10 @@ const Leaderboard = () => {
             Weekly Challenge
           </h3>
           <p className="mb-4">Record a 30-second pitch for your business idea and upload it to earn 1000 bonus points!</p>
-          <Button className="w-full rebel-button">
+          <Button 
+            className="w-full rebel-button"
+            onClick={handleTakeChallenge}
+          >
             Take Challenge
           </Button>
         </CardContent>
