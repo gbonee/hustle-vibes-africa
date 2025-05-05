@@ -182,13 +182,13 @@ const Dashboard = () => {
           ]
         },
         igbo: {
-          title: 'Mgbasa ozi dijitalụ n'ụzọ Naija',
+          title: "Mgbasa ozi dijitalu n'uzo Naija",
           modules: [
-            { id: 1, title: 'Mmalite na mgbasa ozi dijitalụ n'ụzọ Naija' },
-            { id: 2, title: 'Otú e si ere na WhatsApp & Instagram' },
-            { id: 3, title: 'Mepụta ihe ndị na-atụgharị (Ọbụna site na ekwentị gị) ' },
-            { id: 4, title: 'Otú e si agba mgbasa ozi nta na Meta' },
-            { id: 5, title: 'Otú e si edebe ndị ahịa & re kwa izu' }
+            { id: 1, title: "Mmalite na mgbasa ozi dijitalu n'uzo Naija" },
+            { id: 2, title: "Otu e si ere na WhatsApp & Instagram" },
+            { id: 3, title: "Meputa ihe ndi na-atughari (Obuna site na ekwenti gi)" },
+            { id: 4, title: "Otu e si agba mgbasa ozi nta na Meta" },
+            { id: 5, title: "Otu e si edebe ndi ahia & re kwa izu" }
           ]
         }
       }
@@ -238,13 +238,13 @@ const Dashboard = () => {
           ]
         },
         igbo: {
-          title: 'Malite azụmahịa pastry site na ụlọ nri gị',
+          title: "Malite azumaahia pastry site na ulo nri gi",
           modules: [
-            { id: 1, title: 'Mmalite na ihe mgbaka dị ka azụmahịa na Naịjịrịa' },
-            { id: 2, title: 'Otú e si eme puff-puff nke na-ere ere' },
-            { id: 3, title: 'Otú e si eme Meatpie Naịjịrịa' },
-            { id: 4, title: 'Branding & Packaging maka azụmahịa Pastry' },
-            { id: 5, title: 'Otú ịga achọta ndị ahịa mbụ gị & malite ire' }
+            { id: 1, title: "Mmalite na ihe mgbaka di ka azumaahia na Naijiria" },
+            { id: 2, title: "Otu e si eme puff-puff nke na-ere ere" },
+            { id: 3, title: "Otu e si eme Meatpie Naijiria" },
+            { id: 4, title: "Branding & Packaging maka azumaahia Pastry" },
+            { id: 5, title: "Otu iga achota ndi ahia mbu gi & malite ire" }
           ]
         }
       }
@@ -293,13 +293,13 @@ const Dashboard = () => {
           ]
         },
         igbo: {
-          title: 'Bubata site na China & Ree na WhatsApp',
+          title: "Bubata site na China & Ree na WhatsApp",
           modules: [
-            { id: 1, title: 'Otú ịga achọta ngwá ahịa ndị na-ere ọkụ ndị Naịjịrịa chọrọ' },
-            { id: 2, title: 'Ebe ị ga-azụta ọnụ ala: 1688, Alibaba & usoro nzuzo nke ndị na-eweta ngwa ahịa' },
-            { id: 3, title: 'Mbupu & Nnyefe: Otú e si ebubata na-enweghị nsogbu' },
-            { id: 4, title: 'Otú e si eme mgbasa ozi & ree NGWA NGWA na WhatsApp & Instagram' },
-            { id: 5, title: 'Ndụmọdụ maka ịkọ ụgwọ, uru & ọrụ ndị ahịa iji na-eleta ahịa' }
+            { id: 1, title: "Otu iga achota ngwa ahia ndi na-ere oku ndi Naijiria choro" },
+            { id: 2, title: "Ebe i ga-azuta onu ala: 1688, Alibaba & usoro nzuzo nke ndi na-eweta ngwa ahia" },
+            { id: 3, title: "Mbupu & Nnyefe: Otu e si ebubata na-enwegh nsogbu" },
+            { id: 4, title: "Otu e si eme mgbasa ozi & ree NGWA NGWA na WhatsApp & Instagram" },
+            { id: 5, title: "Ndumoodu maka iko ugwo, uru & oru ndi ahia iji na-eleta ahia" }
           ]
         }
       }
