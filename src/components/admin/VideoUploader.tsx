@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,11 +43,11 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
       return;
     }
 
-    // Check file size (limit to 100MB)
-    if (file.size > 100 * 1024 * 1024) {
+    // Check file size (limit to 1000MB)
+    if (file.size > 1000 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Video must be less than 100MB.",
+        description: "Video must be less than 1000MB.",
         variant: "destructive"
       });
       return;
@@ -185,7 +184,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
             >
               <Video className="h-12 w-12 mb-4 text-gray-500" />
               <p className="text-gray-500">Click to upload a video for this module</p>
-              <p className="text-gray-600 text-sm mt-2">MP4, WebM or MOV, max 100MB</p>
+              <p className="text-gray-600 text-sm mt-2">MP4, WebM or MOV, max 1000MB</p>
             </div>
           )}
           

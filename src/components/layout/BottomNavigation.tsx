@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutDashboard, Trophy, User, Settings } from 'lucide-react';
+import { LayoutDashboard, Trophy, User } from 'lucide-react';
 
 interface BottomNavigationProps {
   currentPath: string;
@@ -41,16 +41,6 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
         >
           <User size={24} />
           <span className="text-xs mt-1">Profile</span>
-        </Link>
-        
-        <Link 
-          to="/admin" 
-          className={`flex flex-col items-center justify-center p-2 flex-1 ${
-            isActive('/admin') ? 'text-electric' : 'text-gray-400'
-          }`}
-        >
-          <Settings size={24} />
-          <span className="text-xs mt-1">Admin</span>
         </Link>
       </div>
     </div>

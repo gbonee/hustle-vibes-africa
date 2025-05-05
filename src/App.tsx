@@ -69,7 +69,7 @@ const App = () => {
   }
 
   // Define routes that require authentication
-  const protectedRoutes = ['/dashboard', '/profile', '/leaderboard', '/onboarding', '/admin'];
+  const protectedRoutes = ['/dashboard', '/profile', '/leaderboard', '/onboarding'];
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -118,14 +118,8 @@ const App = () => {
                 ) : <Navigate to="/auth" />
               }
             />
-            <Route 
-              path="/admin" 
-              element={
-                session ? (
-                  isNewUser ? <Navigate to="/onboarding" /> : <AdminDashboard />
-                ) : <Navigate to="/auth" />
-              }
-            />
+            {/* Admin route no longer requires authentication */}
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

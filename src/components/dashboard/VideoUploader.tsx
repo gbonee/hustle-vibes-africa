@@ -33,11 +33,11 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ moduleTitle }) => {
       return;
     }
 
-    // Check file size (limit to 100MB)
-    if (file.size > 100 * 1024 * 1024) {
+    // Check file size (limit to 1000MB)
+    if (file.size > 1000 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Video must be less than 100MB.",
+        description: "Video must be less than 1000MB.",
         variant: "destructive"
       });
       return;
