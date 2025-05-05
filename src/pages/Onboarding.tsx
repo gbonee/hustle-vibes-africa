@@ -30,27 +30,22 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   // Check if we're in preview mode
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const forcePreview = urlParams.get('forcePreview') === 'true';
-    setIsPreviewMode(forcePreview);
-    
-    console.log("Onboarding: Preview mode =", forcePreview);
+    setIsPreviewMode(urlParams.get('forcePreview') === 'true');
   }, []);
 
   const handleLanguageSelect = (selectedLanguage: Language) => {
-    console.log("Language selected:", selectedLanguage);
     setLanguage(selectedLanguage);
     setTimeout(() => setStep(2), 500);
   };
 
   const handleAvatarSelect = async (selectedAvatar: Avatar) => {
-    console.log("Avatar selected:", selectedAvatar);
     setAvatar(selectedAvatar);
     setAnimateMessage(true);
     
     // Skip saving to Supabase in preview mode
     if (isPreviewMode) {
       setTimeout(() => {
-        navigate('/dashboard?forcePreview=true');
+        navigate('/dashboard');
       }, 5000);
       return;
     }

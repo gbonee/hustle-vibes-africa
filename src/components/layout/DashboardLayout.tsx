@@ -27,7 +27,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   return (
     <div className="min-h-screen bg-black pb-20">
       {/* Top Navigation Bar */}
-      <Header userAvatar={user.avatar} />
+      <Header onSettingsClick={() => {}} />
       
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">

@@ -33,18 +33,7 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState(false);
 
-  // Check for preview mode immediately
-  const urlParams = new URLSearchParams(window.location.search);
-  const forcePreview = urlParams.get('forcePreview') === 'true';
-  
   useEffect(() => {
-    // Skip auth checking if in preview mode
-    if (forcePreview) {
-      console.log("Preview mode active, skipping auth check");
-      setLoading(false);
-      return;
-    }
-    
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
@@ -83,9 +72,13 @@ const App = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [forcePreview]); // Add forcePreview as a dependency
+  }, []);
+
+  // Special case for direct access to preview pages with forcePreview param
+  const urlParams = new URLSearchParams(window.location.search);
+  const forcePreview = urlParams.get('forcePreview') === 'true';
   
-  if (loading && !forcePreview) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-black">
         <div className="space-y-4 w-full max-w-md px-4">
@@ -108,20 +101,55 @@ const App = () => {
             <Route path="/enterprise" element={<Enterprise />} />
             <Route 
               path="/auth" 
-              element={<Auth />} 
+              element={
+                forcePreview ? <Auth /> : (
+                  session ? (
+                    isNewUser ? <Navigate to="/onboarding" /> : <Navigate to="/dashboard" />
+                  ) : <Auth />
+                )
+              } 
             />
             <Route 
               path="/onboarding" 
-              element={<Onboarding onComplete={() => {
-                if (session) {
-                  localStorage.setItem(`onboarding_completed_${session.user.id}`, 'true');
-                  setIsNewUser(false);
-                }
-              }} />} 
+              element={
+                forcePreview ? <Onboarding /> : (
+                  session ? (
+                    <Onboarding onComplete={() => {
+                      // Mark onboarding as completed for this user
+                      if (session) {
+                        localStorage.setItem(`onboarding_completed_${session.user.id}`, 'true');
+                        setIsNewUser(false);
+                      }
+                    }} />
+                  ) : <Navigate to="/auth" />
+                )
+              }
             />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/leaderboard" element={<Leaderboard />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route 
+              path="/dashboard" 
+              element={
+                session ? (
+                  isNewUser ? <Navigate to="/onboarding" /> : <Dashboard />
+                ) : <Navigate to="/auth" />
+              }
+            />
+            <Route 
+              path="/leaderboard" 
+              element={
+                session ? (
+                  isNewUser ? <Navigate to="/onboarding" /> : <Leaderboard />
+                ) : <Navigate to="/auth" />
+              }
+            />
+            <Route 
+              path="/profile" 
+              element={
+                session ? (
+                  isNewUser ? <Navigate to="/onboarding" /> : <Profile />
+                ) : <Navigate to="/auth" />
+              }
+            />
+            {/* Admin route no longer requires authentication */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -119,17 +120,17 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   }, [chatMessages]);
 
-  // Generate a welcome message using the AI - updated to request shorter messages
+  // Generate a welcome message using the AI
   const sendWelcomeMessage = async (name: string, course: string) => {
     setIsLoading(true);
     
     try {
       const progress = getUserProgress();
       
-      // Call the edge function for AI welcome message - requesting a SHORT message
+      // Call the edge function for AI welcome message
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
-          message: `Say hello to ${name} and introduce yourself as ${coachName} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${language} language with lots of Nigerian flavor.`,
+          message: `Say hello to ${name} and introduce yourself as ${coachName} for the ${course} course. Be very welcoming, funny and cheerful. Speak in ${language} language with lots of Nigerian flavor. Include a Nigerian Aki and Pawpaw reference if possible.`,
           course: course || 'digital-marketing',
           language: language,
           userName: name,
@@ -150,10 +151,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       
     } catch (error) {
       console.error('Error calling AI function for welcome message:', error);
-      // Add fallback welcome message - shortened
+      // Add fallback welcome message
       setChatMessages([{ 
         isUser: false, 
-        text: `Wetin dey sup ${name}! Na me be ${coachName}! Ask me anything!`,
+        text: `Wetin dey sup ${name}! Na me be ${coachName} wey go teach you ${courseSpecificGreeting}! I go show you road like Aki and Pawpaw for film! Ask me anything, I go burst your brain with knowledge!`,
         timestamp: Date.now()
       }]);
     } finally {
@@ -214,7 +215,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           { isUser: true, text: message, timestamp: Date.now() },
           { 
             isUser: false, 
-            text: `I switch to ${requestedLanguage} language! I go dey speak with you like this from now.`,
+            text: `I don switch to ${requestedLanguage} language! I go dey speak with you like this from now.`,
             timestamp: Date.now() + 1 
           }
         ]);

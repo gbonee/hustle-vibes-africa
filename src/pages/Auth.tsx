@@ -21,19 +21,17 @@ const Auth = () => {
   // Check if we're in preview mode
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const forcePreview = urlParams.get('forcePreview') === 'true';
-    setIsPreviewMode(forcePreview);
-    
-    console.log("Auth: Preview mode =", forcePreview);
-    
-    // Skip session check in preview mode
-    if (forcePreview) {
-      setCheckingSession(false);
-      return;
-    }
-    
-    // Check if user is already logged in (skip in preview mode)
+    setIsPreviewMode(urlParams.get('forcePreview') === 'true');
+  }, []);
+  
+  // Check if user is already logged in (skip in preview mode)
+  useEffect(() => {
     const checkSession = async () => {
+      if (isPreviewMode) {
+        setCheckingSession(false);
+        return;
+      }
+      
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
@@ -48,9 +46,9 @@ const Auth = () => {
     };
     
     checkSession();
-  }, [navigate]);
+  }, [navigate, isPreviewMode]);
   
-  if (checkingSession && !isPreviewMode) {
+  if (checkingSession) {
     return <AuthSkeleton />;
   }
 

@@ -4,7 +4,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from '@/components/layout/DashboardLayout';
-import PreviewMode from '@/components/common/PreviewMode';
 
 // Import our components
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -31,17 +30,17 @@ const avatarNames = {
 const Profile = () => {
   const { userPrefs } = useUserPreferences();
   const [user, setUser] = useState({
-    id: 'preview-user-id', 
-    name: 'Preview User',
-    email: 'preview@usabi.ai',
-    avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+    id: '', // Adding the missing id property with default empty string
+    name: '',
+    email: '',
+    avatar: '',
     progress: {
-      completed: 7,
+      completed: 0,
       total: 15
     },
-    points: 845,
-    rank: 2,
-    joined: 'May 2025'
+    points: 0,
+    rank: 0,
+    joined: ''
   });
   
   const [certificates, setCertificates] = useState([
@@ -52,23 +51,9 @@ const Profile = () => {
       image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
     }
   ]);
-  
-  const [isPreviewMode, setIsPreviewMode] = useState(true);
-  
-  // Check if we're in preview mode
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const forcePreview = urlParams.get('forcePreview') === 'true';
-    setIsPreviewMode(forcePreview);
-    
-    // Only fetch user data if not in preview mode
-    if (!forcePreview) {
-      fetchUserData();
-    }
-  }, []);
 
-  const fetchUserData = async () => {
-    try {
+  useEffect(() => {
+    const fetchUserData = async () => {
       // Get the current authenticated user
       const { data: { user: authUser } } = await supabase.auth.getUser();
       
@@ -78,7 +63,7 @@ const Profile = () => {
       // For now, we'll just use some mock data but with the real user's info
       
       setUser({
-        id: authUser.id,
+        id: authUser.id, // Make sure to set the id from the auth user
         name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
         email: authUser.email || '',
         avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1", // For now, keep a default avatar
@@ -90,15 +75,13 @@ const Profile = () => {
         rank: 2,
         joined: new Date(authUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       });
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-    }
-  };
+    };
+    
+    fetchUserData();
+  }, []);
 
   return (
     <DashboardLayout currentPath="/profile" user={user}>
-      {isPreviewMode && <PreviewMode />}
-      
       {/* Profile Header */}
       <Card className="border-electric bg-muted mb-6">
         <CardContent className="p-6">
