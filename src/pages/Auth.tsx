@@ -4,8 +4,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
+import PreviewMode from '@/components/common/PreviewMode';
 
-// Import our new components
+// Import our components
 import LoginForm from '@/components/auth/LoginForm';
 import SignupForm from '@/components/auth/SignupForm';
 import SocialLoginButtons from '@/components/auth/SocialLoginButtons';
@@ -15,10 +16,22 @@ import BrandLogo from '@/components/auth/BrandLogo';
 const Auth = () => {
   const navigate = useNavigate();
   const [checkingSession, setCheckingSession] = useState(true);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   
-  // Check if user is already logged in
+  // Check if we're in preview mode
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setIsPreviewMode(urlParams.get('forcePreview') === 'true');
+  }, []);
+  
+  // Check if user is already logged in (skip in preview mode)
   useEffect(() => {
     const checkSession = async () => {
+      if (isPreviewMode) {
+        setCheckingSession(false);
+        return;
+      }
+      
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
@@ -33,7 +46,7 @@ const Auth = () => {
     };
     
     checkSession();
-  }, [navigate]);
+  }, [navigate, isPreviewMode]);
   
   if (checkingSession) {
     return <AuthSkeleton />;
@@ -41,6 +54,8 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-black flex flex-col justify-center items-center p-4">
+      {isPreviewMode && <PreviewMode />}
+      
       <div className="w-full max-w-md">
         <BrandLogo />
 

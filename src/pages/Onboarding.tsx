@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import PreviewMode from '@/components/common/PreviewMode';
 
 // Import our new components
 import OnboardingHeader from '@/components/onboarding/OnboardingHeader';
@@ -24,6 +25,13 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [language, setLanguage] = useState<Language | null>(null);
   const [avatar, setAvatar] = useState<Avatar | null>(null);
   const [animateMessage, setAnimateMessage] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  
+  // Check if we're in preview mode
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setIsPreviewMode(urlParams.get('forcePreview') === 'true');
+  }, []);
 
   const handleLanguageSelect = (selectedLanguage: Language) => {
     setLanguage(selectedLanguage);
@@ -33,6 +41,14 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const handleAvatarSelect = async (selectedAvatar: Avatar) => {
     setAvatar(selectedAvatar);
     setAnimateMessage(true);
+    
+    // Skip saving to Supabase in preview mode
+    if (isPreviewMode) {
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 5000);
+      return;
+    }
     
     // Get the current user
     const { data: { user } } = await supabase.auth.getUser();
@@ -77,6 +93,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
 
   return (
     <div className="min-h-screen bg-black flex flex-col justify-center items-center p-4">
+      {isPreviewMode && <PreviewMode />}
+      
       <div className="w-full max-w-md">
         <OnboardingHeader step={step} />
 

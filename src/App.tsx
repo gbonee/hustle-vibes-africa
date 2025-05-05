@@ -74,6 +74,10 @@ const App = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Special case for direct access to preview pages with forcePreview param
+  const urlParams = new URLSearchParams(window.location.search);
+  const forcePreview = urlParams.get('forcePreview') === 'true';
+  
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen bg-black">
@@ -95,17 +99,30 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/manifesto" element={<Manifesto />} />
             <Route path="/enterprise" element={<Enterprise />} />
-            <Route path="/auth" element={session ? (
-              isNewUser ? <Navigate to="/onboarding" /> : <Navigate to="/dashboard" />
-            ) : <Auth />} />
+            <Route 
+              path="/auth" 
+              element={
+                forcePreview ? <Auth /> : (
+                  session ? (
+                    isNewUser ? <Navigate to="/onboarding" /> : <Navigate to="/dashboard" />
+                  ) : <Auth />
+                )
+              } 
+            />
             <Route 
               path="/onboarding" 
               element={
-                session ? <Onboarding onComplete={() => {
-                  // Mark onboarding as completed for this user
-                  localStorage.setItem(`onboarding_completed_${session.user.id}`, 'true');
-                  setIsNewUser(false);
-                }} /> : <Navigate to="/auth" />
+                forcePreview ? <Onboarding /> : (
+                  session ? (
+                    <Onboarding onComplete={() => {
+                      // Mark onboarding as completed for this user
+                      if (session) {
+                        localStorage.setItem(`onboarding_completed_${session.user.id}`, 'true');
+                        setIsNewUser(false);
+                      }
+                    }} />
+                  ) : <Navigate to="/auth" />
+                )
               }
             />
             <Route 
