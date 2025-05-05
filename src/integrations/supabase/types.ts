@@ -47,6 +47,36 @@ export type Database = {
           },
         ]
       }
+      challenge_submissions: {
+        Row: {
+          challenge_id: string
+          id: string
+          is_approved: boolean | null
+          submission_type: string
+          submission_url: string
+          submitted_at: string | null
+          user_id: string
+        }
+        Insert: {
+          challenge_id: string
+          id?: string
+          is_approved?: boolean | null
+          submission_type: string
+          submission_url: string
+          submitted_at?: string | null
+          user_id: string
+        }
+        Update: {
+          challenge_id?: string
+          id?: string
+          is_approved?: boolean | null
+          submission_type?: string
+          submission_url?: string
+          submitted_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       course_progress: {
         Row: {
           course_id: string

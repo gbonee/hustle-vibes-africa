@@ -43,7 +43,7 @@ export const useUserPreferences = () => {
             const dbPrefs = {
               language: userMetadata.language_preference || userPrefs?.language || 'pidgin',
               avatar: userMetadata.avatar_preference || userPrefs?.avatar || null,
-              course: userPrefs?.course || 'digital-marketing'
+              course: userMetadata.course_preference || userPrefs?.course || 'digital-marketing'
             };
             
             setUserPrefs(dbPrefs);
@@ -62,8 +62,32 @@ export const useUserPreferences = () => {
 
   const updateUserPreferences = async (newPrefs: Partial<UserPreferences>) => {
     try {
+      // If avatar is changed, update the course based on the avatar
+      let updatedCourse = newPrefs.course;
+      if (newPrefs.avatar && !newPrefs.course) {
+        // Map avatar to its corresponding course
+        switch(newPrefs.avatar) {
+          case 'digital-mama':
+            updatedCourse = 'digital-marketing';
+            break;
+          case 'baker-amara':
+            updatedCourse = 'pastry-biz';
+            break;
+          case 'uncle-musa':
+            updatedCourse = 'importation';
+            break;
+          default:
+            updatedCourse = userPrefs?.course;
+        }
+      }
+      
       // Update local state and localStorage first for immediate feedback
-      const updatedPrefs = { ...userPrefs, ...newPrefs } as UserPreferences;
+      const updatedPrefs = { 
+        ...userPrefs, 
+        ...newPrefs,
+        course: updatedCourse || newPrefs.course || userPrefs?.course
+      } as UserPreferences;
+      
       localStorage.setItem('userPreferences', JSON.stringify(updatedPrefs));
       setUserPrefs(updatedPrefs);
       
@@ -73,10 +97,22 @@ export const useUserPreferences = () => {
         // Update user metadata with preferences
         await supabase.auth.updateUser({
           data: {
-            language_preference: newPrefs.language !== undefined ? newPrefs.language : userPrefs?.language,
-            avatar_preference: newPrefs.avatar !== undefined ? newPrefs.avatar : userPrefs?.avatar
+            language_preference: updatedPrefs.language,
+            avatar_preference: updatedPrefs.avatar,
+            course_preference: updatedPrefs.course
           }
         });
+      }
+      
+      // Clear existing chat history for previous avatar to force a refresh
+      if (newPrefs.avatar || newPrefs.course) {
+        if (user?.id) {
+          Object.keys(localStorage).forEach(key => {
+            if (key.startsWith(`chat_history_${user.id}_`)) {
+              localStorage.removeItem(key);
+            }
+          });
+        }
       }
       
       return true;

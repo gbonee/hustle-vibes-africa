@@ -65,6 +65,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [userId, setUserId] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [currentCourseKey, setCurrentCourseKey] = useState<string>('');
   
   const currentCourse = userPrefs?.course || 'digital-marketing';
   const coachName = getCoachName(currentCourse);
@@ -77,8 +78,11 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
+        const courseKey = `${user.id}_${currentCourse}`;
+        setCurrentCourseKey(courseKey);
+        
         // Load previous messages from localStorage for the SPECIFIC AVATAR
-        const savedMessages = localStorage.getItem(`chat_history_${user.id}_${currentCourse}`);
+        const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
         if (savedMessages) {
           const parsedMessages = JSON.parse(savedMessages);
           // Only load messages from the last 24 hours
@@ -118,10 +122,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
-    if (userId && chatMessages.length > 0) {
-      localStorage.setItem(`chat_history_${userId}_${currentCourse}`, JSON.stringify(chatMessages));
+    if (userId && chatMessages.length > 0 && currentCourseKey) {
+      localStorage.setItem(`chat_history_${currentCourseKey}`, JSON.stringify(chatMessages));
     }
-  }, [chatMessages, userId, currentCourse]);
+  }, [chatMessages, userId, currentCourseKey]);
 
   // Scroll to bottom when messages change
   useEffect(() => {

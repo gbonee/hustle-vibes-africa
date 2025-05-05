@@ -65,8 +65,19 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     setAvatar(selectedAvatar);
     setAnimateMessage(true);
     
+    // Find the corresponding course for the selected avatar
+    const selectedAvatarObj = avatars.find(a => a.id === selectedAvatar);
+    
     // Skip saving to Supabase in preview mode
     if (isPreviewMode) {
+      // Even in preview mode, update localStorage
+      if (selectedAvatarObj) {
+        updateUserPreferences({
+          avatar: selectedAvatar,
+          course: selectedAvatarObj.course
+        });
+      }
+      
       setTimeout(() => {
         navigate('/dashboard');
       }, 3000);
@@ -79,7 +90,6 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     if (user) {
       try {
         // Save user preferences to Supabase
-        const selectedAvatarObj = avatars.find(a => a.id === selectedAvatar);
         const userPreferences = {
           language,
           avatar: selectedAvatar,
