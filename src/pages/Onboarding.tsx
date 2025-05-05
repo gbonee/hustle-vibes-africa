@@ -48,7 +48,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       id: 'digital-mama',
       name: 'Digital Mama',
       role: 'Digital Marketing Expert',
-      image: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9',
+      image: 'https://images.unsplash.com/photo-1581329957093-92a8a36121ff?q=80&w=687&auto=format&fit=crop',
       course: 'digital-marketing',
       intro: {
         pidgin: "Ah! You don choose Digital Mama? Oya let's go hustle money online sharp sharp. You no go carry last!",
@@ -61,7 +61,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       id: 'baker-amara',
       name: 'Baker Amara',
       role: 'Pastry Business Expert',
-      image: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901',
+      image: 'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1470&auto=format&fit=crop',
       course: 'pastry-biz',
       intro: {
         pidgin: "You wan bake like pro? Baker Amara don land! Make I show you how to hammer with puff-puff and meat pie business!",
@@ -74,7 +74,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
       id: 'uncle-musa',
       name: 'Uncle Musa',
       role: 'Importation & Sales Guru',
-      image: 'https://images.unsplash.com/photo-1501286353178-1ec871214838',
+      image: 'https://images.unsplash.com/photo-1621788641723-00348d55982e?q=80&w=1287&auto=format&fit=crop',
       course: 'importation',
       intro: {
         pidgin: "Uncle Musa for your service! You go learn how to import goods from China come make heavy money for Nigeria. No long talk, na action!",
