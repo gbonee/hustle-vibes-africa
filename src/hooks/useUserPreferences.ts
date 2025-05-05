@@ -110,20 +110,26 @@ export const useUserPreferences = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return { hasSubmitted: false, isApproved: false };
       
-      // Use any type to bypass TypeScript errors until the database types are updated
-      const { data: submission } = await supabase
+      // Explicitly type the submission data
+      const { data: submission, error } = await supabase
         .from('challenge_submissions' as any)
         .select('*')
         .eq('user_id', user.id)
         .eq('challenge_id', challengeId)
         .maybeSingle();
       
+      if (error) {
+        console.error("Error checking challenge status:", error);
+        return { hasSubmitted: false, isApproved: false };
+      }
+      
       if (submission) {
+        const typedSubmission = submission as unknown as ChallengeSubmission;
         return {
           hasSubmitted: true,
-          isApproved: submission.is_approved || false,
-          submissionUrl: submission.submission_url,
-          submissionType: submission.submission_type
+          isApproved: typedSubmission.is_approved || false,
+          submissionUrl: typedSubmission.submission_url,
+          submissionType: typedSubmission.submission_type
         };
       }
       
@@ -161,14 +167,22 @@ export const useUserPreferences = () => {
       if (!publicURL) return false;
       
       // Check if a submission already exists
-      const { data: existingSubmission } = await supabase
+      const { data: existingSubmission, error: queryError } = await supabase
         .from('challenge_submissions' as any)
         .select('*')
         .eq('user_id', user.id)
         .eq('challenge_id', challengeId)
         .maybeSingle();
         
+      if (queryError) {
+        console.error("Error checking existing submission:", queryError);
+        return false;
+      }
+        
       if (existingSubmission) {
+        // Cast to our type to safely access properties
+        const typedSubmission = existingSubmission as unknown as ChallengeSubmission;
+        
         // Update existing submission
         const { error: updateError } = await supabase
           .from('challenge_submissions' as any)
@@ -178,7 +192,7 @@ export const useUserPreferences = () => {
             submitted_at: new Date().toISOString(),
             is_approved: false
           })
-          .eq('id', existingSubmission.id);
+          .eq('id', typedSubmission.id);
           
         if (updateError) {
           console.error("Error updating submission:", updateError);
