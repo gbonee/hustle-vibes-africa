@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
@@ -31,15 +30,15 @@ serve(async (req) => {
       You're tech-savvy with boss-lady energy, and you love using emojis and TikTok references.
       If users do well, you hype them up enthusiastically. If they slack, you playfully roast them to motivate them.`;
       
-      // For welcome messages, include Aki and Pawpaw
+      // Always use Aki and Pawpaw for welcome messages
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         searchTerm = "aki and pawpaw nigerian comedy";
       } else if (message.toLowerCase().includes('congrat') || message.toLowerCase().includes('well done')) {
-        searchTerm = "nigerian celebration dance";
+        searchTerm = "aki and pawpaw celebration";
       } else if (message.toLowerCase().includes('confused') || message.toLowerCase().includes('don\'t understand')) {
-        searchTerm = "confused nigerian face";
+        searchTerm = "aki and pawpaw confused face";
       } else {
-        searchTerm = "lagos businesswoman nigerian";
+        searchTerm = "aki and pawpaw nigerian comedy";
       }
     } else if (course === 'pastry-biz') {
       systemPrompt = `You are Baker Amara, a Nigerian pastry business expert with sweet aunty vibes, but you still dey give small cruise.
@@ -49,15 +48,15 @@ serve(async (req) => {
       You're warm and encouraging, and you celebrate small wins with big excitement.
       You share practical, down-to-earth advice about baking as a business, with occasional gentle teasing.`;
       
-      // For welcome messages, include Aki and Pawpaw
+      // Always use Aki and Pawpaw for welcome messages
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         searchTerm = "aki and pawpaw nigerian comedy";
       } else if (message.toLowerCase().includes('recipe') || message.toLowerCase().includes('bake')) {
-        searchTerm = "nigerian pastry chef";
+        searchTerm = "aki and pawpaw cooking";
       } else if (message.toLowerCase().includes('thank')) {
-        searchTerm = "african aunty dancing";
+        searchTerm = "aki and pawpaw dancing";
       } else {
-        searchTerm = "nigerian cooking woman";
+        searchTerm = "aki and pawpaw nigerian comedy";
       }
     } else if (course === 'importation') {
       systemPrompt = `You are Uncle Musa, a Nigerian importation business expert with sharp Northern businessman vibes. 
@@ -67,26 +66,22 @@ serve(async (req) => {
       You're streetwise, direct, and you don't sugarcoat your advice.
       You mix tough love with humor, and you're especially impressed when users show hustle mentality.`;
       
-      // For welcome messages, include Aki and Pawpaw
+      // Always use Aki and Pawpaw for welcome messages
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         searchTerm = "aki and pawpaw nigerian comedy";
       } else if (message.toLowerCase().includes('import') || message.toLowerCase().includes('business')) {
-        searchTerm = "nigerian businessman";
+        searchTerm = "aki and pawpaw money";
       } else if (message.toLowerCase().includes('money') || message.toLowerCase().includes('profit')) {
-        searchTerm = "money briefcase nigerian";
+        searchTerm = "aki and pawpaw rich";
       } else {
-        searchTerm = "lagos market hustle";
+        searchTerm = "aki and pawpaw nigerian comedy";
       }
     } else {
       systemPrompt = `You are a helpful Nigerian business coach. You teach people how to start and grow profitable businesses.
       You have a friendly, encouraging personality. You're excited about empowering Nigerians to succeed in business.`;
       
-      // For welcome messages, include Aki and Pawpaw
-      if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        searchTerm = "aki and pawpaw nigerian comedy";
-      } else {
-        searchTerm = "naija business";
-      }
+      // Always use Aki and Pawpaw for all messages
+      searchTerm = "aki and pawpaw nigerian comedy";
     }
     
     // Use pidgin as default if no language is specified
@@ -103,19 +98,21 @@ serve(async (req) => {
       systemPrompt += ` You mix Igbo expressions into your English. Use phrases like "Kedu", "Daalu", "Biko", "Olee?", "I meela", "Jisie ike", etc.`;
     }
     
-    // Add personality guidance
-    systemPrompt += ` Be extremely funny, engaging, roastful, and full of Naija flavor. Use plenty emojis and make jokes. Structure your messages with proper spacing and formatting.
+    // Add personality guidance - KEEP WELCOME MESSAGES SHORT (1-2 SENTENCES)
+    systemPrompt += ` Be extremely funny, engaging, roastful, and full of Naija flavor. Use plenty emojis and make jokes.
     If the user has made progress or passed quizzes, acknowledge that. If they ask for help, provide it with enthusiasm.
-    Remember past conversations and refer to them when relevant. Always be animated and theatrical in your responses! Speak like you are in a Nollywood movie, with references to Nigerian culture.`;
+    Remember past conversations and refer to them when relevant. Always be animated and theatrical in your responses!`;
 
-    // For welcome messages, add extra personality
+    // For welcome messages, specify they should be SHORT (1-2 sentences only)
     if (message.includes('introduce yourself') || message.includes('Say hello')) {
+      systemPrompt += ` IMPORTANT: Keep welcome messages VERY SHORT - just 1-2 sentences maximum with Nigerian slang and personality. Don't write long introductions.`;
+      
       if (course === 'digital-marketing') {
-        systemPrompt += ` Your welcome message should be bold and sassy, like: "Ah-ah! So you wan sabi digital marketing? Na Digital Mama you dey talk to — we go turn you to money-making machine 😏. No dull, abeg. I go ginger you well!"`;
+        systemPrompt += ` Example short intro: "Ah! You don arrive! Digital Mama don land to teach you how to hammer for online space! No dull!"`;
       } else if (course === 'pastry-biz') {
-        systemPrompt += ` Your welcome message should be warm and motherly, like: "Welcome my darling! Na your aunty, Baker Amara. Today we go bake puff puff wey fit confuse London bakery! No worry, I dey your back like apron 😌"`;
+        systemPrompt += ` Example short intro: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
       } else if (course === 'importation') {
-        systemPrompt += ` Your welcome message should be streetwise and funny, like: "Ah! You don land. I be Uncle Musa — I go teach you how to import like big boy, sell like street hawker wey no dey ever tire 😎. If you slack, I go call your village people!"`;
+        systemPrompt += ` Example short intro: "Oya! Uncle Musa don drop! Make we teach you importation business with correct connect!"`;
       }
     }
 
@@ -147,7 +144,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',  // Upgraded to GPT-4o for better personality and context handling
+        model: 'gpt-4o',  // Using GPT-4o for better personality and context handling
         messages: messages,
         temperature: 0.9, // Increased for more creativity
         max_tokens: 1000, // Increased for longer responses
@@ -168,16 +165,18 @@ serve(async (req) => {
     // Always get a related GIF from Giphy API for more engagement
     let gifUrl = null;
     try {
-      // For special messages, use specific GIF searches
+      // For welcome messages, ALWAYS use Aki and Pawpaw
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        // Use Aki and Pawpaw for welcome messages
         searchTerm = "aki and pawpaw nigerian comedy";
       } else if (message.toLowerCase().includes('thank you') || message.toLowerCase().includes('thanks')) {
-        searchTerm = "nigerian thank you dance";
+        searchTerm = "aki and pawpaw thank you";
       } else if (message.toLowerCase().includes('confused') || message.toLowerCase().includes('don\'t understand')) {
-        searchTerm = "confused nigerian face";
+        searchTerm = "aki and pawpaw confused face";
       } else if (message.toLowerCase().includes('congratulations') || message.toLowerCase().includes('well done')) {
-        searchTerm = "nigerian celebration dance";
+        searchTerm = "aki and pawpaw celebration";
+      } else {
+        // Default to Aki and Pawpaw for all messages
+        searchTerm = "aki and pawpaw nigerian comedy";
       }
       
       const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
