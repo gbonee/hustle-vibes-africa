@@ -16,6 +16,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -68,7 +69,7 @@ const App = () => {
   }
 
   // Define routes that require authentication
-  const protectedRoutes = ['/dashboard', '/profile', '/leaderboard', '/onboarding'];
+  const protectedRoutes = ['/dashboard', '/profile', '/leaderboard', '/onboarding', '/admin'];
   
   return (
     <QueryClientProvider client={queryClient}>
@@ -114,6 +115,14 @@ const App = () => {
               element={
                 session ? (
                   isNewUser ? <Navigate to="/onboarding" /> : <Profile />
+                ) : <Navigate to="/auth" />
+              }
+            />
+            <Route 
+              path="/admin" 
+              element={
+                session ? (
+                  isNewUser ? <Navigate to="/onboarding" /> : <AdminDashboard />
                 ) : <Navigate to="/auth" />
               }
             />
