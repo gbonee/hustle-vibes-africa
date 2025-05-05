@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import PreviewMode from '@/components/common/PreviewMode';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 // Import our components
 import OnboardingHeader from '@/components/onboarding/OnboardingHeader';
@@ -26,21 +27,37 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   const [avatar, setAvatar] = useState<Avatar | null>(null);
   const [animateMessage, setAnimateMessage] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const { updateUserPreferences, userPrefs } = useUserPreferences();
   
-  // Check if we're in preview mode
+  // Check if we're in preview mode and initialize with preferences
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const preview = urlParams.get('forcePreview') === 'true';
     setIsPreviewMode(preview);
     
+    // Set default values from existing preferences
+    if (userPrefs) {
+      if (userPrefs.language && !language) {
+        setLanguage(userPrefs.language as Language);
+      }
+      
+      if (userPrefs.avatar && !avatar) {
+        setAvatar(userPrefs.avatar as Avatar);
+      }
+    }
+    
     // Set default language in preview mode for testing
     if (preview && !language) {
       setLanguage('pidgin');
     }
-  }, [language]);
+  }, [language, userPrefs]);
 
   const handleLanguageSelect = (selectedLanguage: Language) => {
     setLanguage(selectedLanguage);
+    
+    // Save language preference immediately
+    updateUserPreferences({ language: selectedLanguage });
+    
     setTimeout(() => setStep(2), 500);
   };
 
@@ -69,8 +86,8 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
           course: selectedAvatarObj?.course
         };
         
-        // Save to localStorage too for fast access
-        localStorage.setItem('userPreferences', JSON.stringify(userPreferences));
+        // Update preferences using our hook
+        await updateUserPreferences(userPreferences);
         
         // Mark onboarding as completed for this user
         localStorage.setItem(`onboarding_completed_${user.id}`, 'true');

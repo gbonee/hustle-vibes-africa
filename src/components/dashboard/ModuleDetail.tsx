@@ -12,9 +12,20 @@ interface ModuleDetailProps {
   module: Module;
   quizzes: Quiz[];
   onClose: () => void;
+  language?: string;
+  texts?: {
+    back?: string;
+    loading?: string;
+  };
 }
 
-const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose }) => {
+const ModuleDetail: React.FC<ModuleDetailProps> = ({ 
+  module, 
+  quizzes, 
+  onClose,
+  language = 'pidgin',
+  texts = { back: 'Back to All Modules', loading: 'Loading...' }
+}) => {
   const [showQuiz, setShowQuiz] = useState(false);
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [quizResult, setQuizResult] = useState<'correct' | 'incorrect' | null>(null);
@@ -51,6 +62,31 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
   // Check if there are quizzes available for this module
   const hasQuizzes = quizzes && quizzes.length > 0;
 
+  // Get quiz button text based on language
+  const getQuizButtonText = () => {
+    const baseText = {
+      'pidgin': 'Take Quiz on',
+      'yoruba': 'Ṣe Idanwo lori',
+      'hausa': 'Yi Gwaji akan',
+      'igbo': 'Were Quiz na',
+    };
+    
+    const selected = (baseText as any)[language] || baseText.pidgin;
+    return `${selected} ${module.title}`;
+  };
+
+  // Get no quiz text based on language
+  const getNoQuizText = () => {
+    const texts = {
+      'pidgin': 'No quiz available for dis module yet.',
+      'yoruba': 'Ko si idanwo ti o wa fun modulu yii sibẹsibẹ.',
+      'hausa': 'Babu gwaji mai samuwa don wannan module har yanzu.',
+      'igbo': 'O nweghị quiz dị maka module a ugbua.',
+    };
+    
+    return (texts as any)[language] || texts.pidgin;
+  };
+
   return (
     <Card className="bg-muted border-electric">
       <CardHeader>
@@ -67,6 +103,7 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
             onAnswerSelect={handleAnswerSelect} 
             result={quizResult}
             moduleTopic={module.title}
+            language={language}
           />
         ) : (
           hasQuizzes ? (
@@ -74,11 +111,11 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
               onClick={handleStartQuiz} 
               className="w-full py-6 bg-electric text-black hover:bg-electric/90"
             >
-              Take Quiz on {module.title}
+              {getQuizButtonText()}
             </Button>
           ) : (
             <div className="p-4 bg-gray-800 rounded-lg text-center">
-              <p>No quiz available for this module yet.</p>
+              <p>{getNoQuizText()}</p>
             </div>
           )
         )}
@@ -90,7 +127,7 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
           variant="ghost"
           className="w-full"
         >
-          Back to All Modules
+          {texts.back || 'Back to All Modules'}
         </Button>
       </CardContent>
     </Card>

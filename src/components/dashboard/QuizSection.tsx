@@ -11,6 +11,7 @@ interface QuizSectionProps {
   onAnswerSelect: (answerIndex: number) => void;
   result: 'correct' | 'incorrect' | null;
   moduleTopic?: string;
+  language?: string;
 }
 
 const QuizSection: React.FC<QuizSectionProps> = React.memo(({ 
@@ -19,12 +20,59 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
   totalQuizzes, 
   onAnswerSelect, 
   result,
-  moduleTopic 
+  moduleTopic,
+  language = 'pidgin'
 }) => {
+  // Get language-specific text
+  const getText = () => {
+    const texts = {
+      heading: {
+        pidgin: 'Quick Quiz:',
+        yoruba: 'Idanwo Kiakia:',
+        hausa: 'Gaggawar Gwaji:',
+        igbo: 'Quiz Ngwa ngwa:',
+      },
+      questionPrefix: {
+        pidgin: 'Question',
+        yoruba: 'Ibeere',
+        hausa: 'Tambaya',
+        igbo: 'Ajụjụ',
+      },
+      of: {
+        pidgin: 'of',
+        yoruba: 'ti',
+        hausa: 'na',
+        igbo: 'nke',
+      },
+      correctAnswer: {
+        pidgin: 'You sabi die! You go make money pass Dangote o!',
+        yoruba: 'O mọ̀ dáradára! Ìwọ yóò ṣe owó ju Dangote lọ!',
+        hausa: 'Ka sani sosai! Za ka iya samun kudi fiye da Dangote!',
+        igbo: 'Ịmatala nke ọma! Ị ga-emenweta ego karịa Dangote o!',
+      },
+      wrongAnswer: {
+        pidgin: 'Ah, who dash you brain today? Oya try again jare!',
+        yoruba: 'Ah, tani fun ọ ni ọpọlọ loni? Oya gbiyanju lẹẹkansi!',
+        hausa: 'Ah, wa ya baka kwakwalwa yau? Kawai sake gwadawa!',
+        igbo: 'Ah, onye nyere gị uche taa? Ngwa gbalịa ọzọ!',
+      }
+    };
+    
+    return {
+      heading: (texts.heading as any)[language] || texts.heading.pidgin,
+      questionPrefix: (texts.questionPrefix as any)[language] || texts.questionPrefix.pidgin,
+      of: (texts.of as any)[language] || texts.of.pidgin,
+      correctAnswer: (texts.correctAnswer as any)[language] || texts.correctAnswer.pidgin,
+      wrongAnswer: (texts.wrongAnswer as any)[language] || texts.wrongAnswer.pidgin,
+    };
+  };
+  
+  const localizedText = getText();
+  
   return (
     <div className="bg-black p-6 rounded-lg border border-gray-800">
-      <h3 className="text-xl font-bold mb-4">Quick Quiz: {moduleTopic || 'Module Knowledge'}</h3>
-      <p className="text-gray-400 mb-4">Question {quizNumber} of {totalQuizzes}</p>
+      <h3 className="text-xl font-bold mb-4">{localizedText.heading} {moduleTopic || 'Module Knowledge'}</h3>
+      <p className="text-gray-400 mb-4">{localizedText.questionPrefix} {quizNumber} {localizedText.of} {totalQuizzes}</p>
       
       <div className="mb-6">
         <h4 className="text-lg mb-4">{quiz.question}</h4>
@@ -52,12 +100,12 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
           {result === 'correct' ? (
             <>
               <CircleCheck className="text-green-400 h-5 w-5" />
-              <p>You sabi die! You go make money pass Dangote o!</p>
+              <p>{localizedText.correctAnswer}</p>
             </>
           ) : (
             <>
               <CircleX className="text-red-400 h-5 w-5" />
-              <p>Ah, who dash you brain today? Oya try again jare!</p>
+              <p>{localizedText.wrongAnswer}</p>
             </>
           )}
         </div>

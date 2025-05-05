@@ -19,12 +19,60 @@ interface Course {
   avatar: string;
   progress: number;
   modules: Module[];
+  translations: {
+    [key: string]: {
+      title: string;
+      modules: {
+        id: number;
+        title: string;
+      }[];
+    }
+  };
 }
 
 // Group quizzes by module topic
 interface QuizzesByModule {
   [moduleId: number]: Quiz[];
 }
+
+// Text translations for UI elements
+const uiTranslations = {
+  pidgin: {
+    lessons: "Lessons",
+    chat: "AI Chat",
+    yourModules: "Your Modules",
+    back: "Back to All Modules",
+    loading: "Dey load...",
+  },
+  yoruba: {
+    lessons: "Ẹkọ",
+    chat: "Ibaraẹnisọrọ AI",
+    yourModules: "Awọn Modulu Rẹ",
+    back: "Pada si Gbogbo Modulu",
+    loading: "Ń gbàá...",
+  },
+  hausa: {
+    lessons: "Darussan",
+    chat: "AI Tattaunawa",
+    yourModules: "Modules Naka",
+    back: "Koma Zuwa Duk Modules",
+    loading: "Ana loading...",
+  },
+  igbo: {
+    lessons: "Ihe omume",
+    chat: "AI Okwu",
+    yourModules: "Modules Gị",
+    back: "Laghachi na Modules Nile",
+    loading: "Na-ebubata...",
+  },
+  english: {
+    lessons: "Lessons",
+    chat: "AI Chat",
+    yourModules: "Your Modules",
+    back: "Back to All Modules",
+    loading: "Loading...",
+  }
+};
 
 const Dashboard = () => {
   const { userPrefs } = useUserPreferences();
@@ -38,6 +86,10 @@ const Dashboard = () => {
     email: 'preview@example.com',
     avatar: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1'
   });
+  
+  // Get current language for translations (default to English if not set)
+  const currentLanguage = userPrefs?.language || 'pidgin';
+  const texts = uiTranslations[currentLanguage as keyof typeof uiTranslations] || uiTranslations.english;
   
   // Check for preview mode
   useEffect(() => {
@@ -84,7 +136,7 @@ const Dashboard = () => {
     fetchUserData();
   }, []);
   
-  // Mock course data based on user's selection - load immediately without waiting for user data
+  // Mock course data with translations
   const courses: Record<string, Course> = {
     'digital-marketing': {
       id: 'digital-marketing',
@@ -97,8 +149,51 @@ const Dashboard = () => {
         { id: 3, title: 'Create Content That Converts (Even With Just Your Phone)', hasVideo: true, completed: false, locked: true },
         { id: 4, title: 'How to Run Small Ads on Meta', hasVideo: false, completed: false, locked: true },
         { id: 5, title: 'How to Keep Customers & Sell Weekly', hasVideo: true, completed: false, locked: true }
-      ]
+      ],
+      translations: {
+        pidgin: {
+          title: 'Digital Marketing di Naija Way',
+          modules: [
+            { id: 1, title: 'Introduction to Digital Marketing di Naija Way' },
+            { id: 2, title: 'How to Sell for WhatsApp & Instagram' },
+            { id: 3, title: 'Create Content Wey Go Convert (Even With Just Your Phone)' },
+            { id: 4, title: 'How to Run Small Ads for Meta' },
+            { id: 5, title: 'How to Keep Customers & Sell Every Week' }
+          ]
+        },
+        yoruba: {
+          title: 'Ìpolówó ojú òpó lójú kan Nàìjíríà',
+          modules: [
+            { id: 1, title: 'Ìfihan sí Ìpolówó ojú òpó lójú kan Nàìjíríà' },
+            { id: 2, title: 'Báwo ni o ṣe le tà lórí WhatsApp & Instagram' },
+            { id: 3, title: 'Ṣe àwọn àkóónú tí ó ń yípadà (Pẹlú fóònù rẹ nìkan)' },
+            { id: 4, title: 'Báwo ni o ṣe le ṣe àfihàn kékeré lórí Meta' },
+            { id: 5, title: 'Báwo ni o ṣe le dá àwọn oníbàárà dúró & tà ní ọ̀sẹ̀-n-ọ̀sẹ̀' }
+          ]
+        },
+        hausa: {
+          title: 'Tallace-tallace na Dijital a hanyar Naija',
+          modules: [
+            { id: 1, title: 'Gabatarwa zuwa Tallace-tallace na Dijital a hanyar Naija' },
+            { id: 2, title: 'Yadda ake sayar a WhatsApp & Instagram' },
+            { id: 3, title: 'Kirkira abun ciki mai amfani (Ko da wayar ka kawai)' },
+            { id: 4, title: 'Yadda ake gudanar da taɓo na ƙarami a Meta' },
+            { id: 5, title: 'Yadda ake kula da abokan ciniki & sayar kowane sati' }
+          ]
+        },
+        igbo: {
+          title: 'Mgbasa ozi dijitalụ n'ụzọ Naija',
+          modules: [
+            { id: 1, title: 'Mmalite na mgbasa ozi dijitalụ n'ụzọ Naija' },
+            { id: 2, title: 'Otú e si ere na WhatsApp & Instagram' },
+            { id: 3, title: 'Mepụta ihe ndị na-atụgharị (Ọbụna site na ekwentị gị) ' },
+            { id: 4, title: 'Otú e si agba mgbasa ozi nta na Meta' },
+            { id: 5, title: 'Otú e si edebe ndị ahịa & re kwa izu' }
+          ]
+        }
+      }
     },
+    // ... other courses with similar translation structure
     'pastry-biz': {
       id: 'pastry-biz',
       title: 'Start a Pastry Biz From Your Kitchen',
@@ -110,7 +205,49 @@ const Dashboard = () => {
         { id: 3, title: 'How to Make Nigerian Meatpie', hasVideo: false, completed: false, locked: true },
         { id: 4, title: 'Branding & Packaging for Pastry Biz', hasVideo: true, completed: false, locked: true },
         { id: 5, title: 'How to Find Your First Customers & Start Selling', hasVideo: true, completed: false, locked: true }
-      ]
+      ],
+      translations: {
+        pidgin: {
+          title: 'Start Pastry Business From Your Kitchen',
+          modules: [
+            { id: 1, title: 'Introduction to Baking as Business for Nigeria' },
+            { id: 2, title: 'How to Make Puff-Puff Wey Go Sell Well-well' },
+            { id: 3, title: 'How to Make Nigerian Meatpie' },
+            { id: 4, title: 'Branding & Packaging for Pastry Business' },
+            { id: 5, title: 'How to Find Your First Customers & Begin Sell' }
+          ]
+        },
+        yoruba: {
+          title: 'Bẹrẹ Iṣẹ́ àwọn oúnjẹ adùn láti inú kíchẹ́ẹ̀nì rẹ',
+          modules: [
+            { id: 1, title: 'Ìfihan sí Ìdáná gẹ́gẹ́ bí Iṣẹ́ ní Nàìjíríà' },
+            { id: 2, title: 'Báwo ni o ṣe le ṣe Puff-Puff tí yóò tà' },
+            { id: 3, title: 'Báwo ni o ṣe le ṣe Ẹran-àkàrà Nàìjíríà' },
+            { id: 4, title: 'Àmì & Ipèsè fún Iṣẹ́ Ìdáná' },
+            { id: 5, title: 'Báwo ni o ṣe le rí àwọn Oníbàárà àkọ́kọ́ rẹ & Bẹrẹ Títà' }
+          ]
+        },
+        hausa: {
+          title: 'Fara Harkar Abinci Mai Zaki Daga Dakin Girkinki',
+          modules: [
+            { id: 1, title: 'Gabatarwa zuwa Gashin Burodi a matsayin Kasuwanci a Najeriya' },
+            { id: 2, title: 'Yadda ake yin Puff-Puff da ke sayarwa' },
+            { id: 3, title: 'Yadda ake yin Meatpie na Najeriya' },
+            { id: 4, title: 'Branding & Packaging domin Kasuwancin Pastry' },
+            { id: 5, title: 'Yadda ake samun Masu Sayayya na Farko & Fara Sayarwa' }
+          ]
+        },
+        igbo: {
+          title: 'Malite azụmahịa pastry site na ụlọ nri gị',
+          modules: [
+            { id: 1, title: 'Mmalite na ihe mgbaka dị ka azụmahịa na Naịjịrịa' },
+            { id: 2, title: 'Otú e si eme puff-puff nke na-ere ere' },
+            { id: 3, title: 'Otú e si eme Meatpie Naịjịrịa' },
+            { id: 4, title: 'Branding & Packaging maka azụmahịa Pastry' },
+            { id: 5, title: 'Otú ịga achọta ndị ahịa mbụ gị & malite ire' }
+          ]
+        }
+      }
     },
     'importation': {
       id: 'importation',
@@ -123,7 +260,49 @@ const Dashboard = () => {
         { id: 3, title: 'Shipping & Delivery: How to Import Without Wahala', hasVideo: false, completed: false, locked: true },
         { id: 4, title: 'How to Market & Sell FAST on WhatsApp & Instagram', hasVideo: true, completed: false, locked: true },
         { id: 5, title: 'Pricing, Profit & Customer Service Tips to Keep Sales Coming', hasVideo: false, completed: false, locked: true }
-      ]
+      ],
+      translations: {
+        pidgin: {
+          title: 'Import From China & Sell for WhatsApp',
+          modules: [
+            { id: 1, title: 'How to Find Hot-Selling Products Wey Nigerians Want' },
+            { id: 2, title: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks' },
+            { id: 3, title: 'Shipping & Delivery: How to Import Without Wahala' },
+            { id: 4, title: 'How to Market & Sell FAST for WhatsApp & Instagram' },
+            { id: 5, title: 'Pricing, Profit & Customer Service Tips to Keep Sales Coming' }
+          ]
+        },
+        yoruba: {
+          title: 'Mú wá láti Ṣáínà & Ta lórí WhatsApp',
+          modules: [
+            { id: 1, title: 'Báwo ni o ṣe le rí àwọn ọjà tí ń tà gbòógì tí àwọn ará Nàìjíríà fẹ́' },
+            { id: 2, title: 'Níbo ni o le rà ní ìdíẹ̀: 1688, Alibaba & àwọn èdí àwọn olùpèsè' },
+            { id: 3, title: 'Ìfiránṣẹ́ & Ìfì ránṣẹ́: Báwo ni o ṣe le mú wọlé láìsí wàhálà' },
+            { id: 4, title: 'Báwo ni o ṣe le polowo & tà KÍÁKÍÁ lórí WhatsApp & Instagram' },
+            { id: 5, title: 'Àwọn ìdámọ̀ràn Ìdíyelé, Èrè & Iṣẹ́ Oníbàárà láti jẹ́ kí àwọn ìtàjà máa bá wọlé' }
+          ]
+        },
+        hausa: {
+          title: 'Shigo daga China & Sayar a WhatsApp',
+          modules: [
+            { id: 1, title: 'Yadda ake samun kayayyakin da ke sayarwa masu zafi wanda Najeriyawan ke so' },
+            { id: 2, title: 'Inda za a saya a arha: 1688, Alibaba & hanyoyin samun masu samar da kaya na asiri' },
+            { id: 3, title: 'Jigilar kaya & Isar: Yadda ake shigo ba tare da wahala ba' },
+            { id: 4, title: 'Yadda ake tallata & sayar da SAURI a WhatsApp & Instagram' },
+            { id: 5, title: 'Shawarwari game da farashin, riba & hidimar abokin ciniki don ci gaba da sayarwa' }
+          ]
+        },
+        igbo: {
+          title: 'Bubata site na China & Ree na WhatsApp',
+          modules: [
+            { id: 1, title: 'Otú ịga achọta ngwá ahịa ndị na-ere ọkụ ndị Naịjịrịa chọrọ' },
+            { id: 2, title: 'Ebe ị ga-azụta ọnụ ala: 1688, Alibaba & usoro nzuzo nke ndị na-eweta ngwa ahịa' },
+            { id: 3, title: 'Mbupu & Nnyefe: Otú e si ebubata na-enweghị nsogbu' },
+            { id: 4, title: 'Otú e si eme mgbasa ozi & ree NGWA NGWA na WhatsApp & Instagram' },
+            { id: 5, title: 'Ndụmọdụ maka ịkọ ụgwọ, uru & ọrụ ndị ahịa iji na-eleta ahịa' }
+          ]
+        }
+      }
     }
   };
 
@@ -230,21 +409,33 @@ const Dashboard = () => {
     ]
   }), []);
   
-  // Function to get quizzes for a specific module
-  const getQuizzesForModule = (moduleId: number): Quiz[] => {
-    // Find the correct quiz list based on module ID and course
-    if (userPrefs?.course === 'pastry-biz') {
-      // Offset module IDs for pastry business course (using 100-range)
-      return quizzesByModule[moduleId + 100] || [];
-    } else if (userPrefs?.course === 'importation') {
-      // Offset module IDs for importation course (using 200-range)
-      return quizzesByModule[moduleId + 200] || [];
-    } else {
-      // Default to digital marketing course
-      return quizzesByModule[moduleId] || [];
+  // Translate quiz questions based on language
+  const getTranslatedQuizzes = (moduleId: number): Quiz[] => {
+    const originalQuizzes = quizzesByModule[moduleId] || [];
+    
+    // Only translate if needed - add translations for each language
+    if (currentLanguage === 'pidgin') {
+      // Apply Pidgin translations for quizzes
+      return originalQuizzes.map(quiz => {
+        if (moduleId === 1) {
+          // Example translation for moduleId 1 questions
+          if (quiz.question === 'What is the primary purpose of digital marketing in Nigeria?') {
+            return {
+              ...quiz,
+              question: 'Wetin be the main reason for digital marketing for Nigeria?',
+              options: ['To get website', 'To reach and engage customers online', 'To dey post for social media everyday', 'To spend money for ads'],
+            };
+          }
+        }
+        return quiz;
+      });
     }
+    
+    // Add similar translations for other languages
+    
+    return originalQuizzes; // Return original if no translation
   };
-
+  
   const handleModuleSelect = (module: Module) => {
     if (module.locked) return;
     setSelectedModule(module);
@@ -256,6 +447,29 @@ const Dashboard = () => {
 
   // Use digital marketing as default course if no preference is set
   const userCourse = userPrefs?.course ? courses[userPrefs.course] : courses['digital-marketing'];
+  
+  // Get translated course content
+  const getTranslatedCourse = () => {
+    const course = { ...userCourse };
+    
+    // Apply translations if available
+    if (currentLanguage && course.translations && course.translations[currentLanguage]) {
+      const translation = course.translations[currentLanguage];
+      
+      // Apply translated title
+      course.title = translation.title;
+      
+      // Apply translated module titles
+      course.modules = course.modules.map(module => {
+        const translatedModule = translation.modules.find(m => m.id === module.id);
+        return translatedModule ? { ...module, title: translatedModule.title } : module;
+      });
+    }
+    
+    return course;
+  };
+  
+  const translatedCourse = getTranslatedCourse();
 
   if (isLoading) {
     return (
@@ -279,9 +493,9 @@ const Dashboard = () => {
       
       {/* Course Info Card */}
       <CourseHeader 
-        title={userCourse.title} 
-        avatar={userCourse.avatar} 
-        progress={userCourse.progress} 
+        title={translatedCourse.title} 
+        avatar={translatedCourse.avatar} 
+        progress={translatedCourse.progress} 
       />
 
       {/* Main Content Tabs */}
@@ -289,11 +503,11 @@ const Dashboard = () => {
         <TabsList className="grid grid-cols-2 mb-6 bg-black">
           <TabsTrigger value="lessons" className="text-lg">
             <Video className="mr-2 h-4 w-4" />
-            Lessons
+            {texts.lessons}
           </TabsTrigger>
           <TabsTrigger value="chat" className="text-lg">
             <MessageSquare className="mr-2 h-4 w-4" />
-            AI Chat
+            {texts.chat}
           </TabsTrigger>
         </TabsList>
         
@@ -302,21 +516,26 @@ const Dashboard = () => {
           {selectedModule ? (
             <ModuleDetail 
               module={selectedModule} 
-              quizzes={getQuizzesForModule(selectedModule.id)} 
-              onClose={handleCloseModule} 
+              quizzes={getTranslatedQuizzes(selectedModule.id)} 
+              onClose={handleCloseModule}
+              language={currentLanguage}
+              texts={texts}
             />
           ) : (
-            <ModulesList 
-              modules={userCourse.modules} 
-              onModuleSelect={handleModuleSelect} 
-            />
+            <div>
+              <h2 className="text-xl font-bold mb-4">{texts.yourModules}</h2>
+              <ModulesList 
+                modules={translatedCourse.modules} 
+                onModuleSelect={handleModuleSelect} 
+              />
+            </div>
           )}
         </TabsContent>
         
         {/* Chat Tab */}
         <TabsContent value="chat" className="space-y-4">
           <AIChat 
-            courseAvatar={userCourse.avatar} 
+            courseAvatar={translatedCourse.avatar} 
             userName={user.name} 
           />
         </TabsContent>
