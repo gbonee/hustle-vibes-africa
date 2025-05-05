@@ -12,6 +12,7 @@ import CourseHeader from '@/components/dashboard/CourseHeader';
 import ModulesList, { Module } from '@/components/dashboard/ModulesList';
 import ModuleDetail from '@/components/dashboard/ModuleDetail';
 import AIChat from '@/components/dashboard/AIChat';
+import { Quiz } from '@/types/quiz';
 
 // Define types
 interface Course {
@@ -20,12 +21,6 @@ interface Course {
   avatar: string;
   progress: number;
   modules: Module[];
-}
-
-interface Quiz {
-  question: string;
-  options: string[];
-  answer: number;
 }
 
 const Dashboard = () => {
