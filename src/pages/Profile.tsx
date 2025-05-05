@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import PreviewMode from '@/components/common/PreviewMode';
 
 // Import our components
 import ProfileHeader from '@/components/profile/ProfileHeader';

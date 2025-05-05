@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -67,8 +68,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [language, setLanguage] = useState<string>(userPrefs?.language || 'pidgin');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   
-  const coachName = getCoachName(userPrefs?.course || 'digital-marketing');
-  const courseSpecificGreeting = getCourseSpecificGreeting(userPrefs?.course || 'digital-marketing');
+  const currentCourse = userPrefs?.course || 'digital-marketing';
+  const coachName = getCoachName(currentCourse);
+  const courseSpecificGreeting = getCourseSpecificGreeting(currentCourse);
 
   // Initialize user ID and check preview mode
   useEffect(() => {
@@ -76,8 +78,8 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
-        // Load previous messages from localStorage
-        const savedMessages = localStorage.getItem(`chat_history_${user.id}`);
+        // Load previous messages from localStorage for the SPECIFIC AVATAR
+        const savedMessages = localStorage.getItem(`chat_history_${user.id}_${currentCourse}`);
         if (savedMessages) {
           const parsedMessages = JSON.parse(savedMessages);
           // Only load messages from the last 24 hours
@@ -94,7 +96,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       }
 
       // We'll generate a proper welcome message via the AI
-      sendWelcomeMessage(userName, userPrefs?.course || 'digital-marketing');
+      sendWelcomeMessage(userName, currentCourse);
     };
 
     // Check if we're in preview mode
@@ -103,14 +105,24 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setIsPreviewMode(preview);
 
     getUserId();
-  }, [userName, userPrefs?.course]);
+    
+    // Reset chat messages when course changes
+    setChatMessages([]);
+    setIsInitialLoad(true);
+    
+    // We need to reset the chat when the course (avatar) changes
+    if (userId) {
+      sendWelcomeMessage(userName, currentCourse);
+    }
+    
+  }, [userName, currentCourse]); // Re-run when course changes
 
-  // Save messages to localStorage whenever they change
+  // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
     if (userId && chatMessages.length > 0) {
-      localStorage.setItem(`chat_history_${userId}`, JSON.stringify(chatMessages));
+      localStorage.setItem(`chat_history_${userId}_${currentCourse}`, JSON.stringify(chatMessages));
     }
-  }, [chatMessages, userId]);
+  }, [chatMessages, userId, currentCourse]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -130,7 +142,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
           message: `Say hello to ${name} and introduce yourself as ${coachName} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${language} language with lots of Nigerian flavor.`,
-          course: course || 'digital-marketing',
+          course: course,
           language: language,
           userName: name,
           progress,
@@ -173,7 +185,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     
     // If chat is empty, generate welcome message in the new language
     if (chatMessages.length <= 1) {
-      sendWelcomeMessage(userName, userPrefs?.course || 'digital-marketing');
+      sendWelcomeMessage(userName, currentCourse);
     }
   };
 
@@ -244,7 +256,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
           message: sentMessage, 
-          course: userPrefs?.course || 'digital-marketing',
+          course: currentCourse,
           language: language,
           userName,
           progress,
