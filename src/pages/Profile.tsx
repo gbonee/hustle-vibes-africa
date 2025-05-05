@@ -31,17 +31,17 @@ const avatarNames = {
 const Profile = () => {
   const { userPrefs } = useUserPreferences();
   const [user, setUser] = useState({
-    id: '', 
-    name: '',
-    email: '',
-    avatar: '',
+    id: 'preview-user-id', 
+    name: 'Preview User',
+    email: 'preview@usabi.ai',
+    avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
     progress: {
-      completed: 0,
+      completed: 7,
       total: 15
     },
-    points: 0,
-    rank: 0,
-    joined: ''
+    points: 845,
+    rank: 2,
+    joined: 'May 2025'
   });
   
   const [certificates, setCertificates] = useState([
@@ -53,34 +53,22 @@ const Profile = () => {
     }
   ]);
   
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(true);
   
   // Check if we're in preview mode
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    setIsPreviewMode(urlParams.get('forcePreview') === 'true');
+    const forcePreview = urlParams.get('forcePreview') === 'true';
+    setIsPreviewMode(forcePreview);
+    
+    // Only fetch user data if not in preview mode
+    if (!forcePreview) {
+      fetchUserData();
+    }
   }, []);
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      // Skip Supabase query in preview mode
-      if (isPreviewMode) {
-        setUser({
-          id: 'preview-user-id',
-          name: 'Preview User',
-          email: 'preview@usabi.ai',
-          avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-          progress: {
-            completed: 7,
-            total: 15
-          },
-          points: 845,
-          rank: 2,
-          joined: 'May 2025'
-        });
-        return;
-      }
-      
+  const fetchUserData = async () => {
+    try {
       // Get the current authenticated user
       const { data: { user: authUser } } = await supabase.auth.getUser();
       
@@ -102,10 +90,10 @@ const Profile = () => {
         rank: 2,
         joined: new Date(authUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       });
-    };
-    
-    fetchUserData();
-  }, [isPreviewMode]);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
+  };
 
   return (
     <DashboardLayout currentPath="/profile" user={user}>
