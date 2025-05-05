@@ -17,8 +17,16 @@ import Dashboard from "./pages/Dashboard";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -26,21 +34,22 @@ const App = () => {
   const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
-    // Set up auth state listener
+    // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
+      async (event, currentSession) => {
+        console.log('Auth state changed:', event);
+        setSession(currentSession);
         
-        if (event === 'SIGNED_IN') {
+        if (event === 'SIGNED_IN' && currentSession) {
           // Check if this is the user's first time logging in
           const { data: profile } = await supabase
             .from('profiles')
             .select('*')
-            .eq('id', session?.user?.id)
+            .eq('id', currentSession.user.id)
             .maybeSingle();
           
           // If we don't have user preferences stored, consider them a new user
-          const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${session?.user?.id}`);
+          const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${currentSession.user.id}`);
           setIsNewUser(!hasCompletedOnboarding);
         }
         
@@ -48,13 +57,14 @@ const App = () => {
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
+    // Then check for existing session
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
+      console.log('Current session:', currentSession ? 'exists' : 'none');
+      setSession(currentSession);
       
-      if (session) {
+      if (currentSession) {
         // Check if this is the user's first time logging in
-        const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${session?.user?.id}`);
+        const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${currentSession.user.id}`);
         setIsNewUser(!hasCompletedOnboarding);
       }
       
@@ -65,12 +75,16 @@ const App = () => {
   }, []);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen bg-black">
+        <div className="space-y-4 w-full max-w-md px-4">
+          <Skeleton className="h-12 w-40 mx-auto" />
+          <Skeleton className="h-[400px] w-full" />
+        </div>
+      </div>
+    );
   }
 
-  // Define routes that require authentication
-  const protectedRoutes = ['/dashboard', '/profile', '/leaderboard', '/onboarding'];
-  
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

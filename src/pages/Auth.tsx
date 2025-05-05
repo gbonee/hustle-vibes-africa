@@ -1,14 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
-import { Facebook, Mail } from "lucide-react";
+import { Facebook, Mail, Loader2 } from "lucide-react";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -16,10 +17,39 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [checkingSession, setCheckingSession] = useState(true);
+  
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          // User is already logged in, redirect to dashboard
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.error('Error checking session:', error);
+      } finally {
+        setCheckingSession(false);
+      }
+    };
+    
+    checkSession();
+  }, [navigate]);
   
   // Handle signup process
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password || !name) {
+      toast({
+        title: "Missing information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setLoading(true);
     
     try {
@@ -78,6 +108,15 @@ const Auth = () => {
   // Handle login process
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!email || !password) {
+      toast({
+        title: "Missing information",
+        description: "Please enter both email and password.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setLoading(true);
     
     try {
@@ -114,8 +153,12 @@ const Auth = () => {
   // Social login handlers
   const handleGoogleLogin = async () => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
+        options: {
+          redirectTo: window.location.origin + '/dashboard'
+        }
       });
       
       if (error) {
@@ -132,13 +175,19 @@ const Auth = () => {
         variant: "destructive",
       });
       console.error('Error during Google login:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleFacebookLogin = async () => {
     try {
+      setLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
+        options: {
+          redirectTo: window.location.origin + '/dashboard'
+        }
       });
       
       if (error) {
@@ -155,8 +204,23 @@ const Auth = () => {
         variant: "destructive",
       });
       console.error('Error during Facebook login:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col justify-center items-center p-4">
+        <div className="w-full max-w-md space-y-4">
+          <div className="flex justify-center mb-8">
+            <Skeleton className="h-12 w-40" />
+          </div>
+          <Skeleton className="h-[400px] w-full" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex flex-col justify-center items-center p-4">
@@ -197,6 +261,7 @@ const Auth = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div className="space-y-2">
@@ -208,10 +273,15 @@ const Auth = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      disabled={loading}
                     />
                   </div>
                   <Button type="submit" className="w-full rebel-button" disabled={loading}>
-                    {loading ? 'Logging in...' : 'Login'}
+                    {loading ? (
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in...</>
+                    ) : (
+                      'Login'
+                    )}
                   </Button>
                 </form>
               </CardContent>
@@ -233,6 +303,7 @@ const Auth = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div className="space-y-2">
@@ -244,6 +315,7 @@ const Auth = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       required
+                      disabled={loading}
                     />
                   </div>
                   <div className="space-y-2">
@@ -255,10 +327,15 @@ const Auth = () => {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       required
+                      disabled={loading}
                     />
                   </div>
                   <Button type="submit" className="w-full rebel-button" disabled={loading}>
-                    {loading ? 'Creating Account...' : 'Create Account'}
+                    {loading ? (
+                      <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating Account...</>
+                    ) : (
+                      'Create Account'
+                    )}
                   </Button>
                 </form>
               </CardContent>

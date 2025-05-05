@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Video } from 'lucide-react';
 import { Module } from './ModulesList';
 import { supabase } from "@/integrations/supabase/client";
@@ -15,63 +15,63 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  useEffect(() => {
-    const fetchModuleVideo = async () => {
-      setIsLoading(true);
-      
-      // If there's no module, we can't fetch the video
-      if (!module) {
+  const fetchModuleVideo = useCallback(async () => {
+    if (!module) {
+      setIsLoading(false);
+      setVideoUrl(null);
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      // Fallback to YouTube for specific modules - check this first for faster loading
+      if (module.id === 1 && module.title === "Intro to Digital Marketing the Naija Way") {
+        setVideoUrl("https://www.youtube.com/embed/tlCqenvEmNg");
         setIsLoading(false);
         return;
       }
       
-      try {
-        // Fallback to YouTube for specific modules - check this first for faster loading
-        if (module.id === 1 && module.title === "Intro to Digital Marketing the Naija Way") {
-          setVideoUrl("https://www.youtube.com/embed/tlCqenvEmNg");
-          setIsLoading(false);
-          return;
-        }
+      // If there's no course preference, we can't fetch the video
+      if (!userPrefs?.course) {
+        setIsLoading(false);
+        return;
+      }
+      
+      // Look for videos in the format: courseId/moduleId-filename
+      const { data, error } = await supabase
+        .storage
+        .from('module-videos')
+        .list(userPrefs.course);
         
-        // If there's no course preference, we can't fetch the video
-        if (!userPrefs?.course) {
-          setIsLoading(false);
-          return;
-        }
-        
-        // Look for videos in the format: courseId/moduleId-filename
-        const { data, error } = await supabase
+      if (error) throw error;
+      
+      // Find the first video that starts with the module ID
+      const moduleVideo = data.find(file => 
+        file.name.startsWith(`${module.id}-`)
+      );
+      
+      if (moduleVideo) {
+        const { data: { publicUrl } } = supabase
           .storage
           .from('module-videos')
-          .list(userPrefs.course);
+          .getPublicUrl(`${userPrefs.course}/${moduleVideo.name}`);
           
-        if (error) throw error;
-        
-        // Find the first video that starts with the module ID
-        const moduleVideo = data.find(file => 
-          file.name.startsWith(`${module.id}-`)
-        );
-        
-        if (moduleVideo) {
-          const { data: { publicUrl } } = supabase
-            .storage
-            .from('module-videos')
-            .getPublicUrl(`${userPrefs.course}/${moduleVideo.name}`);
-            
-          setVideoUrl(publicUrl);
-        } else {
-          setVideoUrl(null);
-        }
-      } catch (error) {
-        console.error("Error fetching module video:", error);
+        setVideoUrl(publicUrl);
+      } else {
         setVideoUrl(null);
-      } finally {
-        setIsLoading(false);
       }
-    };
-    
-    fetchModuleVideo();
+    } catch (error) {
+      console.error("Error fetching module video:", error);
+      setVideoUrl(null);
+    } finally {
+      setIsLoading(false);
+    }
   }, [module, userPrefs?.course]);
+  
+  useEffect(() => {
+    fetchModuleVideo();
+  }, [fetchModuleVideo]);
 
   if (isLoading) {
     return (
@@ -131,4 +131,4 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
   );
 };
 
-export default VideoPlayer;
+export default React.memo(VideoPlayer);
