@@ -34,7 +34,7 @@ export const avatars: AvatarInfo[] = [
     id: 'baker-amara',
     name: 'Baker Amara',
     role: 'Pastry Business Expert',
-    image: 'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?q=80&w=1470&auto=format&fit=crop',
+    image: 'public/lovable-uploads/03f3298b-d495-4119-b024-cbaf62388cf1.png',
     course: 'pastry-biz',
     intro: {
       pidgin: "You wan bake like pro? Baker Amara don land! Make I show you how to hammer with puff-puff and meat pie business!",
