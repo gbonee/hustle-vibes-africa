@@ -13,7 +13,7 @@ interface QuizSectionProps {
   moduleTopic?: string;
 }
 
-const QuizSection: React.FC<QuizSectionProps> = ({ 
+const QuizSection: React.FC<QuizSectionProps> = React.memo(({ 
   quiz, 
   quizNumber, 
   totalQuizzes, 
@@ -64,6 +64,8 @@ const QuizSection: React.FC<QuizSectionProps> = ({
       )}
     </div>
   );
-};
+});
+
+QuizSection.displayName = 'QuizSection';
 
 export default QuizSection;

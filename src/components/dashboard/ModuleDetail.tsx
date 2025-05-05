@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Module } from './ModulesList';
@@ -19,32 +19,34 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [quizResult, setQuizResult] = useState<'correct' | 'incorrect' | null>(null);
 
-  const handleStartQuiz = () => {
+  const handleStartQuiz = useCallback(() => {
     setShowQuiz(true);
     setCurrentQuizIndex(0);
     setQuizResult(null);
-  };
+  }, []);
 
-  const handleAnswerSelect = (answerIndex: number) => {
-    if (answerIndex === quizzes[currentQuizIndex].answer) {
-      setQuizResult('correct');
-    } else {
-      setQuizResult('incorrect');
-    }
-    
-    setTimeout(() => {
-      if (currentQuizIndex < quizzes.length - 1) {
-        setCurrentQuizIndex(prevIndex => prevIndex + 1);
-        setQuizResult(null);
+  const handleAnswerSelect = useCallback((answerIndex: number) => {
+    if (quizzes && quizzes.length > 0) {
+      if (answerIndex === quizzes[currentQuizIndex].answer) {
+        setQuizResult('correct');
       } else {
-        // End of quiz
-        setTimeout(() => {
-          setShowQuiz(false);
-          // Update progress (in a real app)
-        }, 1500);
+        setQuizResult('incorrect');
       }
-    }, 2000);
-  };
+      
+      setTimeout(() => {
+        if (currentQuizIndex < quizzes.length - 1) {
+          setCurrentQuizIndex(prevIndex => prevIndex + 1);
+          setQuizResult(null);
+        } else {
+          // End of quiz
+          setTimeout(() => {
+            setShowQuiz(false);
+            // Update progress (in a real app)
+          }, 1500);
+        }
+      }, 2000);
+    }
+  }, [currentQuizIndex, quizzes]);
 
   // Check if there are quizzes available for this module
   const hasQuizzes = quizzes && quizzes.length > 0;
@@ -57,7 +59,7 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
       <CardContent className="space-y-6">
         <VideoPlayer module={module} />
         
-        {showQuiz ? (
+        {showQuiz && hasQuizzes ? (
           <QuizSection 
             quiz={quizzes[currentQuizIndex]} 
             quizNumber={currentQuizIndex + 1} 

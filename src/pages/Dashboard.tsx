@@ -1,18 +1,16 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Video, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import DashboardLayout from '@/components/layout/DashboardLayout';
-
-// Import refactored components
 import CourseHeader from '@/components/dashboard/CourseHeader';
 import ModulesList, { Module } from '@/components/dashboard/ModulesList';
 import ModuleDetail from '@/components/dashboard/ModuleDetail';
 import AIChat from '@/components/dashboard/AIChat';
 import { Quiz } from '@/types/quiz';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Define types
 interface Course {
@@ -32,6 +30,7 @@ const Dashboard = () => {
   const { userPrefs } = useUserPreferences();
   const [activeTab, setActiveTab] = useState("lessons");
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState({
     id: '',
     name: '',
@@ -42,29 +41,38 @@ const Dashboard = () => {
   // Fetch user data
   useEffect(() => {
     const fetchUserData = async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
-      if (!authUser) return;
-      
-      // Get the user's profile if it exists
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .maybeSingle();
-      
-      setUser({
-        id: authUser.id,
-        name: profile?.display_name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
-        email: authUser.email || '',
-        avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" // Default avatar
-      });
+      try {
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        
+        if (!authUser) {
+          setIsLoading(false);
+          return;
+        }
+        
+        // Get the user's profile if it exists
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authUser.id)
+          .maybeSingle();
+        
+        setUser({
+          id: authUser.id,
+          name: profile?.display_name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
+          email: authUser.email || '',
+          avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" // Default avatar
+        });
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
     
     fetchUserData();
   }, []);
   
-  // Mock course data based on user's selection
+  // Mock course data based on user's selection - load immediately without waiting for user data
   const courses: Record<string, Course> = {
     'digital-marketing': {
       id: 'digital-marketing',
@@ -107,8 +115,8 @@ const Dashboard = () => {
     }
   };
 
-  // Module-specific quizzes
-  const quizzesByModule: QuizzesByModule = {
+  // Module-specific quizzes - Memoized to avoid recreating on each render
+  const quizzesByModule: QuizzesByModule = React.useMemo(() => ({
     // Digital Marketing Module 1
     1: [
       {
@@ -208,7 +216,7 @@ const Dashboard = () => {
         moduleTopic: 'How to Find Hot-Selling Products Nigerians Want'
       }
     ]
-  };
+  }), []);
   
   // Function to get quizzes for a specific module
   const getQuizzesForModule = (moduleId: number): Quiz[] => {
@@ -235,6 +243,22 @@ const Dashboard = () => {
   };
 
   const userCourse = userPrefs?.course ? courses[userPrefs.course] : courses['digital-marketing'];
+
+  if (isLoading) {
+    return (
+      <DashboardLayout currentPath="/dashboard" user={user}>
+        <div className="w-full space-y-4">
+          <Skeleton className="h-40 w-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout currentPath="/dashboard" user={user}>
