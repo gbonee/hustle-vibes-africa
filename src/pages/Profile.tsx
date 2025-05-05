@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import PreviewMode from '@/components/common/PreviewMode';
 
 // Import our components
 import ProfileHeader from '@/components/profile/ProfileHeader';
@@ -30,7 +31,7 @@ const avatarNames = {
 const Profile = () => {
   const { userPrefs } = useUserPreferences();
   const [user, setUser] = useState({
-    id: '', // Adding the missing id property with default empty string
+    id: '', 
     name: '',
     email: '',
     avatar: '',
@@ -51,9 +52,35 @@ const Profile = () => {
       image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb"
     }
   ]);
+  
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
+  
+  // Check if we're in preview mode
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setIsPreviewMode(urlParams.get('forcePreview') === 'true');
+  }, []);
 
   useEffect(() => {
     const fetchUserData = async () => {
+      // Skip Supabase query in preview mode
+      if (isPreviewMode) {
+        setUser({
+          id: 'preview-user-id',
+          name: 'Preview User',
+          email: 'preview@usabi.ai',
+          avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+          progress: {
+            completed: 7,
+            total: 15
+          },
+          points: 845,
+          rank: 2,
+          joined: 'May 2025'
+        });
+        return;
+      }
+      
       // Get the current authenticated user
       const { data: { user: authUser } } = await supabase.auth.getUser();
       
@@ -63,7 +90,7 @@ const Profile = () => {
       // For now, we'll just use some mock data but with the real user's info
       
       setUser({
-        id: authUser.id, // Make sure to set the id from the auth user
+        id: authUser.id,
         name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
         email: authUser.email || '',
         avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1", // For now, keep a default avatar
@@ -78,10 +105,12 @@ const Profile = () => {
     };
     
     fetchUserData();
-  }, []);
+  }, [isPreviewMode]);
 
   return (
     <DashboardLayout currentPath="/profile" user={user}>
+      {isPreviewMode && <PreviewMode />}
+      
       {/* Profile Header */}
       <Card className="border-electric bg-muted mb-6">
         <CardContent className="p-6">

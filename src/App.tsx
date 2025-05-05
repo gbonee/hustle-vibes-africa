@@ -33,7 +33,17 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState(false);
 
+  // Check for preview mode immediately
+  const urlParams = new URLSearchParams(window.location.search);
+  const forcePreview = urlParams.get('forcePreview') === 'true';
+  
   useEffect(() => {
+    // Skip auth checking if in preview mode
+    if (forcePreview) {
+      setLoading(false);
+      return;
+    }
+    
     // Set up auth state listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, currentSession) => {
@@ -72,13 +82,9 @@ const App = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  // Special case for direct access to preview pages with forcePreview param
-  const urlParams = new URLSearchParams(window.location.search);
-  const forcePreview = urlParams.get('forcePreview') === 'true';
+  }, [forcePreview]); // Add forcePreview as a dependency
   
-  if (loading) {
+  if (loading && !forcePreview) {
     return (
       <div className="flex justify-center items-center h-screen bg-black">
         <div className="space-y-4 w-full max-w-md px-4">
@@ -128,24 +134,24 @@ const App = () => {
             <Route 
               path="/dashboard" 
               element={
-                session ? (
-                  isNewUser ? <Navigate to="/onboarding" /> : <Dashboard />
+                forcePreview || session ? (
+                  isNewUser && !forcePreview ? <Navigate to="/onboarding" /> : <Dashboard />
                 ) : <Navigate to="/auth" />
               }
             />
             <Route 
               path="/leaderboard" 
               element={
-                session ? (
-                  isNewUser ? <Navigate to="/onboarding" /> : <Leaderboard />
+                forcePreview || session ? (
+                  isNewUser && !forcePreview ? <Navigate to="/onboarding" /> : <Leaderboard />
                 ) : <Navigate to="/auth" />
               }
             />
             <Route 
               path="/profile" 
               element={
-                session ? (
-                  isNewUser ? <Navigate to="/onboarding" /> : <Profile />
+                forcePreview || session ? (
+                  isNewUser && !forcePreview ? <Navigate to="/onboarding" /> : <Profile />
                 ) : <Navigate to="/auth" />
               }
             />
