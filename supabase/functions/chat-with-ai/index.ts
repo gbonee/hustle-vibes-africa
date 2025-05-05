@@ -87,32 +87,76 @@ serve(async (req) => {
     // Use pidgin as default if no language is specified
     const userLanguage = language || 'pidgin';
     
-    // Add language style guidance based on selected language
+    // Add language style guidance based on selected language - UPDATED FOR PURE LANGUAGE USAGE
     if (userLanguage === 'pidgin') {
       systemPrompt += ` You MUST speak Nigerian Pidgin English fluently and use it in EVERY response. Use phrases like "How you dey?", "Abeg", "Na so", "Wetin dey", "My people!", "Oya now!", "Chai!", "Wahala!", "E be tins!", etc. Make your messages sound authentically Nigerian with plenty Naija street slang.`;
+      
+      // Specific example for pidgin welcome message
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        systemPrompt += ` Example introduction: "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!"`;
+      }
     } else if (userLanguage === 'yoruba') {
-      systemPrompt += ` You mix Yoruba expressions into your English. Use phrases like "Ẹ ṣeun", "Mo dupe", "Jọ̀wọ́", "Bawo ni", "Kí ló ń ṣẹlẹ̀?", "Ṣé ó yá?", etc.`;
+      systemPrompt += ` You MUST speak PURE Yoruba language in EVERY response. ALL your messages should be FULLY in Yoruba (not mixing with English). Use proper Yoruba phrases and expressions throughout your entire messages.`;
+      
+      // Specific example for Yoruba welcome message
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        systemPrompt += ` Example introduction: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára. Ẹ má ṣe jẹ́ kí ó pẹ́ o!"`;
+      }
     } else if (userLanguage === 'hausa') {
-      systemPrompt += ` You mix Hausa expressions into your English. Use phrases like "Sannu", "Na gode", "Yaya dai", "Kana lafiya?", "Barka da yini", "In sha Allah", etc.`;
+      systemPrompt += ` You MUST speak PURE Hausa language in EVERY response. ALL your messages should be FULLY in Hausa (not mixing with English). Use proper Hausa phrases and expressions throughout your entire messages.`;
+      
+      // Specific example for Hausa welcome message
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        systemPrompt += ` Example introduction: "Sannu da zuwa! Ni ne Digital Mama. Na zo ne domin in koya maka yadda za ka sami kuɗi ta hanyar kasuwanci a yanar gizo. Kada ka yi jinkiri!"`;
+      }
     } else if (userLanguage === 'igbo') {
-      systemPrompt += ` You mix Igbo expressions into your English. Use phrases like "Kedu", "Daalu", "Biko", "Olee?", "I meela", "Jisie ike", etc.`;
+      systemPrompt += ` You MUST speak PURE Igbo language in EVERY response. ALL your messages should be FULLY in Igbo (not mixing with English). Use proper Igbo phrases and expressions throughout your entire messages.`;
+      
+      // Specific example for Igbo welcome message
+      if (message.includes('introduce yourself') || message.includes('Say hello')) {
+        systemPrompt += ` Example introduction: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ. Emela ngwa ngwa!"`;
+      }
     }
     
     // Add personality guidance - KEEP WELCOME MESSAGES SHORT (1-2 SENTENCES)
-    systemPrompt += ` Be extremely funny, engaging, roastful, and full of Naija flavor. Use plenty emojis and make jokes.
+    systemPrompt += ` Be extremely funny, engaging, roastful, and full of cultural flavor. Use appropriate cultural expressions and make jokes.
     If the user has made progress or passed quizzes, acknowledge that. If they ask for help, provide it with enthusiasm.
     Remember past conversations and refer to them when relevant. Always be animated and theatrical in your responses!`;
 
     // For welcome messages, specify they should be SHORT (1-2 sentences only)
     if (message.includes('introduce yourself') || message.includes('Say hello')) {
-      systemPrompt += ` IMPORTANT: Keep welcome messages VERY SHORT - just 1-2 sentences maximum with Nigerian slang and personality. Don't write long introductions.`;
+      systemPrompt += ` IMPORTANT: Keep welcome messages VERY SHORT - just 1-2 sentences maximum with appropriate cultural expressions. Don't write long introductions.`;
       
       if (course === 'digital-marketing') {
-        systemPrompt += ` Example short intro: "Ah! You don arrive! Digital Mama don land to teach you how to hammer for online space! No dull!"`;
+        if (userLanguage === 'yoruba') {
+          systemPrompt += ` Use ONLY Yoruba language for your entire response. Example: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!"`;
+        } else if (userLanguage === 'hausa') {
+          systemPrompt += ` Use ONLY Hausa language for your entire response. Example: "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!"`;
+        } else if (userLanguage === 'igbo') {
+          systemPrompt += ` Use ONLY Igbo language for your entire response. Example: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!"`;
+        } else {
+          systemPrompt += ` Example short intro: "Ah! You don arrive! Digital Mama don land to teach you how to hammer for online space! No dull!"`;
+        }
       } else if (course === 'pastry-biz') {
-        systemPrompt += ` Example short intro: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
+        if (userLanguage === 'yoruba') {
+          systemPrompt += ` Use ONLY Yoruba language for your entire response. Example: "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!"`;
+        } else if (userLanguage === 'hausa') {
+          systemPrompt += ` Use ONLY Hausa language for your entire response. Example: "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!"`;
+        } else if (userLanguage === 'igbo') {
+          systemPrompt += ` Use ONLY Igbo language for your entire response. Example: "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!"`;
+        } else {
+          systemPrompt += ` Example short intro: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
+        }
       } else if (course === 'importation') {
-        systemPrompt += ` Example short intro: "Oya! Uncle Musa don drop! Make we teach you importation business with correct connect!"`;
+        if (userLanguage === 'yoruba') {
+          systemPrompt += ` Use ONLY Yoruba language for your entire response. Example: "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!"`;
+        } else if (userLanguage === 'hausa') {
+          systemPrompt += ` Use ONLY Hausa language for your entire response. Example: "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!"`;
+        } else if (userLanguage === 'igbo') {
+          systemPrompt += ` Use ONLY Igbo language for your entire response. Example: "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!"`;
+        } else {
+          systemPrompt += ` Example short intro: "Oya! Uncle Musa don drop! Make we teach you importation business with correct connect!"`;
+        }
       }
     }
 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -163,12 +164,28 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Add fallback welcome message - shortened
       setChatMessages([{ 
         isUser: false, 
-        text: `Wetin dey sup ${name}! Na me be ${coachName}! Ask me anything!`,
+        text: getLanguageSpecificFallbackWelcome(userName, coachName),
         timestamp: Date.now()
       }]);
     } finally {
       setIsLoading(false);
       setIsInitialLoad(false);
+    }
+  };
+
+  // Fallback welcome message in the chosen language if API call fails
+  const getLanguageSpecificFallbackWelcome = (name: string, coach: string): string => {
+    switch (currentLanguage) {
+      case 'pidgin':
+        return `Wetin dey sup ${name}! Na me be ${coach}! Ask me anything!`;
+      case 'yoruba':
+        return `Ẹ ku àbọ̀ ${name}! Èmi ni ${coach}! Ẹ le bi mi ohunkohun!`;
+      case 'hausa':
+        return `Sannu da zuwa ${name}! Ni ne ${coach}! Ka iya tambaye ni komai!`;
+      case 'igbo':
+        return `Nnọọ ${name}! Abụ m ${coach}! Ị nwere ike ịjụ m ihe ọbụla!`;
+      default:
+        return `Wetin dey sup ${name}! Na me be ${coach}! Ask me anything!`;
     }
   };
 
@@ -236,15 +253,47 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       }]);
     } catch (error) {
       console.error('Error calling AI function:', error);
-      // Add fallback response
+      // Add fallback response in the chosen language
       setChatMessages(prev => [...prev, { 
         isUser: false, 
-        text: "Chai! System don hang o! Try again later, my people!",
+        text: getLanguageSpecificErrorMessage(),
         timestamp: Date.now()
       }]);
-      toast.error("AI coach no connect. Make you try again!");
+      toast.error(getLanguageSpecificErrorToast());
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Language-specific error messages
+  const getLanguageSpecificErrorMessage = (): string => {
+    switch (currentLanguage) {
+      case 'pidgin':
+        return "Chai! System don hang o! Try again later, my people!";
+      case 'yoruba':
+        return "Háà! Ẹ̀rọ náà ti dẹ́kun! Ẹ jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan síi lẹ́yìn!";
+      case 'hausa':
+        return "Kai! Na'urar ta lalace! Ka sake gwadawa daga baya!";
+      case 'igbo':
+        return "Chei! Igwe ahụ adaala! Biko gbalịa ọzọ mgbe e mesịrị!";
+      default:
+        return "Chai! System don hang o! Try again later, my people!";
+    }
+  };
+
+  // Language-specific error toast messages
+  const getLanguageSpecificErrorToast = (): string => {
+    switch (currentLanguage) {
+      case 'pidgin':
+        return "AI coach no connect. Make you try again!";
+      case 'yoruba':
+        return "Olùkọ́ AI kò le sopọ̀. Ẹ jọ̀wọ́ gbìyànjú lẹ́ẹ̀kan síi!";
+      case 'hausa':
+        return "Mai koyarwa na AI bai haɗa ba. Ka sake gwadawa!";
+      case 'igbo':
+        return "Onye nkuzi AI ejighị njikọ. Biko gbalịa ọzọ!";
+      default:
+        return "AI coach no connect. Make you try again!";
     }
   };
 
@@ -253,20 +302,79 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     
     switch(action) {
       case 'next-lesson':
-        actionMessage = "Abeg show me the next lesson wey I need to take.";
+        actionMessage = getLanguageSpecificAction('next-lesson');
         break;
       case 'take-quiz':
-        actionMessage = "I wan take quiz to test my knowledge now-now.";
+        actionMessage = getLanguageSpecificAction('take-quiz');
         break;
       case 'help':
-        actionMessage = "I need help with this course o! Things no too clear.";
+        actionMessage = getLanguageSpecificAction('help');
         break;
       case 'challenge':
-        actionMessage = "Give me challenge make I practice wetin I don learn.";
+        actionMessage = getLanguageSpecificAction('challenge');
         break;
     }
     
     setMessage(actionMessage);
+  };
+
+  // Language-specific quick actions
+  const getLanguageSpecificAction = (action: string): string => {
+    if (currentLanguage === 'pidgin') {
+      switch(action) {
+        case 'next-lesson':
+          return "Abeg show me the next lesson wey I need to take.";
+        case 'take-quiz':
+          return "I wan take quiz to test my knowledge now-now.";
+        case 'help':
+          return "I need help with this course o! Things no too clear.";
+        case 'challenge':
+          return "Give me challenge make I practice wetin I don learn.";
+        default:
+          return "";
+      }
+    } else if (currentLanguage === 'yoruba') {
+      switch(action) {
+        case 'next-lesson':
+          return "Jọ̀wọ́ fi ẹ̀kọ́ tó kàn hàn mí.";
+        case 'take-quiz':
+          return "Mo fẹ́ ṣe ìdánwò láti dán ìmọ̀ mi wò báyìí.";
+        case 'help':
+          return "Mo nílò ìrànlọ́wọ́ pẹ̀lú ẹ̀kọ́ yìí o! Àwọn nǹkan kò tí ì yé mi dáadáa.";
+        case 'challenge':
+          return "Fún mi ní àdánwò kan kí n lè máa lo ohun tí mo ti kọ́.";
+        default:
+          return "";
+      }
+    } else if (currentLanguage === 'hausa') {
+      switch(action) {
+        case 'next-lesson':
+          return "Don Allah nuna mini darasi na gaba da zan dauka.";
+        case 'take-quiz':
+          return "Ina son in yi gwaji don gwada ilimina yanzu.";
+        case 'help':
+          return "Ina bukatar taimako game da wannan darasin! Abubuwan ba su bayyana sosai ba.";
+        case 'challenge':
+          return "Bani wani kalubale don in yi amfani da abin da na koya.";
+        default:
+          return "";
+      }
+    } else if (currentLanguage === 'igbo') {
+      switch(action) {
+        case 'next-lesson':
+          return "Biko gosipụta m ihe ọmụmụ na-esote m ga-amụta.";
+        case 'take-quiz':
+          return "Achọrọ m ime ule iji nyochaa ihe m maara ugbu a.";
+        case 'help':
+          return "Achọrọ m enyemaka maka ọzụzụ a! Ihe ndị a adọghị m anya nke ọma.";
+        case 'challenge':
+          return "Nye m ihe ịma aka ka m wee mụọ ihe m mụtara.";
+        default:
+          return "";
+      }
+    }
+    
+    return "";
   };
 
   // Generate language-specific greeting
@@ -275,11 +383,11 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       case 'pidgin':
         return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
       case 'yoruba':
-        return `Bawo ni ${userName}, o le bi mi nipa ohunkohun nipa ${courseSpecificGreeting}`;
+        return `Báwo ni ${userName}, ẹ lè bí mi nípa ohunkóhun nípa ${courseSpecificGreeting}`;
       case 'hausa':
         return `Sannu ${userName}, za ka iya tambaye ni komai game da ${courseSpecificGreeting}`;
       case 'igbo':
-        return `Kedu ${userName}, i nwere ike iju m ihe obula gbasara ${courseSpecificGreeting}`;
+        return `Kedụ ${userName}, ị nwere ike ịjụ m ihe ọbụla gbasara ${courseSpecificGreeting}`;
       default:
         return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
     }
