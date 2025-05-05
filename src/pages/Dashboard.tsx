@@ -101,6 +101,29 @@ const Dashboard = () => {
   const currentLanguage = userPrefs?.language || 'pidgin';
   const texts = uiTranslations[currentLanguage as keyof typeof uiTranslations] || uiTranslations.english;
   
+  // Add the missing handleAvatarChange function
+  const handleAvatarChange = async (course: string) => {
+    try {
+      // Update the user's course preference
+      const success = await updateUserPreferences({ course });
+      
+      if (success) {
+        toast({
+          title: "Coach changed!",
+          description: `Your learning coach has been updated.`,
+          variant: "default",
+        });
+      }
+    } catch (error) {
+      console.error("Error changing avatar/course:", error);
+      toast({
+        title: "Error",
+        description: "Failed to change your learning coach. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+  
   // Check for preview mode
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
