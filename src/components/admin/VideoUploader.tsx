@@ -65,17 +65,17 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
       // Define file path in storage bucket
       const filePath = `${courseId}/${moduleId}-${file.name.replace(/\s+/g, '-')}`;
       
-      // Upload to Supabase storage
+      // Set up the upload with manual progress tracking
       const { data, error } = await supabase.storage
         .from('module-videos')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: true,
-          onUploadProgress: (progress) => {
-            // Update progress
-            setProgress(Math.round((progress.loaded / progress.total) * 100));
-          }
+          upsert: true
         });
+      
+      // Manually track upload progress (since onUploadProgress isn't available)
+      // We'll just set it to 100% when complete
+      setProgress(100);
       
       if (error) throw error;
       
@@ -101,7 +101,6 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
       });
     } finally {
       setIsUploading(false);
-      setProgress(0);
       // Clean up local preview
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
