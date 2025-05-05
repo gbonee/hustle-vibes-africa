@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from "@/components/ui/card";
@@ -171,7 +172,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                       className={`h-24 text-lg flex flex-col items-center justify-center transition-all ${
                         language === lang.id 
                           ? 'bg-electric text-black border-2 border-white'
-                          : 'bg-black hover:bg-gray-900 border border-gray-700'
+                          : 'bg-black hover:bg-gray-900 border border-gray-700 text-white'
                       }`}
                     >
                       <span className="text-2xl mb-1">{lang.flag}</span>
@@ -239,12 +240,12 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
                     <h3 className="font-bold text-xl">{selectedAvatarInfo?.name}</h3>
                   </div>
                   <div className="bg-black p-4 rounded-lg border border-gray-800 mb-4">
-                    <p className="text-lg">
+                    <p className="text-lg text-white">
                       {selectedAvatarInfo?.intro[language as Language]}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-gray-400">Loading your dashboard...</p>
+                    <p className="text-gray-300">Loading your dashboard...</p>
                     <Progress value={100} className="h-2 mt-4 animate-pulse" />
                   </div>
                 </div>
