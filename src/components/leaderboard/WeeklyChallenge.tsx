@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, Upload } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useChallengeSubmission } from '@/hooks/useChallengeSubmission';
 
 interface WeeklyChallengeProps {
   challengeId: string;
@@ -27,7 +26,7 @@ const WeeklyChallenge: React.FC<WeeklyChallengeProps> = ({
   const [uploadOpen, setUploadOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const { submitChallengeFile } = useUserPreferences();
+  const { submitChallengeFile } = useChallengeSubmission();
   
   const handleUploadClick = () => {
     if (challengeStatus.hasSubmitted && !challengeStatus.isApproved) {

@@ -8,24 +8,6 @@ interface UserPreferences {
   course: string;
 }
 
-interface ChallengeStatus {
-  hasSubmitted: boolean;
-  isApproved: boolean;
-  submissionUrl?: string;
-  submissionType?: string;
-}
-
-// Define a type for the challenge submission to avoid type errors
-interface ChallengeSubmission {
-  id: string;
-  user_id: string;
-  challenge_id: string;
-  submission_url: string;
-  submission_type: string;
-  submitted_at: string | null;
-  is_approved: boolean | null;
-}
-
 export const useUserPreferences = () => {
   const [userPrefs, setUserPrefs] = useState<UserPreferences | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,9 +27,6 @@ export const useUserPreferences = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           // Get user preferences from profiles table
-          // Note: We're storing preferences in localStorage and in user metadata
-          // since the profiles table doesn't have language_preference and avatar_preference columns
-          
           const { data: profile } = await supabase
             .from('profiles')
             .select('*')
@@ -105,130 +84,9 @@ export const useUserPreferences = () => {
     }
   };
   
-  const getChallengeStatus = async (challengeId: string): Promise<ChallengeStatus> => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return { hasSubmitted: false, isApproved: false };
-      
-      // Explicitly type the submission data
-      const { data: submission, error } = await supabase
-        .from('challenge_submissions' as any)
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('challenge_id', challengeId)
-        .maybeSingle();
-      
-      if (error) {
-        console.error("Error checking challenge status:", error);
-        return { hasSubmitted: false, isApproved: false };
-      }
-      
-      if (submission) {
-        const typedSubmission = submission as unknown as ChallengeSubmission;
-        return {
-          hasSubmitted: true,
-          isApproved: typedSubmission.is_approved || false,
-          submissionUrl: typedSubmission.submission_url,
-          submissionType: typedSubmission.submission_type
-        };
-      }
-      
-      return { hasSubmitted: false, isApproved: false };
-    } catch (error) {
-      console.error("Error checking challenge status:", error);
-      return { hasSubmitted: false, isApproved: false };
-    }
-  };
-  
-  const submitChallengeFile = async (challengeId: string, file: File): Promise<boolean> => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return false;
-      
-      // First upload the file to storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
-      const filePath = `challenge_submissions/${fileName}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('challenges')
-        .upload(filePath, file);
-      
-      if (uploadError) {
-        console.error("Error uploading file:", uploadError);
-        return false;
-      }
-      
-      // Get the public URL
-      const { data: publicURL } = supabase.storage
-        .from('challenges')
-        .getPublicUrl(filePath);
-      
-      if (!publicURL) return false;
-      
-      // Check if a submission already exists
-      const { data: existingSubmission, error: queryError } = await supabase
-        .from('challenge_submissions' as any)
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('challenge_id', challengeId)
-        .maybeSingle();
-        
-      if (queryError) {
-        console.error("Error checking existing submission:", queryError);
-        return false;
-      }
-        
-      if (existingSubmission) {
-        // Cast to our type to safely access properties
-        const typedSubmission = existingSubmission as unknown as ChallengeSubmission;
-        
-        // Update existing submission
-        const { error: updateError } = await supabase
-          .from('challenge_submissions' as any)
-          .update({
-            submission_url: publicURL.publicUrl,
-            submission_type: file.type,
-            submitted_at: new Date().toISOString(),
-            is_approved: false
-          })
-          .eq('id', typedSubmission.id);
-          
-        if (updateError) {
-          console.error("Error updating submission:", updateError);
-          return false;
-        }
-      } else {
-        // Create new submission
-        const { error: insertError } = await supabase
-          .from('challenge_submissions' as any)
-          .insert({
-            user_id: user.id,
-            challenge_id: challengeId,
-            submission_url: publicURL.publicUrl,
-            submission_type: file.type,
-            submitted_at: new Date().toISOString(),
-            is_approved: false
-          });
-          
-        if (insertError) {
-          console.error("Error creating submission:", insertError);
-          return false;
-        }
-      }
-      
-      return true;
-    } catch (error) {
-      console.error("Error submitting challenge:", error);
-      return false;
-    }
-  };
-  
   return { 
     userPrefs, 
     updateUserPreferences, 
-    isLoading,
-    getChallengeStatus,
-    submitChallengeFile
+    isLoading 
   };
 };

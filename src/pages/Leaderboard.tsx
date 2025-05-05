@@ -1,10 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { useChallengeSubmission } from '@/hooks/useChallengeSubmission';
 import { getLeaderboard, getUserLeaderboardEntry, addPointsForModuleCompletion } from '@/utils/progressTracker';
 
 // Import our new components
@@ -46,7 +46,7 @@ const Leaderboard = () => {
   const [users, setUsers] = useState<LeaderboardUser[]>([]);
   const [currentUser, setCurrentUser] = useState<LeaderboardUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { getChallengeStatus } = useUserPreferences();
+  const { getChallengeStatus } = useChallengeSubmission();
   const [challengeStatus, setChallengeStatus] = useState({ hasSubmitted: false, isApproved: false });
   const [isAdmin, setIsAdmin] = useState(false);
   const [showSubmissions, setShowSubmissions] = useState(false);
