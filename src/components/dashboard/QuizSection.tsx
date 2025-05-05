@@ -10,6 +10,7 @@ interface QuizSectionProps {
   totalQuizzes: number;
   onAnswerSelect: (answerIndex: number) => void;
   result: 'correct' | 'incorrect' | null;
+  moduleTopic?: string;
 }
 
 const QuizSection: React.FC<QuizSectionProps> = ({ 
@@ -17,11 +18,12 @@ const QuizSection: React.FC<QuizSectionProps> = ({
   quizNumber, 
   totalQuizzes, 
   onAnswerSelect, 
-  result 
+  result,
+  moduleTopic 
 }) => {
   return (
     <div className="bg-black p-6 rounded-lg border border-gray-800">
-      <h3 className="text-xl font-bold mb-4">Quick Quiz</h3>
+      <h3 className="text-xl font-bold mb-4">Quick Quiz: {moduleTopic}</h3>
       <p className="text-gray-400 mb-4">Question {quizNumber} of {totalQuizzes}</p>
       
       <div className="mb-6">

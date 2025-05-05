@@ -35,14 +35,19 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
     setTimeout(() => {
       if (currentQuizIndex < quizzes.length - 1) {
         setCurrentQuizIndex(prevIndex => prevIndex + 1);
+        setQuizResult(null);
       } else {
         // End of quiz
-        setShowQuiz(false);
-        // Update progress (in a real app)
+        setTimeout(() => {
+          setShowQuiz(false);
+          // Update progress (in a real app)
+        }, 1500);
       }
-      setQuizResult(null);
     }, 2000);
   };
+
+  // Check if there are quizzes available for this module
+  const hasQuizzes = quizzes && quizzes.length > 0;
 
   return (
     <Card className="bg-muted border-electric">
@@ -59,14 +64,21 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({ module, quizzes, onClose })
             totalQuizzes={quizzes.length} 
             onAnswerSelect={handleAnswerSelect} 
             result={quizResult}
+            moduleTopic={module.title}
           />
         ) : (
-          <Button 
-            onClick={handleStartQuiz} 
-            className="w-full py-6 bg-electric text-black hover:bg-electric/90"
-          >
-            Take Quiz
-          </Button>
+          hasQuizzes ? (
+            <Button 
+              onClick={handleStartQuiz} 
+              className="w-full py-6 bg-electric text-black hover:bg-electric/90"
+            >
+              Take Quiz on {module.title}
+            </Button>
+          ) : (
+            <div className="p-4 bg-gray-800 rounded-lg text-center">
+              <p>No quiz available for this module yet.</p>
+            </div>
+          )
         )}
         
         <VideoUploader moduleTitle={module.title} />
