@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,9 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
-import { BookOpen, Award, HelpCircle, ArrowRight, Globe } from "lucide-react";
+import { BookOpen, Award, HelpCircle, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PreviewMode from '@/components/common/PreviewMode';
 
 interface ChatMessage {
@@ -65,12 +63,12 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [language, setLanguage] = useState<string>(userPrefs?.language || 'pidgin');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   
   const currentCourse = userPrefs?.course || 'digital-marketing';
   const coachName = getCoachName(currentCourse);
   const courseSpecificGreeting = getCourseSpecificGreeting(currentCourse);
+  const currentLanguage = userPrefs?.language || 'pidgin';
 
   // Initialize user ID and check preview mode
   useEffect(() => {
@@ -141,9 +139,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Call the edge function for AI welcome message - requesting a SHORT message
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
-          message: `Say hello to ${name} and introduce yourself as ${coachName} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${language} language with lots of Nigerian flavor.`,
+          message: `Say hello to ${name} and introduce yourself as ${coachName} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${currentLanguage} language with lots of Nigerian flavor.`,
           course: course,
-          language: language,
+          language: currentLanguage,
           userName: name,
           progress,
           previousMessages: []
@@ -174,21 +172,6 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   };
 
-  // Change language and regenerate introduction if needed
-  const handleLanguageChange = async (newLanguage: string) => {
-    if (newLanguage === language) return;
-    
-    setLanguage(newLanguage);
-    
-    // Show toast notification
-    toast.success(`Language changed to ${newLanguage.charAt(0).toUpperCase() + newLanguage.slice(1)}`);
-    
-    // If chat is empty, generate welcome message in the new language
-    if (chatMessages.length <= 1) {
-      sendWelcomeMessage(userName, currentCourse);
-    }
-  };
-
   // Mock progress data - in a real app, this would come from the database
   const getUserProgress = (): Progress => {
     // For now, return mock data
@@ -214,28 +197,6 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     
     if (!message.trim()) return;
 
-    // Check for language switching command
-    if (message.startsWith('/language ')) {
-      const requestedLanguage = message.split(' ')[1]?.toLowerCase();
-      if (['pidgin', 'yoruba', 'hausa', 'igbo'].includes(requestedLanguage)) {
-        handleLanguageChange(requestedLanguage);
-        
-        // Add user message and AI response to chat
-        setChatMessages(prev => [
-          ...prev, 
-          { isUser: true, text: message, timestamp: Date.now() },
-          { 
-            isUser: false, 
-            text: `I switch to ${requestedLanguage} language! I go dey speak with you like this from now.`,
-            timestamp: Date.now() + 1 
-          }
-        ]);
-        
-        setMessage('');
-        return;
-      }
-    }
-
     // Add user message to chat
     setChatMessages(prev => [...prev, { 
       isUser: true, 
@@ -257,7 +218,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         body: { 
           message: sentMessage, 
           course: currentCourse,
-          language: language,
+          language: currentLanguage,
           userName,
           progress,
           previousMessages
@@ -310,7 +271,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
 
   // Generate language-specific greeting
   const getLanguageSpecificGreeting = (): string => {
-    switch (language) {
+    switch (currentLanguage) {
       case 'pidgin':
         return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
       case 'yoruba':
@@ -318,7 +279,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       case 'hausa':
         return `Sannu ${userName}, za ka iya tambaye ni komai game da ${courseSpecificGreeting}`;
       case 'igbo':
-        return `Kedu ${userName}, ị nwere ike ịjụ m ihe ọ bụla gbasara ${courseSpecificGreeting}`;
+        return `Kedu ${userName}, i nwere ike iju m ihe obula gbasara ${courseSpecificGreeting}`;
       default:
         return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
     }
@@ -328,41 +289,21 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     <Card className="bg-muted border-electric">
       {isPreviewMode && (
         <PreviewMode 
-          onLanguageChange={handleLanguageChange} 
-          currentLanguage={language}
+          onLanguageChange={(lang) => {}} 
+          currentLanguage={currentLanguage}
         />
       )}
       
       <CardHeader>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Avatar>
-              <AvatarImage src={courseAvatar} />
-              <AvatarFallback>AI</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle>Chat with {coachName}</CardTitle>
-              <CardDescription>{getLanguageSpecificGreeting()}</CardDescription>
-            </div>
+        <div className="flex items-center">
+          <Avatar className="mr-3">
+            <AvatarImage src={courseAvatar} />
+            <AvatarFallback>AI</AvatarFallback>
+          </Avatar>
+          <div>
+            <CardTitle>Chat with {coachName}</CardTitle>
+            <CardDescription>{getLanguageSpecificGreeting()}</CardDescription>
           </div>
-          
-          {!isPreviewMode && (
-            <Select 
-              value={language}
-              onValueChange={handleLanguageChange}
-            >
-              <SelectTrigger className="w-32 h-8">
-                <Globe className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pidgin">Pidgin</SelectItem>
-                <SelectItem value="yoruba">Yoruba</SelectItem>
-                <SelectItem value="hausa">Hausa</SelectItem>
-                <SelectItem value="igbo">Igbo</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
         </div>
       </CardHeader>
       <CardContent className="p-4">
