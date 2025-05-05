@@ -275,7 +275,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       case 'pidgin':
         return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
       case 'yoruba':
-        return `Bawo ni ${userName}, o le bi mi ohunkohun nipa ${courseSpecificGreeting}`;
+        return `Bawo ni ${userName}, o le bi mi nipa ohunkohun nipa ${courseSpecificGreeting}`;
       case 'hausa':
         return `Sannu ${userName}, za ka iya tambaye ni komai game da ${courseSpecificGreeting}`;
       case 'igbo':
