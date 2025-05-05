@@ -8,6 +8,13 @@ interface UserPreferences {
   course: string;
 }
 
+interface ChallengeStatus {
+  hasSubmitted: boolean;
+  isApproved: boolean;
+  submissionUrl?: string;
+  submissionType?: string;
+}
+
 export const useUserPreferences = () => {
   const [userPrefs, setUserPrefs] = useState<UserPreferences | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -87,5 +94,115 @@ export const useUserPreferences = () => {
     }
   };
   
-  return { userPrefs, updateUserPreferences, isLoading };
+  const getChallengeStatus = async (challengeId: string): Promise<ChallengeStatus> => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return { hasSubmitted: false, isApproved: false };
+      
+      const { data: submission } = await supabase
+        .from('challenge_submissions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('challenge_id', challengeId)
+        .maybeSingle();
+      
+      if (submission) {
+        return {
+          hasSubmitted: true,
+          isApproved: submission.is_approved || false,
+          submissionUrl: submission.submission_url,
+          submissionType: submission.submission_type
+        };
+      }
+      
+      return { hasSubmitted: false, isApproved: false };
+    } catch (error) {
+      console.error("Error checking challenge status:", error);
+      return { hasSubmitted: false, isApproved: false };
+    }
+  };
+  
+  const submitChallengeFile = async (challengeId: string, file: File): Promise<boolean> => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return false;
+      
+      // First upload the file to storage
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `challenge_submissions/${fileName}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('challenges')
+        .upload(filePath, file);
+      
+      if (uploadError) {
+        console.error("Error uploading file:", uploadError);
+        return false;
+      }
+      
+      // Get the public URL
+      const { data: publicURL } = supabase.storage
+        .from('challenges')
+        .getPublicUrl(filePath);
+      
+      if (!publicURL) return false;
+      
+      // Check if a submission already exists
+      const { data: existingSubmission } = await supabase
+        .from('challenge_submissions')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('challenge_id', challengeId)
+        .maybeSingle();
+        
+      if (existingSubmission) {
+        // Update existing submission
+        const { error: updateError } = await supabase
+          .from('challenge_submissions')
+          .update({
+            submission_url: publicURL.publicUrl,
+            submission_type: file.type,
+            submitted_at: new Date().toISOString(),
+            is_approved: false
+          })
+          .eq('id', existingSubmission.id);
+          
+        if (updateError) {
+          console.error("Error updating submission:", updateError);
+          return false;
+        }
+      } else {
+        // Create new submission
+        const { error: insertError } = await supabase
+          .from('challenge_submissions')
+          .insert({
+            user_id: user.id,
+            challenge_id: challengeId,
+            submission_url: publicURL.publicUrl,
+            submission_type: file.type,
+            submitted_at: new Date().toISOString(),
+            is_approved: false
+          });
+          
+        if (insertError) {
+          console.error("Error creating submission:", insertError);
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Error submitting challenge:", error);
+      return false;
+    }
+  };
+  
+  return { 
+    userPrefs, 
+    updateUserPreferences, 
+    isLoading,
+    getChallengeStatus,
+    submitChallengeFile
+  };
 };
