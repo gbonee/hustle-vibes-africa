@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 import { Languages, CircleUser } from "lucide-react";
+import { toast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface UserPreferencesProps {
   userName: string;
@@ -62,8 +64,60 @@ const UserPreferences: React.FC<UserPreferencesProps> = ({
   avatarNames 
 }) => {
   const navigate = useNavigate();
+  const [displayName, setDisplayName] = useState(userName);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const currentLanguage = userPrefs?.language || 'pidgin';
   const texts = uiTranslations[currentLanguage as keyof typeof uiTranslations] || uiTranslations.english;
+  
+  const handleSaveChanges = async () => {
+    if (displayName.trim() === userName) {
+      toast({
+        description: "No changes to save.",
+      });
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
+      
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to save changes.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Update the profile display name
+      const { error } = await supabase
+        .from('profiles')
+        .update({ display_name: displayName.trim() })
+        .eq('id', user.id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast({
+        title: "Success",
+        description: "Your changes have been saved.",
+      });
+      
+    } catch (error: any) {
+      console.error('Error saving preferences:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save changes. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   return (
     <div className="space-y-4">
@@ -71,7 +125,8 @@ const UserPreferences: React.FC<UserPreferencesProps> = ({
         <Label htmlFor="display-name">{texts.displayName}</Label>
         <Input 
           id="display-name"
-          defaultValue={userName}
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
           className="mt-1 bg-muted border-gray-700"
         />
       </div>
@@ -108,8 +163,12 @@ const UserPreferences: React.FC<UserPreferencesProps> = ({
         </div>
       </div>
       
-      <Button className="w-full mt-2 rebel-button">
-        {texts.saveChanges}
+      <Button 
+        className="w-full mt-2 rebel-button"
+        onClick={handleSaveChanges}
+        disabled={isLoading}
+      >
+        {isLoading ? "Saving..." : texts.saveChanges}
       </Button>
     </div>
   );

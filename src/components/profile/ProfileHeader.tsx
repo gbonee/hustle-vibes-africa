@@ -4,6 +4,10 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trophy, Award, LogIn } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/use-toast";
 
 interface ProfileHeaderProps {
   user?: {
@@ -25,73 +29,146 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user: propUser }) => {
     rank: propUser?.rank || 0,
     joined: propUser?.joined || ''
   });
+  
+  const [isAvatarDialogOpen, setIsAvatarDialogOpen] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(user.avatar);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      // Get the current authenticated user
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
-      if (!authUser) return;
-      
-      // Get the user profile if it exists
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', authUser.id)
-        .maybeSingle();
-      
-      // Format joined date
-      const joinedDate = new Date(authUser.created_at);
-      const month = joinedDate.toLocaleString('default', { month: 'long' });
-      const year = joinedDate.getFullYear();
-      
+    if (propUser) {
       setUser({
-        name: profile?.display_name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
-        email: authUser.email || '',
-        avatar: profile?.avatar_url || propUser?.avatar || '',
-        points: propUser?.points || 0, // Keep the mock data for now
-        rank: propUser?.rank || 0, // Keep the mock data for now
-        joined: `${month} ${year}`
+        name: propUser.name || user.name,
+        email: propUser.email || user.email,
+        avatar: propUser.avatar || user.avatar,
+        points: propUser.points || user.points,
+        rank: propUser.rank || user.rank,
+        joined: propUser.joined || user.joined
       });
-    };
-    
-    fetchUserData();
+      setAvatarUrl(propUser.avatar || user.avatar);
+    }
   }, [propUser]);
   
-  return (
-    <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
-      <div className="relative">
-        <Avatar className="w-24 h-24 border-2 border-electric">
-          <AvatarImage src={user.avatar} />
-          <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('') || 'U'}</AvatarFallback>
-        </Avatar>
-        <Button 
-          size="icon" 
-          className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-electric text-black"
-        >
-          <Pencil className="h-4 w-4" />
-        </Button>
-      </div>
+  const handleAvatarChange = async () => {
+    if (!avatarUrl.trim() || avatarUrl === user.avatar) {
+      setIsAvatarDialogOpen(false);
+      return;
+    }
+    
+    try {
+      setIsLoading(true);
       
-      <div className="flex-1">
-        <h1 className="text-2xl font-bold">{user.name}</h1>
-        <p className="text-gray-400">{user.email}</p>
-        <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-3">
-          <div className="bg-black px-3 py-1 rounded-full text-sm">
-            <Trophy className="inline-block w-4 h-4 mr-1 text-electric" />
-            Rank #{user.rank}
-          </div>
-          <div className="bg-black px-3 py-1 rounded-full text-sm">
-            <Award className="inline-block w-4 h-4 mr-1 text-electric" />
-            {user.points} Points
-          </div>
-          <div className="bg-black px-3 py-1 rounded-full text-sm">
-            <LogIn className="inline-block w-4 h-4 mr-1" />
-            Joined {user.joined}
+      // Get current user
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to update your avatar.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Update the profile avatar_url
+      const { error } = await supabase
+        .from('profiles')
+        .update({ avatar_url: avatarUrl.trim() })
+        .eq('id', authUser.id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Update local state
+      setUser(prev => ({ ...prev, avatar: avatarUrl.trim() }));
+      
+      toast({
+        title: "Success",
+        description: "Your avatar has been updated.",
+      });
+      
+      setIsAvatarDialogOpen(false);
+    } catch (error: any) {
+      console.error('Error updating avatar:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update avatar. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  return (
+    <>
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+        <div className="relative">
+          <Avatar className="w-24 h-24 border-2 border-electric">
+            <AvatarImage src={user.avatar} />
+            <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('') || 'U'}</AvatarFallback>
+          </Avatar>
+          <Button 
+            size="icon" 
+            className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-electric text-black"
+            onClick={() => setIsAvatarDialogOpen(true)}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+        </div>
+        
+        <div className="flex-1">
+          <h1 className="text-2xl font-bold">{user.name}</h1>
+          <p className="text-gray-400">{user.email}</p>
+          <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-3">
+            <div className="bg-black px-3 py-1 rounded-full text-sm">
+              <Trophy className="inline-block w-4 h-4 mr-1 text-electric" />
+              Rank #{user.rank || '—'}
+            </div>
+            <div className="bg-black px-3 py-1 rounded-full text-sm">
+              <Award className="inline-block w-4 h-4 mr-1 text-electric" />
+              {user.points} Points
+            </div>
+            <div className="bg-black px-3 py-1 rounded-full text-sm">
+              <LogIn className="inline-block w-4 h-4 mr-1" />
+              Joined {user.joined}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+      
+      {/* Avatar Dialog */}
+      <Dialog open={isAvatarDialogOpen} onOpenChange={setIsAvatarDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Change Avatar</DialogTitle>
+            <DialogDescription>
+              Enter a URL for your new avatar image.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="avatar-url" className="text-right">
+                Avatar URL
+              </Label>
+              <Input
+                id="avatar-url"
+                value={avatarUrl}
+                onChange={(e) => setAvatarUrl(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAvatarDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAvatarChange} disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Changes"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 
