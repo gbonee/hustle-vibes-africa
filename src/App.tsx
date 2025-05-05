@@ -33,22 +33,24 @@ const App = () => {
   const [loading, setLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState(false);
 
+  // Check if we're in preview mode from URL
+  const forcePreview = new URLSearchParams(window.location.search).get('forcePreview') === 'true';
+
   useEffect(() => {
-    // Set up auth state listener first
+    // Skip auth checks if in preview mode
+    if (forcePreview) {
+      setLoading(false);
+      return;
+    }
+
+    // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
+      (event, currentSession) => {
         console.log('Auth state changed:', event);
         setSession(currentSession);
         
         if (event === 'SIGNED_IN' && currentSession) {
           // Check if this is the user's first time logging in
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', currentSession.user.id)
-            .maybeSingle();
-          
-          // If we don't have user preferences stored, consider them a new user
           const hasCompletedOnboarding = localStorage.getItem(`onboarding_completed_${currentSession.user.id}`);
           setIsNewUser(!hasCompletedOnboarding);
         }
@@ -58,7 +60,7 @@ const App = () => {
     );
 
     // Then check for existing session
-    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
       console.log('Current session:', currentSession ? 'exists' : 'none');
       setSession(currentSession);
       
@@ -72,11 +74,7 @@ const App = () => {
     });
 
     return () => subscription.unsubscribe();
-  }, []);
-
-  // Special case for direct access to preview pages with forcePreview param
-  const urlParams = new URLSearchParams(window.location.search);
-  const forcePreview = urlParams.get('forcePreview') === 'true';
+  }, [forcePreview]);
   
   if (loading) {
     return (
@@ -99,6 +97,8 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/manifesto" element={<Manifesto />} />
             <Route path="/enterprise" element={<Enterprise />} />
+            
+            {/* Auth routes */}
             <Route 
               path="/auth" 
               element={
@@ -109,13 +109,14 @@ const App = () => {
                 )
               } 
             />
+            
+            {/* Onboarding route */}
             <Route 
               path="/onboarding" 
               element={
                 forcePreview ? <Onboarding /> : (
                   session ? (
                     <Onboarding onComplete={() => {
-                      // Mark onboarding as completed for this user
                       if (session) {
                         localStorage.setItem(`onboarding_completed_${session.user.id}`, 'true');
                         setIsNewUser(false);
@@ -125,31 +126,40 @@ const App = () => {
                 )
               }
             />
+            
+            {/* Protected routes */}
             <Route 
               path="/dashboard" 
               element={
-                session ? (
-                  isNewUser ? <Navigate to="/onboarding" /> : <Dashboard />
-                ) : <Navigate to="/auth" />
+                forcePreview ? <Dashboard /> : (
+                  session ? (
+                    isNewUser ? <Navigate to="/onboarding" /> : <Dashboard />
+                  ) : <Navigate to="/auth" />
+                )
               }
             />
             <Route 
               path="/leaderboard" 
               element={
-                session ? (
-                  isNewUser ? <Navigate to="/onboarding" /> : <Leaderboard />
-                ) : <Navigate to="/auth" />
+                forcePreview ? <Leaderboard /> : (
+                  session ? (
+                    isNewUser ? <Navigate to="/onboarding" /> : <Leaderboard />
+                  ) : <Navigate to="/auth" />
+                )
               }
             />
             <Route 
               path="/profile" 
               element={
-                session ? (
-                  isNewUser ? <Navigate to="/onboarding" /> : <Profile />
-                ) : <Navigate to="/auth" />
+                forcePreview ? <Profile /> : (
+                  session ? (
+                    isNewUser ? <Navigate to="/onboarding" /> : <Profile />
+                  ) : <Navigate to="/auth" />
+                )
               }
             />
-            {/* Admin route no longer requires authentication */}
+            
+            {/* Admin route */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

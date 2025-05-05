@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import PreviewMode from '@/components/common/PreviewMode';
 
-// Import our new components
+// Import our components
 import OnboardingHeader from '@/components/onboarding/OnboardingHeader';
 import LanguageSelector from '@/components/onboarding/LanguageSelector';
 import AvatarSelector from '@/components/onboarding/AvatarSelector';
@@ -30,8 +30,14 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
   // Check if we're in preview mode
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    setIsPreviewMode(urlParams.get('forcePreview') === 'true');
-  }, []);
+    const preview = urlParams.get('forcePreview') === 'true';
+    setIsPreviewMode(preview);
+    
+    // Set default language in preview mode for testing
+    if (preview && !language) {
+      setLanguage('pidgin');
+    }
+  }, [language]);
 
   const handleLanguageSelect = (selectedLanguage: Language) => {
     setLanguage(selectedLanguage);
@@ -46,7 +52,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
     if (isPreviewMode) {
       setTimeout(() => {
         navigate('/dashboard');
-      }, 5000);
+      }, 3000);
       return;
     }
     
@@ -75,7 +81,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             onComplete();
           }
           navigate('/dashboard');
-        }, 5000);
+        }, 3000);
       } catch (error) {
         console.error("Error saving user preferences:", error);
         // Still navigate to dashboard even if error occurs
@@ -84,7 +90,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
             onComplete();
           }
           navigate('/dashboard');
-        }, 5000);
+        }, 3000);
       }
     }
   };

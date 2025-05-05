@@ -29,18 +29,19 @@ const avatarNames = {
 
 const Profile = () => {
   const { userPrefs } = useUserPreferences();
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [user, setUser] = useState({
-    id: '', // Adding the missing id property with default empty string
-    name: '',
-    email: '',
-    avatar: '',
+    id: 'preview-user-id',
+    name: 'Preview User',
+    email: 'preview@example.com',
+    avatar: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1',
     progress: {
-      completed: 0,
+      completed: 7,
       total: 15
     },
-    points: 0,
-    rank: 0,
-    joined: ''
+    points: 845,
+    rank: 2,
+    joined: 'May 2025'
   });
   
   const [certificates, setCertificates] = useState([
@@ -53,35 +54,41 @@ const Profile = () => {
   ]);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      // Get the current authenticated user
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
-      if (!authUser) return;
-      
-      // In a real app, we would fetch user's certificates, points, rank, etc.
-      // For now, we'll just use some mock data but with the real user's info
-      
-      setUser({
-        id: authUser.id, // Make sure to set the id from the auth user
-        name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
-        email: authUser.email || '',
-        avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1", // For now, keep a default avatar
-        progress: {
-          completed: 7,
-          total: 15
-        },
-        points: 845,
-        rank: 2,
-        joined: new Date(authUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-      });
-    };
+    const urlParams = new URLSearchParams(window.location.search);
+    const preview = urlParams.get('forcePreview') === 'true';
+    setIsPreviewMode(preview);
     
-    fetchUserData();
+    // Only fetch real user data if not in preview mode
+    if (!preview) {
+      const fetchUserData = async () => {
+        // Get the current authenticated user
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        
+        if (!authUser) return;
+        
+        setUser({
+          id: authUser.id,
+          name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
+          email: authUser.email || '',
+          avatar: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+          progress: {
+            completed: 7,
+            total: 15
+          },
+          points: 845,
+          rank: 2,
+          joined: new Date(authUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+        });
+      };
+      
+      fetchUserData();
+    }
   }, []);
 
   return (
     <DashboardLayout currentPath="/profile" user={user}>
+      {isPreviewMode && <PreviewMode />}
+      
       {/* Profile Header */}
       <Card className="border-electric bg-muted mb-6">
         <CardContent className="p-6">

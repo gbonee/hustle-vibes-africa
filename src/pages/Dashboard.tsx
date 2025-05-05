@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { Video, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -11,6 +10,7 @@ import ModuleDetail from '@/components/dashboard/ModuleDetail';
 import AIChat from '@/components/dashboard/AIChat';
 import { Quiz } from '@/types/quiz';
 import { Skeleton } from '@/components/ui/skeleton';
+import PreviewMode from '@/components/common/PreviewMode';
 
 // Define types
 interface Course {
@@ -31,15 +31,27 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("lessons");
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [user, setUser] = useState({
-    id: '',
-    name: '',
-    email: '',
-    avatar: ''
+    id: 'preview-user-id',
+    name: 'Preview User',
+    email: 'preview@example.com',
+    avatar: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1'
   });
   
-  // Fetch user data
+  // Check for preview mode
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const preview = urlParams.get('forcePreview') === 'true';
+    setIsPreviewMode(preview);
+    
+    // In preview mode, set loading to false immediately
+    if (preview) {
+      setIsLoading(false);
+      return;
+    }
+    
+    // Fetch user data
     const fetchUserData = async () => {
       try {
         const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -60,7 +72,7 @@ const Dashboard = () => {
           id: authUser.id,
           name: profile?.display_name || authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'User',
           email: authUser.email || '',
-          avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1" // Default avatar
+          avatar: profile?.avatar_url || "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1"
         });
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -242,6 +254,7 @@ const Dashboard = () => {
     setSelectedModule(null);
   };
 
+  // Use digital marketing as default course if no preference is set
   const userCourse = userPrefs?.course ? courses[userPrefs.course] : courses['digital-marketing'];
 
   if (isLoading) {
@@ -262,6 +275,8 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout currentPath="/dashboard" user={user}>
+      {isPreviewMode && <PreviewMode />}
+      
       {/* Course Info Card */}
       <CourseHeader 
         title={userCourse.title} 
