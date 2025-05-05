@@ -15,6 +15,17 @@ interface ChallengeStatus {
   submissionType?: string;
 }
 
+// Define a type for the challenge submission to avoid type errors
+interface ChallengeSubmission {
+  id: string;
+  user_id: string;
+  challenge_id: string;
+  submission_url: string;
+  submission_type: string;
+  submitted_at: string | null;
+  is_approved: boolean | null;
+}
+
 export const useUserPreferences = () => {
   const [userPrefs, setUserPrefs] = useState<UserPreferences | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -99,8 +110,9 @@ export const useUserPreferences = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return { hasSubmitted: false, isApproved: false };
       
+      // Use any type to bypass TypeScript errors until the database types are updated
       const { data: submission } = await supabase
-        .from('challenge_submissions')
+        .from('challenge_submissions' as any)
         .select('*')
         .eq('user_id', user.id)
         .eq('challenge_id', challengeId)
@@ -150,7 +162,7 @@ export const useUserPreferences = () => {
       
       // Check if a submission already exists
       const { data: existingSubmission } = await supabase
-        .from('challenge_submissions')
+        .from('challenge_submissions' as any)
         .select('*')
         .eq('user_id', user.id)
         .eq('challenge_id', challengeId)
@@ -159,7 +171,7 @@ export const useUserPreferences = () => {
       if (existingSubmission) {
         // Update existing submission
         const { error: updateError } = await supabase
-          .from('challenge_submissions')
+          .from('challenge_submissions' as any)
           .update({
             submission_url: publicURL.publicUrl,
             submission_type: file.type,
@@ -175,7 +187,7 @@ export const useUserPreferences = () => {
       } else {
         // Create new submission
         const { error: insertError } = await supabase
-          .from('challenge_submissions')
+          .from('challenge_submissions' as any)
           .insert({
             user_id: user.id,
             challenge_id: challengeId,

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -249,7 +248,7 @@ const Leaderboard = () => {
   const fetchSubmissions = async () => {
     try {
       const { data, error } = await supabase
-        .from('challenge_submissions')
+        .from('challenge_submissions' as any)
         .select(`
           id,
           user_id,
@@ -295,7 +294,7 @@ const Leaderboard = () => {
     try {
       // First update the submission to approved
       const { error: updateError } = await supabase
-        .from('challenge_submissions')
+        .from('challenge_submissions' as any)
         .update({ is_approved: true })
         .eq('id', submissionId);
       
