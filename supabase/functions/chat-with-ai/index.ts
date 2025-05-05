@@ -45,21 +45,24 @@ serve(async (req) => {
       searchTerm = "naija business";
     }
     
+    // Use pidgin as default if no language is specified
+    const userLanguage = language || 'pidgin';
+    
     // Add language style guidance based on selected language
-    if (language === 'pidgin') {
-      systemPrompt += ` You speak Nigerian Pidgin English fluently and use it in all your responses. Use phrases like "How you dey?", "Abeg", "Na so", "Wetin dey", etc.`;
-    } else if (language === 'yoruba') {
+    if (userLanguage === 'pidgin') {
+      systemPrompt += ` You MUST speak Nigerian Pidgin English fluently and use it in EVERY response. Use phrases like "How you dey?", "Abeg", "Na so", "Wetin dey", "My people!", "Oya now!", "Chai!", "Wahala!", "E be tins!", etc. Make your messages sound authentically Nigerian with plenty Naija street slang.`;
+    } else if (userLanguage === 'yoruba') {
       systemPrompt += ` You mix Yoruba expressions into your English. Use phrases like "Ẹ ṣeun", "Mo dupe", "Jọ̀wọ́", "Bawo ni", etc.`;
-    } else if (language === 'hausa') {
+    } else if (userLanguage === 'hausa') {
       systemPrompt += ` You mix Hausa expressions into your English. Use phrases like "Sannu", "Na gode", "Yaya dai", etc.`;
-    } else if (language === 'igbo') {
+    } else if (userLanguage === 'igbo') {
       systemPrompt += ` You mix Igbo expressions into your English. Use phrases like "Kedu", "Daalu", "Biko", etc.`;
     }
     
     // Add personality guidance
-    systemPrompt += ` Be funny, engaging, roastful, and full of Naija flavor. Use emojis and make jokes. Structure your messages with proper spacing and formatting.
+    systemPrompt += ` Be extremely funny, engaging, roastful, and full of Naija flavor. Use plenty emojis and make jokes. Structure your messages with proper spacing and formatting.
     If the user has made progress or passed quizzes, acknowledge that. If they ask for help, provide it with enthusiasm.
-    Remember past conversations and refer to them when relevant.`;
+    Remember past conversations and refer to them when relevant. Always be animated and theatrical in your responses!`;
 
     // Add context about the user's progress if available
     if (progress) {
@@ -91,7 +94,10 @@ serve(async (req) => {
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: messages,
-        temperature: 0.8,
+        temperature: 0.9, // Increased for more creativity
+        max_tokens: 1000, // Increased for longer responses
+        presence_penalty: 0.7, // Added to encourage uniqueness
+        frequency_penalty: 0.7, // Added to discourage repetition
       }),
     });
 
@@ -104,15 +110,15 @@ serve(async (req) => {
     
     const generatedResponse = data.choices[0].message.content;
 
-    // Get a related GIF from Giphy API
+    // Always get a related GIF from Giphy API for more engagement
     let gifUrl = null;
     try {
-      const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=5&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
+      const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
       const giphyData = await giphyResponse.json();
       
       if (giphyData.data && giphyData.data.length > 0) {
-        // Get a random GIF from the top 5 results
-        const randomIndex = Math.floor(Math.random() * Math.min(5, giphyData.data.length));
+        // Get a random GIF from the top 10 results for more variety
+        const randomIndex = Math.floor(Math.random() * Math.min(10, giphyData.data.length));
         gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
       }
     } catch (giphyError) {

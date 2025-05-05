@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -33,6 +34,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const { userPrefs } = useUserPreferences();
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Initialize user ID
   useEffect(() => {
@@ -51,19 +53,14 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           );
           if (recentMessages.length > 0) {
             setChatMessages(recentMessages);
+            setIsInitialLoad(false);
             return; // Don't add welcome message if we have recent messages
           }
         }
       }
 
-      // Add welcome message if no recent chat history
-      setChatMessages([
-        { 
-          isUser: false, 
-          text: `Hey ${userName}! I'm your AI coach. How can I help you with your ${userPrefs?.course || 'course'} journey today?`,
-          timestamp: Date.now()
-        }
-      ]);
+      // We'll generate a proper welcome message via the AI instead of using a static one
+      sendWelcomeMessage(userName, userPrefs?.course || 'digital-marketing');
     };
 
     getUserId();
@@ -82,6 +79,49 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
   }, [chatMessages]);
+
+  // Generate a welcome message using the AI
+  const sendWelcomeMessage = async (name: string, course: string) => {
+    setIsLoading(true);
+    
+    try {
+      const progress = getUserProgress();
+      
+      // Call the edge function for AI welcome message
+      const { data, error } = await supabase.functions.invoke('chat-with-ai', {
+        body: { 
+          message: `Say hello to ${name} and introduce yourself as their AI coach for the ${course} course. Be very welcoming and cheerful. Speak in Pidgin English with lots of Nigerian flavor.`,
+          course: course || 'digital-marketing',
+          language: userPrefs?.language || 'pidgin', // Default to pidgin
+          userName: name,
+          progress,
+          previousMessages: []
+        }
+      });
+
+      if (error) throw error;
+
+      // Add AI welcome response to chat
+      setChatMessages([{ 
+        isUser: false, 
+        text: data.response,
+        gif: data.gif,
+        timestamp: Date.now()
+      }]);
+      
+    } catch (error) {
+      console.error('Error calling AI function for welcome message:', error);
+      // Add fallback welcome message
+      setChatMessages([{ 
+        isUser: false, 
+        text: `Wetin dey happen, ${name}! How you dey? I be your AI coach for this ${course} journey. Make we hammer together! Ask me anything, I go show you the way!`,
+        timestamp: Date.now()
+      }]);
+    } finally {
+      setIsLoading(false);
+      setIsInitialLoad(false);
+    }
+  };
 
   // Mock progress data - in a real app, this would come from the database
   const getUserProgress = (): Progress => {
@@ -129,7 +169,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         body: { 
           message: sentMessage, 
           course: userPrefs?.course || 'digital-marketing',
-          language: userPrefs?.language || 'english',
+          language: userPrefs?.language || 'pidgin', // Default to pidgin
           userName,
           progress,
           previousMessages
@@ -150,10 +190,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Add fallback response
       setChatMessages(prev => [...prev, { 
         isUser: false, 
-        text: "Sorry, I'm having trouble connecting right now. Please try again later.",
+        text: "Chai! System don hang o! Try again later, my people!",
         timestamp: Date.now()
       }]);
-      toast.error("Failed to connect to AI coach. Please try again.");
+      toast.error("AI coach no connect. Make you try again!");
     } finally {
       setIsLoading(false);
     }
@@ -164,16 +204,16 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     
     switch(action) {
       case 'next-lesson':
-        actionMessage = "Can you tell me about the next lesson I should take?";
+        actionMessage = "Abeg show me the next lesson wey I need to take.";
         break;
       case 'take-quiz':
-        actionMessage = "I want to take a quiz to test my knowledge.";
+        actionMessage = "I wan take quiz to test my knowledge now-now.";
         break;
       case 'help':
-        actionMessage = "I need help with this course.";
+        actionMessage = "I need help with this course o! Things no too clear.";
         break;
       case 'challenge':
-        actionMessage = "Do you have any challenges for me to practice what I've learned?";
+        actionMessage = "Give me challenge make I practice wetin I don learn.";
         break;
     }
     
