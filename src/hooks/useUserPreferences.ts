@@ -43,7 +43,7 @@ export const useUserPreferences = () => {
             const dbPrefs = {
               language: userMetadata.language_preference || userPrefs?.language || 'pidgin',
               avatar: userMetadata.avatar_preference || userPrefs?.avatar || null,
-              course: userPrefs?.course || 'digital-marketing'
+              course: userMetadata.course_preference || userPrefs?.course || 'digital-marketing'
             };
             
             setUserPrefs(dbPrefs);
@@ -74,7 +74,8 @@ export const useUserPreferences = () => {
         await supabase.auth.updateUser({
           data: {
             language_preference: newPrefs.language !== undefined ? newPrefs.language : userPrefs?.language,
-            avatar_preference: newPrefs.avatar !== undefined ? newPrefs.avatar : userPrefs?.avatar
+            avatar_preference: newPrefs.avatar !== undefined ? newPrefs.avatar : userPrefs?.avatar,
+            course_preference: newPrefs.course !== undefined ? newPrefs.course : userPrefs?.course
           }
         });
       }
