@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProfileHeaderProps {
   user?: {
@@ -37,6 +38,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user: propUser }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("upload");
+  const [isAvatarLoading, setIsAvatarLoading] = useState(true);
 
   useEffect(() => {
     if (propUser) {
@@ -216,10 +218,20 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({ user: propUser }) => {
     <>
       <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
         <div className="relative">
-          <Avatar className="w-24 h-24 border-2 border-electric">
-            <AvatarImage src={user.avatar} />
-            <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('') || 'U'}</AvatarFallback>
-          </Avatar>
+          {isAvatarLoading && !user.avatar ? (
+            <Skeleton className="w-24 h-24 rounded-full" />
+          ) : (
+            <Avatar className="w-24 h-24 border-2 border-electric">
+              {user.avatar ? (
+                <AvatarImage 
+                  src={user.avatar}
+                  onLoad={() => setIsAvatarLoading(false)}
+                  onError={() => setIsAvatarLoading(false)}
+                />
+              ) : null}
+              <AvatarFallback>{user.name?.split(' ').map(n => n[0]).join('') || 'US'}</AvatarFallback>
+            </Avatar>
+          )}
           <Button 
             size="icon" 
             className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-electric text-black"

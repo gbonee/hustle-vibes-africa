@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface HeaderProps {
   onSettingsClick?: () => void;
@@ -12,14 +13,16 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ 
   onSettingsClick = () => {},
-  userAvatar = "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1"
+  userAvatar
 }) => {
   const navigate = useNavigate();
-  const [avatar, setAvatar] = useState(userAvatar);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
     const fetchUserAvatar = async () => {
       try {
+        setIsLoading(true);
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
@@ -31,10 +34,16 @@ const Header: React.FC<HeaderProps> = ({
             
           if (profile?.avatar_url) {
             setAvatar(profile.avatar_url);
+          } else if (userAvatar) {
+            setAvatar(userAvatar);
           }
+        } else if (userAvatar) {
+          setAvatar(userAvatar);
         }
       } catch (error) {
         console.error('Error fetching user avatar:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
     
@@ -50,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [userAvatar]);
   
   return (
     <header className="bg-black/90 backdrop-blur-sm border-b border-electric/30 sticky top-0 z-10">
@@ -70,10 +79,16 @@ const Header: React.FC<HeaderProps> = ({
           variant="ghost" 
           className="rounded-full w-10 h-10 p-0"
         >
-          <Avatar>
-            <AvatarImage src={avatar} />
-            <AvatarFallback>US</AvatarFallback>
-          </Avatar>
+          {isLoading ? (
+            <Skeleton className="h-10 w-10 rounded-full" />
+          ) : (
+            <Avatar>
+              {avatar ? (
+                <AvatarImage src={avatar} />
+              ) : null}
+              <AvatarFallback>US</AvatarFallback>
+            </Avatar>
+          )}
         </Button>
       </div>
     </header>
