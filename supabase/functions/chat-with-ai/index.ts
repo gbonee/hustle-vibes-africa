@@ -21,7 +21,8 @@ serve(async (req) => {
 
     // Define system prompt based on course and language
     let systemPrompt = "";
-    let searchTerm = "aki and pawpaw nigerian comedy";
+    // Always using Aki and Pawpaw for GIFs
+    const searchTerm = "aki and pawpaw nigerian comedy";
     
     // Log the course being used to help with debugging
     console.log(`Processing request for course: ${course}, language: ${language}`);

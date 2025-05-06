@@ -101,7 +101,6 @@ const getFixedWelcomeMessage = (course: string, language: string): string => {
 const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const chatBoxRef = useRef<HTMLDivElement>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { userPrefs } = useUserPreferences();
   const [isLoading, setIsLoading] = useState(false);
@@ -125,50 +124,24 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   useEffect(() => {
     const getUserId = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      let courseKey = '';
       
       if (user) {
         setUserId(user.id);
         // Create a unique key for this user+course combination
-        courseKey = `${user.id}_${currentCourse}`;
+        const courseKey = `${user.id}_${currentCourse}`;
+        setCurrentCourseKey(courseKey);
         console.log("Setting course key for logged in user:", courseKey);
+        
+        // Load previous messages from localStorage for the SPECIFIC AVATAR/COURSE
+        loadChatHistory(courseKey);
       } else {
         // Handle preview mode or user not logged in
-        courseKey = `preview_${currentCourse}`;
+        const courseKey = `preview_${currentCourse}`;
+        setCurrentCourseKey(courseKey);
         console.log("Setting course key for preview mode:", courseKey);
-      }
-      
-      setCurrentCourseKey(courseKey);
-      
-      // Load previous messages from localStorage for the SPECIFIC AVATAR/COURSE
-      const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
-      
-      if (savedMessages) {
-        try {
-          const parsedMessages = JSON.parse(savedMessages);
-          // Only load messages from the last 7 days
-          const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-          const recentMessages = parsedMessages.filter(
-            (msg: ChatMessage) => msg.timestamp > sevenDaysAgo
-          );
-          
-          if (recentMessages.length > 0) {
-            console.log(`Loading ${recentMessages.length} saved messages for ${courseKey}`);
-            setChatMessages(recentMessages);
-            setIsInitialLoad(false);
-          } else {
-            // If we have no recent messages, send a welcome message
-            console.log(`No recent messages for ${courseKey}, sending welcome message`);
-            sendWelcomeMessage(userName, currentCourse, currentLanguage);
-          }
-        } catch (error) {
-          console.error("Error parsing saved messages:", error);
-          sendWelcomeMessage(userName, currentCourse, currentLanguage);
-        }
-      } else {
-        // If we have no saved messages at all, send a welcome message
-        console.log(`No saved messages for ${courseKey}, sending welcome message`);
-        sendWelcomeMessage(userName, currentCourse, currentLanguage);
+        
+        // Load previous messages for preview mode
+        loadChatHistory(courseKey);
       }
     };
 
@@ -178,7 +151,40 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setIsPreviewMode(preview);
 
     getUserId();
-  }, [userName, currentCourse, currentLanguage]); // Dependencies to re-trigger when they change
+  }, [currentCourse]); // Make sure this re-runs when currentCourse changes
+
+  // Function to load chat history
+  const loadChatHistory = (courseKey: string) => {
+    const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
+    
+    if (savedMessages) {
+      try {
+        const parsedMessages = JSON.parse(savedMessages);
+        // Only load messages from the last 7 days
+        const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+        const recentMessages = parsedMessages.filter(
+          (msg: ChatMessage) => msg.timestamp > sevenDaysAgo
+        );
+        
+        if (recentMessages.length > 0) {
+          console.log(`Loading ${recentMessages.length} saved messages for ${courseKey}`);
+          setChatMessages(recentMessages);
+          setIsInitialLoad(false);
+        } else {
+          // If we have no recent messages, send a welcome message
+          console.log(`No recent messages for ${courseKey}, sending welcome message`);
+          sendWelcomeMessage(userName, currentCourse, currentLanguage);
+        }
+      } catch (error) {
+        console.error("Error parsing saved messages:", error);
+        sendWelcomeMessage(userName, currentCourse, currentLanguage);
+      }
+    } else {
+      // If we have no saved messages at all, send a welcome message
+      console.log(`No saved messages for ${courseKey}, sending welcome message`);
+      sendWelcomeMessage(userName, currentCourse, currentLanguage);
+    }
+  };
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
@@ -195,7 +201,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   }, [chatMessages]);
 
-  // Generate a welcome message using the AI - updated to request avatar-specific messages
+  // Generate a welcome message using the AI
   const sendWelcomeMessage = async (name: string, course: string, language: string) => {
     setIsLoading(true);
     
@@ -203,30 +209,38 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       const progress = getUserProgress();
       console.log("Generating welcome message for course:", course);
       
-      // Call the edge function for AI welcome message - requesting avatar-specific intro
-      const { data, error } = await supabase.functions.invoke('chat-with-ai', {
-        body: { 
-          message: `Say hello to ${name} and introduce yourself as ${getCoachName(course)} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${language} language with lots of Nigerian flavor.`,
-          course: course, // Make sure to pass the correct course for avatar-specific prompt
-          language: language,
-          userName: name,
-          progress,
-          previousMessages: []
+      // Instead of calling the API, use the fixed welcome message for the specific course and language
+      const welcomeMessage = getFixedWelcomeMessage(course, language);
+      
+      // Try to get a GIF for the welcome message
+      let gifUrl = null;
+      try {
+        const giphyApiKey = "pLURtkhVrUXr4TN8PseRqbVN4n9Re7ky"; // Using a fixed GIPHY API key
+        const searchTerm = "aki and pawpaw nigerian comedy"; // Always use Aki and Pawpaw
+        
+        const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
+        const giphyData = await giphyResponse.json();
+        
+        if (giphyData.data && giphyData.data.length > 0) {
+          // Get a random GIF from the top 10 results for more variety
+          const randomIndex = Math.floor(Math.random() * Math.min(10, giphyData.data.length));
+          gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
         }
-      });
-
-      if (error) throw error;
-
-      // Add AI welcome response to chat
+      } catch (giphyError) {
+        console.error('Giphy API error:', giphyError);
+        // Continue without a GIF if there's an error
+      }
+      
+      // Add welcome message to chat with the GIF
       setChatMessages([{ 
         isUser: false, 
-        text: data.response,
-        gif: data.gif,
+        text: welcomeMessage,
+        gif: gifUrl,
         timestamp: Date.now()
       }]);
       
     } catch (error) {
-      console.error('Error calling AI function for welcome message:', error);
+      console.error('Error generating welcome message:', error);
       // Add fallback welcome message - avatar-specific
       setChatMessages([{ 
         isUser: false, 
