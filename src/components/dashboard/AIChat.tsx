@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -57,6 +58,46 @@ const getCourseSpecificGreeting = (course: string): string => {
   }
 };
 
+// Fixed welcome messages for each avatar and language
+const getFixedWelcomeMessage = (course: string, language: string): string => {
+  if (language === 'pidgin') {
+    if (course === 'digital-marketing') {
+      return "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!";
+    } else if (course === 'pastry-biz') {
+      return "My darling! Baker Amara don show! Ready to bake money into your life!";
+    } else if (course === 'importation') {
+      return "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!";
+    }
+  } else if (language === 'yoruba') {
+    if (course === 'digital-marketing') {
+      return "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!";
+    } else if (course === 'pastry-biz') {
+      return "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!";
+    } else if (course === 'importation') {
+      return "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!";
+    }
+  } else if (language === 'hausa') {
+    if (course === 'digital-marketing') {
+      return "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!";
+    } else if (course === 'pastry-biz') {
+      return "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!";
+    } else if (course === 'importation') {
+      return "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!";
+    }
+  } else if (language === 'igbo') {
+    if (course === 'digital-marketing') {
+      return "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!";
+    } else if (course === 'pastry-biz') {
+      return "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!";
+    } else if (course === 'importation') {
+      return "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!";
+    }
+  }
+  
+  // Default fallback based on course
+  return `Welcome! I am ${getCoachName(course)}. Let's talk about ${getCourseSpecificGreeting(course)}!`;
+};
+
 const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -101,10 +142,11 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       
       // Load previous messages from localStorage for the SPECIFIC AVATAR/COURSE
       const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
+      
       if (savedMessages) {
         try {
           const parsedMessages = JSON.parse(savedMessages);
-          // Only load messages from the last 7 days (was 24 hours - now extended)
+          // Only load messages from the last 7 days
           const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
           const recentMessages = parsedMessages.filter(
             (msg: ChatMessage) => msg.timestamp > sevenDaysAgo
@@ -114,17 +156,20 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             console.log(`Loading ${recentMessages.length} saved messages for ${courseKey}`);
             setChatMessages(recentMessages);
             setIsInitialLoad(false);
-            return; // Don't add welcome message if we have recent messages
+          } else {
+            // If we have no recent messages, send a welcome message
+            console.log(`No recent messages for ${courseKey}, sending welcome message`);
+            sendWelcomeMessage(userName, currentCourse, currentLanguage);
           }
         } catch (error) {
           console.error("Error parsing saved messages:", error);
+          sendWelcomeMessage(userName, currentCourse, currentLanguage);
         }
+      } else {
+        // If we have no saved messages at all, send a welcome message
+        console.log(`No saved messages for ${courseKey}, sending welcome message`);
+        sendWelcomeMessage(userName, currentCourse, currentLanguage);
       }
-
-      // If we reached here, we need to send a welcome message
-      console.log(`No saved messages for ${courseKey}, sending welcome message`);
-      setChatMessages([]); // Reset messages when changing avatar/course
-      sendWelcomeMessage(userName, currentCourse);
     };
 
     // Check if we're in preview mode
@@ -133,7 +178,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setIsPreviewMode(preview);
 
     getUserId();
-  }, [userName, currentCourse, currentLanguage]); // Added currentLanguage as dependency
+  }, [userName, currentCourse, currentLanguage]); // Dependencies to re-trigger when they change
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
@@ -151,7 +196,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   }, [chatMessages]);
 
   // Generate a welcome message using the AI - updated to request avatar-specific messages
-  const sendWelcomeMessage = async (name: string, course: string) => {
+  const sendWelcomeMessage = async (name: string, course: string, language: string) => {
     setIsLoading(true);
     
     try {
@@ -161,9 +206,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Call the edge function for AI welcome message - requesting avatar-specific intro
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
-          message: `Say hello to ${name} and introduce yourself as ${getCoachName(course)} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${currentLanguage} language with lots of Nigerian flavor.`,
+          message: `Say hello to ${name} and introduce yourself as ${getCoachName(course)} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${language} language with lots of Nigerian flavor.`,
           course: course, // Make sure to pass the correct course for avatar-specific prompt
-          language: currentLanguage,
+          language: language,
           userName: name,
           progress,
           previousMessages: []
@@ -185,53 +230,13 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Add fallback welcome message - avatar-specific
       setChatMessages([{ 
         isUser: false, 
-        text: getFixedWelcomeMessage(course, currentLanguage),
+        text: getFixedWelcomeMessage(course, language),
         timestamp: Date.now()
       }]);
     } finally {
       setIsLoading(false);
       setIsInitialLoad(false);
     }
-  };
-
-  // Fixed welcome messages for each avatar and language
-  const getFixedWelcomeMessage = (course: string, language: string): string => {
-    if (language === 'pidgin') {
-      if (course === 'digital-marketing') {
-        return "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!";
-      } else if (course === 'pastry-biz') {
-        return "My darling! Baker Amara don show! Ready to bake money into your life!";
-      } else if (course === 'importation') {
-        return "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!";
-      }
-    } else if (language === 'yoruba') {
-      if (course === 'digital-marketing') {
-        return "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!";
-      } else if (course === 'pastry-biz') {
-        return "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!";
-      } else if (course === 'importation') {
-        return "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!";
-      }
-    } else if (language === 'hausa') {
-      if (course === 'digital-marketing') {
-        return "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!";
-      } else if (course === 'pastry-biz') {
-        return "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!";
-      } else if (course === 'importation') {
-        return "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!";
-      }
-    } else if (language === 'igbo') {
-      if (course === 'digital-marketing') {
-        return "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!";
-      } else if (course === 'pastry-biz') {
-        return "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!";
-      } else if (course === 'importation') {
-        return "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!";
-      }
-    }
-    
-    // Default fallback based on course
-    return `Welcome! I am ${getCoachName(course)}. Let's talk about ${getCourseSpecificGreeting(course)}!`;
   };
 
   // Mock progress data - in a real app, this would come from the database
