@@ -130,6 +130,20 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
     
     return (texts as any)[language] || texts.pidgin;
   };
+  
+  // Get button text for back button
+  const getBackButtonText = () => {
+    if (texts.back) return texts.back;
+    
+    const backTexts = {
+      'pidgin': 'Back to All Modules',
+      'yoruba': 'Pada si Gbogbo Modulu',
+      'hausa': 'Koma Zuwa Duk Modules',
+      'igbo': 'Laghachi na Modules Nile',
+    };
+    
+    return (backTexts as any)[language] || backTexts.pidgin;
+  };
 
   return (
     <Card className="bg-muted border-electric">
@@ -177,7 +191,7 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
           variant="ghost"
           className="w-full"
         >
-          {texts.back || 'Back to All Modules'}
+          {getBackButtonText()}
         </Button>
       </CardContent>
     </Card>

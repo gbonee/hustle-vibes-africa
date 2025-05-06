@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -42,6 +41,38 @@ const getCoachName = (course: string): string => {
     default:
       return 'Digital Mama';
   }
+};
+
+// Get translated coach names based on language
+const getTranslatedCoachName = (course: string, language: string): string => {
+  const baseCoachName = getCoachName(course);
+  
+  // Return the base name if no translation needed
+  if (language === 'pidgin') {
+    return baseCoachName;
+  }
+  
+  // Coach name translations
+  const coachNameTranslations: Record<string, Record<string, string>> = {
+    yoruba: {
+      'Digital Mama': 'Ìyá Díjítà',
+      'Baker Amara': 'Aladàáná Amara',
+      'Uncle Musa': 'Bàbá Musa'
+    },
+    hausa: {
+      'Digital Mama': 'Mama Dijital',
+      'Baker Amara': 'Mai Gashi Amara',
+      'Uncle Musa': 'Kawu Musa'
+    },
+    igbo: {
+      'Digital Mama': 'Nne Dijitạl',
+      'Baker Amara': 'Onye Nri Amara',
+      'Uncle Musa': 'Nna Nwanna Musa'
+    }
+  };
+  
+  // Return translated name or default to base name
+  return coachNameTranslations[language]?.[baseCoachName] || baseCoachName;
 };
 
 // Get course-specific greeting
@@ -112,10 +143,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   
   // Make sure we're using the current course from userPrefs
   const currentCourse = userPrefs?.course || 'digital-marketing';
-  // Get the avatar-specific coach name based on the current course
-  const coachName = getCoachName(currentCourse);
-  const courseSpecificGreeting = getCourseSpecificGreeting(currentCourse);
+  // Get the avatar-specific coach name based on the current course and language
   const currentLanguage = userPrefs?.language || 'pidgin';
+  const coachName = getTranslatedCoachName(currentCourse, currentLanguage);
+  const courseSpecificGreeting = getCourseSpecificGreeting(currentCourse);
   
   console.log("Current course in AIChat:", currentCourse);
   console.log("Coach name:", coachName);
@@ -458,6 +489,56 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   };
 
+  // Get translated action button labels
+  const getQuickActionButtonText = (actionType: string): string => {
+    const translations = {
+      'next-lesson': {
+        pidgin: 'Next Lesson',
+        yoruba: 'Ẹ̀kọ́ Tókàn',
+        hausa: 'Darasin Gaba',
+        igbo: 'Ihe Ọmụmụ Ozugbo',
+      },
+      'take-quiz': {
+        pidgin: 'Take Quiz',
+        yoruba: 'Ṣe Idánwò',
+        hausa: 'Yi Gwaji',
+        igbo: 'Were Quiz',
+      },
+      'challenge': {
+        pidgin: 'Challenge',
+        yoruba: 'Ìdánwò',
+        hausa: 'Kalubale',
+        igbo: 'Ịma Aka',
+      },
+    };
+    
+    return translations[actionType]?.[currentLanguage] || translations[actionType]?.pidgin || actionType;
+  };
+  
+  // Get translated "Chat with [coach]" text
+  const getChatWithCoachText = (): string => {
+    const translations = {
+      pidgin: `Chat with ${coachName}`,
+      yoruba: `Bá ${coachName} sọ̀rọ̀`,
+      hausa: `Yi magana da ${coachName}`,
+      igbo: `Soro ${coachName} kparịta ụka`,
+    };
+    
+    return translations[currentLanguage] || translations.pidgin;
+  };
+  
+  // Get placeholder text translation
+  const getPlaceholderText = (): string => {
+    const translations = {
+      pidgin: `Ask ${coachName} a question...`,
+      yoruba: `Bi ${coachName} ìbéèrè kan...`,
+      hausa: `Tambayi ${coachName} tambaya...`,
+      igbo: `Jụọ ${coachName} ajụjụ...`,
+    };
+    
+    return translations[currentLanguage] || translations.pidgin;
+  };
+
   return (
     <Card className="bg-muted border-electric">
       {isPreviewMode && (
@@ -474,7 +555,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             <AvatarFallback>AI</AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle>Chat with {coachName}</CardTitle>
+            <CardTitle>{getChatWithCoachText()}</CardTitle>
             <CardDescription>{getLanguageSpecificGreeting()}</CardDescription>
           </div>
         </div>
@@ -528,7 +609,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           </div>
         </ScrollArea>
         
-        {/* Quick action buttons - now in a grid with 3 columns for mobile */}
+        {/* Quick action buttons - now with translated text */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           <Button 
             variant="outline" 
@@ -537,7 +618,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <BookOpen className="h-4 w-4 mr-1" />
-            <span className={isMobile ? "text-[10px]" : "text-xs"}>Next Lesson</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('next-lesson')}</span>
           </Button>
           <Button 
             variant="outline" 
@@ -546,7 +627,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <Award className="h-4 w-4 mr-1" />
-            <span className={isMobile ? "text-[10px]" : "text-xs"}>Take Quiz</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('take-quiz')}</span>
           </Button>
           <Button 
             variant="outline" 
@@ -555,7 +636,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <ArrowRight className="h-4 w-4 mr-1" />
-            <span className={isMobile ? "text-[10px]" : "text-xs"}>Challenge</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('challenge')}</span>
           </Button>
         </div>
         
@@ -563,11 +644,16 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder={`Ask ${coachName} a question...`}
+            placeholder={getPlaceholderText()}
             className="bg-black border-gray-700"
             disabled={isLoading}
           />
-          <Button type="submit" disabled={isLoading}>Send</Button>
+          <Button type="submit" disabled={isLoading}>
+            {currentLanguage === 'pidgin' ? 'Send' : 
+             currentLanguage === 'yoruba' ? 'Firánṣẹ́' :
+             currentLanguage === 'hausa' ? 'Aika' :
+             currentLanguage === 'igbo' ? 'Zipu' : 'Send'}
+          </Button>
         </form>
       </CardContent>
     </Card>
