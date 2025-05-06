@@ -31,7 +31,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { userPrefs, updateUserPreference } = useUserPreferences();
+  const { userPrefs, updateUserPreferences } = useUserPreferences();
   const { toast } = useToast();
   const [courseSelectionOpen, setCourseSelectionOpen] = useState(false);
   
@@ -58,7 +58,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const handleCourseSelect = async (courseId: string) => {
     try {
       // Update user preference with the selected course
-      await updateUserPreference('course', courseId);
+      await updateUserPreferences({ course: courseId });
       
       // Close the dialog
       setCourseSelectionOpen(false);
