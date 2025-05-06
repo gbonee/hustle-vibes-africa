@@ -180,7 +180,7 @@ serve(async (req) => {
         } else if (userLanguage === 'igbo') {
           systemPrompt += ` Use ONLY Igbo language for your entire response. Example: "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!"`;
         } else {
-          systemPrompt += ` Example short intro: "Oya! Uncle Musa don drop! Make we teach you importation business with correct connect!"`;
+          systemPrompt += ` Example short intro for Uncle Musa: "Oya my guy! Uncle Musa don land! Ready to show you importation business with correct connect!"`;
         }
       }
     }
