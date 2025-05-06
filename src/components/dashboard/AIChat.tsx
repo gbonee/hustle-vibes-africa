@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { BookOpen, Award, HelpCircle, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
+import { useIsMobile } from '@/hooks/use-mobile';
 import PreviewMode from '@/components/common/PreviewMode';
 
 interface ChatMessage {
@@ -65,6 +66,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [currentCourseKey, setCurrentCourseKey] = useState<string>('');
+  const isMobile = useIsMobile();
   
   const currentCourse = userPrefs?.course || 'digital-marketing';
   const coachName = getCoachName(currentCourse);
@@ -312,9 +314,6 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       case 'take-quiz':
         actionMessage = getLanguageSpecificAction('take-quiz');
         break;
-      case 'help':
-        actionMessage = getLanguageSpecificAction('help');
-        break;
       case 'challenge':
         actionMessage = getLanguageSpecificAction('challenge');
         break;
@@ -466,8 +465,8 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           )}
         </div>
         
-        {/* Quick action buttons */}
-        <div className="grid grid-cols-4 gap-2 mb-4">
+        {/* Quick action buttons - now in a grid with 3 columns for mobile */}
+        <div className="grid grid-cols-3 gap-2 mb-4">
           <Button 
             variant="outline" 
             size="sm"
@@ -475,7 +474,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <BookOpen className="h-4 w-4 mr-1" />
-            <span className="text-xs">Next Lesson</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>Next Lesson</span>
           </Button>
           <Button 
             variant="outline" 
@@ -484,7 +483,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <Award className="h-4 w-4 mr-1" />
-            <span className="text-xs">Take Quiz</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>Take Quiz</span>
           </Button>
           <Button 
             variant="outline" 
@@ -493,16 +492,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <ArrowRight className="h-4 w-4 mr-1" />
-            <span className="text-xs">Challenge</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => handleQuickAction('help')}
-            className="flex items-center justify-center"
-          >
-            <HelpCircle className="h-4 w-4 mr-1" />
-            <span className="text-xs">Get Help</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>Challenge</span>
           </Button>
         </div>
         
