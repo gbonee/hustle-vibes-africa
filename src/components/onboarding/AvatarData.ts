@@ -21,7 +21,7 @@ export const avatars: AvatarInfo[] = [
     id: 'digital-mama',
     name: 'Digital Mama',
     role: 'Digital Marketing Expert',
-    image: 'https://images.unsplash.com/photo-1581329957093-92a8a36121ff?q=80&w=687&auto=format&fit=crop',
+    image: 'https://img.freepik.com/premium-photo/mature-elderly-black-woman-wearing-traditional-nigerian-clothes-african-american-grandmother-is_777271-18892.jpg',
     course: 'digital-marketing',
     intro: {
       pidgin: "Ah! You don choose Digital Mama? Oya let's go hustle money online sharp sharp. You no go carry last!",
@@ -34,7 +34,7 @@ export const avatars: AvatarInfo[] = [
     id: 'baker-amara',
     name: 'Baker Amara',
     role: 'Pastry Business Expert',
-    image: 'public/lovable-uploads/03f3298b-d495-4119-b024-cbaf62388cf1.png',
+    image: 'https://media.istockphoto.com/id/1269519579/photo/small-bakery-shop-owner-standing-in-front-of-store.jpg?s=612x612&w=0&k=20&c=h0Hu3UFEREi-V186FkkoQGNQYkBbOn9fkj_FJ2q3rPU=',
     course: 'pastry-biz',
     intro: {
       pidgin: "You wan bake like pro? Baker Amara don land! Make I show you how to hammer with puff-puff and meat pie business!",
@@ -47,7 +47,7 @@ export const avatars: AvatarInfo[] = [
     id: 'uncle-musa',
     name: 'Uncle Musa',
     role: 'Importation & Sales Guru',
-    image: 'https://images.unsplash.com/photo-1621788641723-00348d55982e?q=80&w=1287&auto=format&fit=crop',
+    image: 'https://media.istockphoto.com/id/1296271163/photo/confident-businessman-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=StyHxyC8uUIVVV4UFHb141gIahiNr0fKurV-fiNb2oU=',
     course: 'importation',
     intro: {
       pidgin: "Uncle Musa for your service! You go learn how to import goods from China come make heavy money for Nigeria. No long talk, na action!",

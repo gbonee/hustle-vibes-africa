@@ -176,7 +176,7 @@ const Dashboard = () => {
     'digital-marketing': {
       id: 'digital-marketing',
       title: 'Digital Marketing the Naija Way',
-      avatar: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9',
+      avatar: 'https://img.freepik.com/premium-photo/mature-elderly-black-woman-wearing-traditional-nigerian-clothes-african-american-grandmother-is_777271-18892.jpg',
       progress: 25,
       modules: [
         { id: 1, title: 'Intro to Digital Marketing the Naija Way', hasVideo: false, completed: true, locked: false },
@@ -228,11 +228,10 @@ const Dashboard = () => {
         }
       }
     },
-    // ... other courses with similar translation structure
     'pastry-biz': {
       id: 'pastry-biz',
       title: 'Start a Pastry Biz From Your Kitchen',
-      avatar: 'https://images.unsplash.com/photo-1582562124811-c09040d0a901',
+      avatar: 'https://media.istockphoto.com/id/1269519579/photo/small-bakery-shop-owner-standing-in-front-of-store.jpg?s=612x612&w=0&k=20&c=h0Hu3UFEREi-V186FkkoQGNQYkBbOn9fkj_FJ2q3rPU=',
       progress: 20,
       modules: [
         { id: 1, title: 'Intro to Baking as a Business in Nigeria', hasVideo: false, completed: true, locked: false },
@@ -287,7 +286,7 @@ const Dashboard = () => {
     'importation': {
       id: 'importation',
       title: 'Import From China & Sell on WhatsApp',
-      avatar: 'https://images.unsplash.com/photo-1501286353178-1ec871214838',
+      avatar: 'https://media.istockphoto.com/id/1296271163/photo/confident-businessman-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=StyHxyC8uUIVVV4UFHb141gIahiNr0fKurV-fiNb2oU=',
       progress: 15,
       modules: [
         { id: 1, title: 'How to Find Hot-Selling Products Nigerians Want', hasVideo: false, completed: true, locked: false },
