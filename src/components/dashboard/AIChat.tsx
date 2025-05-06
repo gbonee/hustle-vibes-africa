@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,6 +10,7 @@ import { BookOpen, Award, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useIsMobile } from '@/hooks/use-mobile';
 import PreviewMode from '@/components/common/PreviewMode';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ChatMessage {
   isUser: boolean;
@@ -60,6 +62,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [message, setMessage] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const chatBoxRef = useRef<HTMLDivElement>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { userPrefs } = useUserPreferences();
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
@@ -152,10 +155,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   }, [chatMessages, currentCourseKey]);
 
-  // Scroll to bottom when messages change
+  // Scroll to the top of messages after AI responds or on initial load
   useEffect(() => {
-    if (chatBoxRef.current) {
-      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = 0;
     }
   }, [chatMessages]);
 
@@ -456,51 +459,53 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         </div>
       </CardHeader>
       <CardContent className="p-4">
-        <div 
-          ref={chatBoxRef}
-          className="h-80 overflow-y-auto flex flex-col space-y-4 mb-4 p-2"
+        <ScrollArea 
+          ref={scrollAreaRef}
+          className="h-80 mb-4 p-2"
+          scrollHideDelay={100}
         >
-          {chatMessages.map((msg, index) => (
-            msg.isUser ? (
-              <div key={index} className="flex justify-end mb-4">
-                <div className="bg-electric text-black p-3 rounded-lg max-w-[80%]">
-                  <p>{msg.text}</p>
+          <div className="flex flex-col-reverse space-y-reverse space-y-4">
+            {isLoading && (
+              <div className="flex mb-4">
+                <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+                  <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
                 </div>
-              </div>
-            ) : (
-              <div key={index} className="flex flex-col mb-4">
-                <div className="flex">
-                  <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-                    <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="bg-muted p-3 rounded-lg max-w-[80%]">
-                    <p className="whitespace-pre-line">{msg.text}</p>
+                <div className="bg-muted p-3 rounded-lg max-w-[80%] flex items-center">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                   </div>
                 </div>
-                {msg.gif && (
-                  <div className="ml-13 mt-2 max-w-[200px]">
-                    <img src={msg.gif} alt="Giphy reaction" className="rounded-lg" />
+              </div>
+            )}
+            {chatMessages.slice().reverse().map((msg, index) => (
+              msg.isUser ? (
+                <div key={index} className="flex justify-end mb-4">
+                  <div className="bg-electric text-black p-3 rounded-lg max-w-[80%]">
+                    <p>{msg.text}</p>
                   </div>
-                )}
-              </div>
-            )
-          ))}
-          
-          {isLoading && (
-            <div className="flex mb-4">
-              <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-                <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
-              </div>
-              <div className="bg-muted p-3 rounded-lg max-w-[80%] flex items-center">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                 </div>
-              </div>
-            </div>
-          )}
-        </div>
+              ) : (
+                <div key={index} className="flex flex-col mb-4">
+                  <div className="flex">
+                    <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+                      <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="bg-muted p-3 rounded-lg max-w-[80%]">
+                      <p className="whitespace-pre-line">{msg.text}</p>
+                    </div>
+                  </div>
+                  {msg.gif && (
+                    <div className="ml-13 mt-2 max-w-[200px]">
+                      <img src={msg.gif} alt="Giphy reaction" className="rounded-lg" />
+                    </div>
+                  )}
+                </div>
+              )
+            ))}
+          </div>
+        </ScrollArea>
         
         {/* Quick action buttons - now in a grid with 3 columns for mobile */}
         <div className="grid grid-cols-3 gap-2 mb-4">
