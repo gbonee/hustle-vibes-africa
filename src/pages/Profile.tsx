@@ -30,6 +30,34 @@ const avatarNames = {
   'uncle-musa': 'Uncle Musa'
 };
 
+// UI translations for different languages
+const uiTranslations = {
+  pidgin: {
+    yourProgress: 'Your Progress',
+    yourCertificates: 'Your Certificates',
+    yourPreferences: 'Your Preferences',
+    loading: 'Loading profile data...',
+  },
+  yoruba: {
+    yourProgress: 'Ìlosíwájú Rẹ',
+    yourCertificates: 'Àwọn Ìwé-ẹ̀rí Rẹ',
+    yourPreferences: 'Àwọn Àṣàyàn Rẹ',
+    loading: 'Ń gbé dáta profaìlì...',
+  },
+  hausa: {
+    yourProgress: 'Ci Gabanka',
+    yourCertificates: 'Takardun Shaida',
+    yourPreferences: 'Zaɓin Ka',
+    loading: 'Ana loding bayanin profile...',
+  },
+  igbo: {
+    yourProgress: 'Ịganagote Gị',
+    yourCertificates: 'Akwụkwọ gị ndị e nyere gị',
+    yourPreferences: 'Ihe ị na-ahọrọ',
+    loading: 'Na-ebubata data profaịlụ...',
+  }
+};
+
 const Profile = () => {
   const navigate = useNavigate();
   const { userPrefs } = useUserPreferences();
@@ -51,6 +79,10 @@ const Profile = () => {
   
   const [certificates, setCertificates] = useState<any[]>([]);
   const [hasCompletedCourse, setHasCompletedCourse] = useState(false);
+  
+  // Get the current language for UI text
+  const currentLanguage = userPrefs?.language || 'pidgin';
+  const texts = uiTranslations[currentLanguage as keyof typeof uiTranslations] || uiTranslations.pidgin;
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -149,7 +181,7 @@ const Profile = () => {
     return (
       <DashboardLayout currentPath="/profile">
         <div className="flex items-center justify-center min-h-[400px]">
-          <div className="animate-pulse text-electric">Loading profile data...</div>
+          <div className="animate-pulse text-electric">{texts.loading}</div>
         </div>
       </DashboardLayout>
     );
@@ -167,7 +199,7 @@ const Profile = () => {
       </Card>
       
       {/* Course Progress */}
-      <h2 className="text-xl font-bold mb-4">Your Progress</h2>
+      <h2 className="text-xl font-bold mb-4">{texts.yourProgress}</h2>
       <Card className="bg-black mb-6">
         <CardContent className="p-6">
           <CourseProgress progress={user.progress} />
@@ -175,11 +207,11 @@ const Profile = () => {
       </Card>
       
       {/* Certificates */}
-      <h2 className="text-xl font-bold mb-4">Your Certificates</h2>
+      <h2 className="text-xl font-bold mb-4">{texts.yourCertificates}</h2>
       <CertificatesList certificates={certificates} />
       
       {/* Preferences */}
-      <h2 className="text-xl font-bold mb-4">Your Preferences</h2>
+      <h2 className="text-xl font-bold mb-4">{texts.yourPreferences}</h2>
       <Card className="bg-black mb-6">
         <CardContent className="p-6">
           <UserPreferences 

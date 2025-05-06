@@ -119,6 +119,18 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
     }
   };
 
+  // Get mark as complete text based on language
+  const getMarkAsCompleteText = () => {
+    const texts = {
+      'pidgin': 'Mark as Complete',
+      'yoruba': 'Fi àmì sí bí Àṣẹṣẹ́',
+      'hausa': 'Yi Alamar Cika',
+      'igbo': 'Makị dịka Emezuru',
+    };
+    
+    return (texts as any)[language] || texts.pidgin;
+  };
+
   return (
     <Card className="bg-muted border-electric">
       <CardHeader>
@@ -152,7 +164,7 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
                 onClick={handleMarkAsComplete}
                 className="mt-4 bg-electric text-black hover:bg-electric/90"
               >
-                Mark as Complete
+                {getMarkAsCompleteText()}
               </Button>
             </div>
           )

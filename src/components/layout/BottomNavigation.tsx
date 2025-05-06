@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { LayoutDashboard, Trophy, User } from 'lucide-react';
+import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 interface BottomNavigationProps {
   currentPath: string;
@@ -9,6 +10,40 @@ interface BottomNavigationProps {
 
 const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
   const isActive = (path: string) => currentPath === path;
+  const { userPrefs } = useUserPreferences();
+  const currentLanguage = userPrefs?.language || 'pidgin';
+  
+  // Get localized navigation labels
+  const getNavigationText = () => {
+    const navigationLabels = {
+      learn: {
+        pidgin: 'Learn',
+        yoruba: 'Kọ́',
+        hausa: 'Koyo',
+        igbo: 'Mụta',
+      },
+      ranks: {
+        pidgin: 'Ranks',
+        yoruba: 'Ipò',
+        hausa: 'Matsayi',
+        igbo: 'Ọkwa',
+      },
+      profile: {
+        pidgin: 'Profile',
+        yoruba: 'Profaili',
+        hausa: 'Bayani',
+        igbo: 'Profaịlụ',
+      }
+    };
+    
+    return {
+      learn: (navigationLabels.learn as any)[currentLanguage] || navigationLabels.learn.pidgin,
+      ranks: (navigationLabels.ranks as any)[currentLanguage] || navigationLabels.ranks.pidgin,
+      profile: (navigationLabels.profile as any)[currentLanguage] || navigationLabels.profile.pidgin,
+    };
+  };
+  
+  const labels = getNavigationText();
   
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm border-t border-electric/30 z-10">
@@ -20,7 +55,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
           }`}
         >
           <LayoutDashboard size={24} />
-          <span className="text-xs mt-1">Learn</span>
+          <span className="text-xs mt-1">{labels.learn}</span>
         </Link>
         
         <Link 
@@ -30,7 +65,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
           }`}
         >
           <Trophy size={24} />
-          <span className="text-xs mt-1">Ranks</span>
+          <span className="text-xs mt-1">{labels.ranks}</span>
         </Link>
         
         <Link 
@@ -40,7 +75,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
           }`}
         >
           <User size={24} />
-          <span className="text-xs mt-1">Profile</span>
+          <span className="text-xs mt-1">{labels.profile}</span>
         </Link>
       </div>
     </div>
