@@ -97,6 +97,25 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             return; // Don't add welcome message if we have recent messages
           }
         }
+      } else {
+        // Handle preview mode or user not logged in
+        const previewCourseKey = `preview_${currentCourse}`;
+        setCurrentCourseKey(previewCourseKey);
+        
+        // Check for preview chat history
+        const savedMessages = localStorage.getItem(`chat_history_${previewCourseKey}`);
+        if (savedMessages) {
+          const parsedMessages = JSON.parse(savedMessages);
+          const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+          const recentMessages = parsedMessages.filter(
+            (msg: ChatMessage) => msg.timestamp > sevenDaysAgo
+          );
+          if (recentMessages.length > 0) {
+            setChatMessages(recentMessages);
+            setIsInitialLoad(false);
+            return;
+          }
+        }
       }
 
       // Reset messages when changing avatar/course
@@ -117,10 +136,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
-    if (userId && chatMessages.length > 0 && currentCourseKey) {
+    if (chatMessages.length > 0 && currentCourseKey) {
       localStorage.setItem(`chat_history_${currentCourseKey}`, JSON.stringify(chatMessages));
     }
-  }, [chatMessages, userId, currentCourseKey]);
+  }, [chatMessages, currentCourseKey]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
@@ -163,7 +182,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Add fallback welcome message - avatar-specific
       setChatMessages([{ 
         isUser: false, 
-        text: getLanguageSpecificFallbackWelcome(userName, getCoachName(course), course),
+        text: getLanguageSpecificFallbackWelcome(userName, course),
         timestamp: Date.now()
       }]);
     } finally {
@@ -173,20 +192,20 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   };
 
   // Fallback welcome message in the chosen language if API call fails
-  const getLanguageSpecificFallbackWelcome = (name: string, coach: string, course: string): string => {
+  const getLanguageSpecificFallbackWelcome = (name: string, course: string): string => {
     const coachWithCourse = getCoachName(course);
     
     switch (currentLanguage) {
       case 'pidgin':
-        return `Wetin dey sup ${name}! Na me be ${coachWithCourse}! Ask me anything!`;
+        return `Wetin dey sup ${name}! Na me be ${coachWithCourse}! Ask me anything about ${getCourseSpecificGreeting(course)}!`;
       case 'yoruba':
-        return `Ẹ ku àbọ̀ ${name}! Èmi ni ${coachWithCourse}! Ẹ le bi mi ohunkohun!`;
+        return `Ẹ ku àbọ̀ ${name}! Èmi ni ${coachWithCourse}! Ẹ le bi mi ohunkohun nípa ${getCourseSpecificGreeting(course)}!`;
       case 'hausa':
-        return `Sannu da zuwa ${name}! Ni ne ${coachWithCourse}! Ka iya tambaye ni komai!`;
+        return `Sannu da zuwa ${name}! Ni ne ${coachWithCourse}! Ka iya tambaye ni komai game da ${getCourseSpecificGreeting(course)}!`;
       case 'igbo':
-        return `Nnọọ ${name}! Abụ m ${coachWithCourse}! Ị nwere ike ịjụ m ihe ọbụla!`;
+        return `Nnọọ ${name}! Abụ m ${coachWithCourse}! Ị nwere ike ịjụ m ihe ọbụla gbasara ${getCourseSpecificGreeting(course)}!`;
       default:
-        return `Wetin dey sup ${name}! Na me be ${coachWithCourse}! Ask me anything!`;
+        return `Wetin dey sup ${name}! Na me be ${coachWithCourse}! Ask me anything about ${getCourseSpecificGreeting(course)}!`;
     }
   };
 
