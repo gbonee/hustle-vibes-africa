@@ -53,7 +53,7 @@ const CourseHeader: React.FC<CourseHeaderProps> = ({ title, avatar, progress }) 
   
   // Get translated course title
   const getCourseTitle = (): string => {
-    return (courseTranslations[currentLanguage as keyof typeof courseTranslations] || courseTranslations.pidgin)[currentCourse as keyof typeof courseTranslations.pidgin] || title;
+    return (courseTranslations[currentLanguage as keyof typeof courseTranslations] || courseTranslations.pidgin)[currentCourse] || title;
   };
   
   return (
