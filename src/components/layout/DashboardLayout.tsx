@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -34,6 +35,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { userPrefs, updateUserPreferences } = useUserPreferences();
   const { toast } = useToast();
   const [courseSelectionOpen, setCourseSelectionOpen] = useState(false);
+  const isMobile = useIsMobile();
   
   // Check if we need to show course selection
   useEffect(() => {
@@ -97,7 +99,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       
       {/* Course Selection Dialog */}
       <Dialog open={courseSelectionOpen} onOpenChange={setCourseSelectionOpen}>
-        <DialogContent className="bg-black border border-electric/30 text-white">
+        <DialogContent className="bg-black border border-electric/30 text-white max-w-3xl w-[95%] mx-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-oswald text-electric">Choose Your Course</DialogTitle>
             <DialogDescription className="text-gray-300">
@@ -109,46 +111,52 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             {/* Digital Marketing Course */}
             <Button
               variant="outline" 
-              className={`flex flex-col items-center p-6 h-auto border border-electric/50 hover:border-electric/80 ${userPrefs?.course === 'digital-marketing' ? 'bg-electric/20' : ''}`}
+              className={`flex flex-col items-center p-4 h-auto border border-electric/50 hover:border-electric/80 ${userPrefs?.course === 'digital-marketing' ? 'bg-electric/20' : ''}`}
               onClick={() => handleCourseSelect('digital-marketing')}
             >
               <img 
                 src="https://img.freepik.com/premium-photo/mature-elderly-black-woman-wearing-traditional-nigerian-clothes-african-american-grandmother-is_777271-18892.jpg" 
                 alt="Digital Marketing" 
-                className="w-16 h-16 rounded-full mb-3 object-cover"
+                className="w-14 h-14 rounded-full mb-2 object-cover"
               />
-              <h3 className="text-lg font-semibold mb-1">Digital Marketing</h3>
-              <p className="text-sm text-gray-400 text-center">Learn digital marketing the Naija way</p>
+              <h3 className="text-base font-semibold mb-1 text-center">Digital Marketing</h3>
+              <p className={`text-xs text-gray-400 text-center ${isMobile ? 'line-clamp-2' : ''}`}>
+                Learn digital marketing the Naija way
+              </p>
             </Button>
             
             {/* Pastry Business Course */}
             <Button
               variant="outline" 
-              className={`flex flex-col items-center p-6 h-auto border border-electric/50 hover:border-electric/80 ${userPrefs?.course === 'pastry-biz' ? 'bg-electric/20' : ''}`}
+              className={`flex flex-col items-center p-4 h-auto border border-electric/50 hover:border-electric/80 ${userPrefs?.course === 'pastry-biz' ? 'bg-electric/20' : ''}`}
               onClick={() => handleCourseSelect('pastry-biz')}
             >
               <img 
                 src="https://media.istockphoto.com/id/1269519579/photo/small-bakery-shop-owner-standing-in-front-of-store.jpg?s=612x612&w=0&k=20&c=h0Hu3UFEREi-V186FkkoQGNQYkBbOn9fkj_FJ2q3rPU=" 
                 alt="Pastry Business" 
-                className="w-16 h-16 rounded-full mb-3 object-cover"
+                className="w-14 h-14 rounded-full mb-2 object-cover"
               />
-              <h3 className="text-lg font-semibold mb-1">Pastry Business</h3>
-              <p className="text-sm text-gray-400 text-center">Start a pastry business from your kitchen</p>
+              <h3 className="text-base font-semibold mb-1 text-center">Pastry Business</h3>
+              <p className={`text-xs text-gray-400 text-center ${isMobile ? 'line-clamp-2' : ''}`}>
+                Start a pastry business from your kitchen
+              </p>
             </Button>
             
             {/* Importation Course */}
             <Button
               variant="outline" 
-              className={`flex flex-col items-center p-6 h-auto border border-electric/50 hover:border-electric/80 ${userPrefs?.course === 'importation' ? 'bg-electric/20' : ''}`}
+              className={`flex flex-col items-center p-4 h-auto border border-electric/50 hover:border-electric/80 ${userPrefs?.course === 'importation' ? 'bg-electric/20' : ''}`}
               onClick={() => handleCourseSelect('importation')}
             >
               <img 
                 src="https://media.istockphoto.com/id/1296271163/photo/confident-businessman-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=StyHxyC8uUIVVV4UFHb141gIahiNr0fKurV-fiNb2oU=" 
                 alt="Importation" 
-                className="w-16 h-16 rounded-full mb-3 object-cover"
+                className="w-14 h-14 rounded-full mb-2 object-cover"
               />
-              <h3 className="text-lg font-semibold mb-1">Importation</h3>
-              <p className="text-sm text-gray-400 text-center">Import from China & sell on WhatsApp</p>
+              <h3 className="text-base font-semibold mb-1 text-center">Importation</h3>
+              <p className={`text-xs text-gray-400 text-center ${isMobile ? 'line-clamp-2' : ''}`}>
+                Import from China & sell on WhatsApp
+              </p>
             </Button>
           </div>
         </DialogContent>
