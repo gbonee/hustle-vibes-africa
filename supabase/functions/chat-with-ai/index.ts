@@ -77,39 +77,6 @@ serve(async (req) => {
     // For welcome messages, specify they should be SHORT (1-2 sentences only)
     if (message.includes('introduce yourself') || message.includes('Say hello')) {
       systemPrompt += ` IMPORTANT: Keep welcome messages VERY SHORT - just 1-2 sentences maximum with appropriate cultural expressions. Don't write long introductions.`;
-      
-      // FORCE SPECIFIC WELCOME MESSAGES FOR EACH AVATAR
-      if (course === 'digital-marketing') {
-        if (userLanguage === 'pidgin') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!"`;
-        } else if (userLanguage === 'yoruba') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!"`;
-        } else if (userLanguage === 'hausa') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!"`;
-        } else if (userLanguage === 'igbo') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!"`;
-        }
-      } else if (course === 'pastry-biz') {
-        if (userLanguage === 'pidgin') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
-        } else if (userLanguage === 'yoruba') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!"`;
-        } else if (userLanguage === 'hausa') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!"`;
-        } else if (userLanguage === 'igbo') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!"`;
-        }
-      } else if (course === 'importation') {
-        if (userLanguage === 'pidgin') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!"`;
-        } else if (userLanguage === 'yoruba') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!"`;
-        } else if (userLanguage === 'hausa') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!"`;
-        } else if (userLanguage === 'igbo') {
-          systemPrompt += ` YOU MUST RETURN EXACTLY: "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!"`;
-        }
-      }
     }
 
     // Add context about the user's progress if available
@@ -130,6 +97,75 @@ serve(async (req) => {
         ...previousMessages,
         { role: 'user', content: message }
       ];
+    }
+    
+    // Check if this is a welcome message request and return the predefined welcome message
+    if (message.includes('introduce yourself') || message.includes('Say hello')) {
+      let welcomeMessage = "";
+      if (course === 'digital-marketing') {
+        if (userLanguage === 'pidgin') {
+          welcomeMessage = "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!";
+        } else if (userLanguage === 'yoruba') {
+          welcomeMessage = "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!";
+        } else if (userLanguage === 'hausa') {
+          welcomeMessage = "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!";
+        } else if (userLanguage === 'igbo') {
+          welcomeMessage = "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!";
+        } else {
+          welcomeMessage = "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!";
+        }
+      } else if (course === 'pastry-biz') {
+        if (userLanguage === 'pidgin') {
+          welcomeMessage = "My darling! Baker Amara don show! Ready to bake money into your life!";
+        } else if (userLanguage === 'yoruba') {
+          welcomeMessage = "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!";
+        } else if (userLanguage === 'hausa') {
+          welcomeMessage = "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!";
+        } else if (userLanguage === 'igbo') {
+          welcomeMessage = "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!";
+        } else {
+          welcomeMessage = "My darling! Baker Amara don show! Ready to bake money into your life!";
+        }
+      } else if (course === 'importation') {
+        if (userLanguage === 'pidgin') {
+          welcomeMessage = "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!";
+        } else if (userLanguage === 'yoruba') {
+          welcomeMessage = "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!";
+        } else if (userLanguage === 'hausa') {
+          welcomeMessage = "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!";
+        } else if (userLanguage === 'igbo') {
+          welcomeMessage = "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!";
+        } else {
+          welcomeMessage = "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!";
+        }
+      } else {
+        // Default fallback
+        welcomeMessage = `Welcome! I am a Nigerian business coach. Let's talk about ${course}!`;
+      }
+      
+      // Try to get a GIF for the welcome message
+      let gifUrl = null;
+      try {
+        const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
+        const giphyData = await giphyResponse.json();
+        
+        if (giphyData.data && giphyData.data.length > 0) {
+          // Get a random GIF from the top 10 results for more variety
+          const randomIndex = Math.floor(Math.random() * Math.min(10, giphyData.data.length));
+          gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
+        }
+      } catch (giphyError) {
+        console.error('Giphy API error:', giphyError);
+        // Continue without a GIF if there's an error
+      }
+      
+      // Return the predefined welcome message
+      return new Response(JSON.stringify({ 
+        response: welcomeMessage,
+        gif: gifUrl
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
     
     // Log that we're making the OpenAI API request

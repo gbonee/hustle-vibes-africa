@@ -110,7 +110,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [currentCourseKey, setCurrentCourseKey] = useState<string>('');
   const isMobile = useIsMobile();
   
-  // Always use the current course from userPrefs
+  // Make sure we're using the current course from userPrefs
   const currentCourse = userPrefs?.course || 'digital-marketing';
   // Get the avatar-specific coach name based on the current course
   const coachName = getCoachName(currentCourse);
@@ -119,6 +119,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   
   console.log("Current course in AIChat:", currentCourse);
   console.log("Coach name:", coachName);
+  console.log("Current language:", currentLanguage);
 
   // Initialize user ID and check preview mode
   useEffect(() => {
@@ -189,7 +190,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
     if (chatMessages.length > 0 && currentCourseKey) {
-      console.log(`Saving ${chatMessages.length} chat messages to: ${currentCourseKey}`);
+      console.log(`Saving ${chatMessages.length} chat messages to: chat_history_${currentCourseKey}`);
       localStorage.setItem(`chat_history_${currentCourseKey}`, JSON.stringify(chatMessages));
     }
   }, [chatMessages, currentCourseKey]);
@@ -207,10 +208,11 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     
     try {
       const progress = getUserProgress();
-      console.log("Generating welcome message for course:", course);
+      console.log("Generating welcome message for course:", course, "language:", language);
       
-      // Instead of calling the API, use the fixed welcome message for the specific course and language
+      // Use the fixed welcome message for the specific course and language
       const welcomeMessage = getFixedWelcomeMessage(course, language);
+      console.log("Using welcome message:", welcomeMessage);
       
       // Try to get a GIF for the welcome message
       let gifUrl = null;
@@ -293,6 +295,8 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     try {
       const progress = getUserProgress();
       const previousMessages = formatChatHistoryForApi();
+
+      console.log("Sending message to AI with course:", currentCourse, "language:", currentLanguage);
 
       // Call the edge function for AI response
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
