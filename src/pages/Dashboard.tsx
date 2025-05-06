@@ -340,221 +340,322 @@ const Dashboard = () => {
     }
   };
 
-  // Module-specific quizzes with translations
-  const quizzesByModule: QuizzesByModule = React.useMemo(() => {
-    const basicQuizzes = {
-      // Digital Marketing Module 1
-      1: [
-        {
-          question: 'What is the primary purpose of digital marketing in Nigeria?',
-          options: ['To have a website', 'To reach and engage customers online', 'To post on social media daily', 'To spend money on ads'],
-          answer: 1,
-          moduleId: 1,
-          moduleTopic: 'Intro to Digital Marketing the Naija Way'
-        },
-        {
-          question: 'Which platform has the highest user base in Nigeria?',
-          options: ['LinkedIn', 'WhatsApp', 'Twitter', 'Snapchat'],
-          answer: 1,
-          moduleId: 1,
-          moduleTopic: 'Intro to Digital Marketing the Naija Way'
-        },
-        {
-          question: 'What is a key advantage of digital marketing for small Nigerian businesses?',
-          options: ['It requires lots of capital', 'It works without electricity', 'It allows for targeted customer reach', 'It guarantees overnight success'],
-          answer: 2,
-          moduleId: 1,
-          moduleTopic: 'Intro to Digital Marketing the Naija Way'
-        }
-      ],
-      
-      // Digital Marketing Module 2
-      2: [
-        {
-          question: 'What is the best way to organize your WhatsApp business account?',
-          options: ['Mix personal and business chats', 'Create broadcast lists for different product categories', 'Only post status updates', 'Send messages at random times'],
-          answer: 1,
-          moduleId: 2,
-          moduleTopic: 'How to Sell on WhatsApp & Instagram'
-        },
-        {
-          question: 'Which Instagram feature is best for showcasing your products?',
-          options: ['IGTV', 'Reels', 'Stories', 'Shop'],
-          answer: 3,
-          moduleId: 2,
-          moduleTopic: 'How to Sell on WhatsApp & Instagram'
-        },
-        {
-          question: 'How often should you follow up with potential customers on WhatsApp?',
-          options: ['Every hour until they respond', 'Once a week', 'Every 2-3 days', 'Never follow up'],
-          answer: 2,
-          moduleId: 2,
-          moduleTopic: 'How to Sell on WhatsApp & Instagram'
-        }
-      ],
-      
-      // Pastry Business Module 1
-      101: [
-        {
-          question: 'What is the most important factor when starting a pastry business in Nigeria?',
-          options: ['A large kitchen space', 'High-quality ingredients', 'Expensive equipment', 'Many staff members'],
-          answer: 1,
-          moduleId: 101,
-          moduleTopic: 'Intro to Baking as a Business in Nigeria'
-        },
-        {
-          question: 'What capital is typically needed to start a small pastry business from your kitchen?',
-          options: ['₦5,000 - ₦20,000', '₦20,000 - ₦50,000', '₦50,000 - ₦150,000', 'At least ₦500,000'],
-          answer: 2,
-          moduleId: 101,
-          moduleTopic: 'Intro to Baking as a Business in Nigeria'
-        },
-        {
-          question: 'Which pastry product typically has the highest profit margin in Nigeria?',
-          options: ['Bread', 'Cakes', 'Small chops', 'Pies'],
-          answer: 2,
-          moduleId: 101,
-          moduleTopic: 'Intro to Baking as a Business in Nigeria'
-        }
-      ],
-      
-      // Importation Module 1
-      201: [
-        {
-          question: 'What is the first step in finding hot-selling products for the Nigerian market?',
-          options: ['Copy what others are selling', 'Conduct market research', 'Import random items', 'Ask friends what they like'],
-          answer: 1,
-          moduleId: 201,
-          moduleTopic: 'How to Find Hot-Selling Products Nigerians Want'
-        },
-        {
-          question: 'Which category of products typically has high demand in Nigeria?',
-          options: ['Luxury items', 'Everyday essentials', 'Collectibles', 'Seasonal items'],
-          answer: 1,
-          moduleId: 201,
-          moduleTopic: 'How to Find Hot-Selling Products Nigerians Want'
-        },
-        {
-          question: 'How can you test if a product will sell well before ordering in bulk?',
-          options: ['Pre-sell to your audience', 'Order just one sample', 'Check social media trends', 'All of the above'],
-          answer: 3,
-          moduleId: 201,
-          moduleTopic: 'How to Find Hot-Selling Products Nigerians Want'
-        }
-      ]
-    };
-    
-    // Quiz translations
-    const translations = {
-      yoruba: {
-        1: [
-          {
-            question: 'Kí ni idi àkọkọ fún ìpolówó ojú òpó lójú kan ní Nàìjíríà?',
-            options: ['Láti ní ìtàkùn ayélujára', 'Láti dé àwọn oníbàárà kí o sì ṣe ìdàpọ̀ pẹ̀lú wọn lórí ayélujára', 'Láti fi síta lórí àwọn mídia sósàn lójoojúmọ́', 'Láti ná owó lórí ìfihàn'],
-            answer: 1,
-            moduleId: 1,
-            moduleTopic: 'Ìfihan sí Ìpolówó ojú òpó lójú kan Nàìjíríà'
-          },
-          {
-            question: 'Èwo ní pẹpẹ tí ó ní ìsàn olùlò tí ó ga jùlọ ní Nàìjíríà?',
-            options: ['LinkedIn', 'WhatsApp', 'Twitter', 'Snapchat'],
-            answer: 1,
-            moduleId: 1,
-            moduleTopic: 'Ìfihan sí Ìpolówó ojú òpó lójú kan Nàìjíríà'
-          },
-          {
-            question: 'Kí ni ánfààní pàtàkì fún ìpolówó ojú òpó lójú kan fún àwọn iṣẹ́ kékeré Nàìjíríà?',
-            options: ['Ó nílò ọ̀pọ̀lọpọ̀ owó', 'Ó ńṣiṣẹ́ láìsí iná mọ̀nà-mọ̀ná', 'Ó fàyè gba ìdé àwọn oníbàárà tó dá', 'Ó ńṣèlérí àṣeyọrí lójú ẹsẹ̀'],
-            answer: 2,
-            moduleId: 1,
-            moduleTopic: 'Ìfihan sí Ìpolówó ojú òpó lójú kan Nàìjíríà'
-          }
-        ],
-        2: [
-          {
-            question: 'Kí ni ọ̀nà tí ó dára jùlọ láti ṣe ètò àkọọ́lẹ̀ iṣẹ́ WhatsApp rẹ?',
-            options: ['Da àwọn ìjíròrò tara ẹni àti ti iṣẹ́ pọ̀', 'Ṣẹ̀dá àwọn àkójọ ìgbésókè fún oríṣiríṣi ẹ̀ka ọjà', 'Kàn fi àwọn ìgbésókè ipò síta', 'Fi ọ̀rọ̀ ránṣẹ́ ní àsìkò àrìnnàkò'],
-            answer: 1,
-            moduleId: 2,
-            moduleTopic: 'Báwo ni o ṣe le tà lórí WhatsApp & Instagram'
-          },
-          {
-            question: 'Èwo ni ẹ̀ya Instagram tí ó dára jùlọ fún ṣíṣàfihàn àwọn ọjà rẹ?',
-            options: ['IGTV', 'Reels', 'Stories', 'Shop'],
-            answer: 3,
-            moduleId: 2,
-            moduleTopic: 'Báwo ni o ṣe le tà lórí WhatsApp & Instagram'
-          },
-          {
-            question: 'Báwo ni o ṣe gbọdọ̀ tẹ̀lé àwọn oníbàárà tí ó ṣeéṣe lórí WhatsApp?',
-            options: ['Ní wákàtí kọ̀ọ̀kan títí wọn yóò fi dáhùn', 'Ní ẹ̀ẹ̀kan ní ọ̀sẹ̀ kan', 'Ní ọjọ́ 2-3 kọ̀ọ̀kan', 'Má ṣe tẹ̀lé látẹ̀yìnwá'],
-            answer: 2,
-            moduleId: 2,
-            moduleTopic: 'Báwo ni o ṣe le tà lórí WhatsApp & Instagram'
-          }
-        ],
-        101: [
-          {
-            question: 'Kí ni àmì tí ó ṣe pàtàkì jùlọ nígbà tí o bá ń bẹ̀rẹ̀ iṣẹ́ oúnjẹ adùn ní Nàìjíríà?',
-            options: ['Àyè kíchẹ́ẹ̀nì tí ó tóbi', 'Àwọn ohun èlò tí ó ní ìdiwọ̀n gíga', 'Ohun elo tí ó wọ́n', 'Ọ̀pọ̀lọpọ̀ àwọn ọmọ iṣẹ́'],
-            answer: 1,
-            moduleId: 101,
-            moduleTopic: 'Ìfihan sí Ìdáná gẹ́gẹ́ bí Iṣẹ́ ní Nàìjíríà'
-          },
-          {
-            question: 'Iye owó wo ni a máa ń nílò láti bẹ̀rẹ̀ iṣẹ́ àwọn oúnjẹ adùn kékeré láti inú kíchẹ́ẹ̀nì rẹ?',
-            options: ['₦5,000 - ₦20,000', '₦20,000 - ₦50,000', '₦50,000 - ₦150,000', 'Ó kéré jù ₦500,000'],
-            answer: 2,
-            moduleId: 101,
-            moduleTopic: 'Ìfihan sí Ìdáná gẹ́gẹ́ bí Iṣẹ́ ní Nàìjíríà'
-          },
-          {
-            question: 'Èwo ni ọjà oúnjẹ adùn tí ó ní àaye èrè tí ó ga jùlọ ní Nàìjíríà?',
-            options: ['Àkàrà', 'Kéèkì', 'Àwọn oúnjẹ kékeré', 'Àwọn pásìtírì'],
-            answer: 2,
-            moduleId: 101,
-            moduleTopic: 'Ìfihan sí Ìdáná gẹ́gẹ́ bí Iṣẹ́ ní Nàìjíríà'
-          }
-        ],
-        201: [
-          {
-            question: 'Kí ni ìgbésẹ̀ àkọ́kọ́ ní ṣíṣe ríràn àwọn ọjà tí ń tà gbòógì fún ọjà Nàìjíríà?',
-            options: ['Da ohun tí àwọn yòókù ń tà àwòkọ', 'Ṣe ìwádìí ọjà', 'Mu àwọn ohun èlò àrìnnàkò wọle', 'Bere lọ́wọ́ àwọn ọ̀rẹ́ ohun tí wọ́n fẹ́ràn'],
-            answer: 1,
-            moduleId: 201,
-            moduleTopic: 'Báwo ni o ṣe le rí àwọn ọjà tí ń tà gbòógì tí àwọn ará Nàìjíríà fẹ́'
-          },
-          {
-            question: 'Èwo ni ẹ̀ka àwọn ọjà tí ó jẹ́ pé ó ní ìbéèrè gíga ní Nàìjíríà?',
-            options: ['Àwọn ohun èlò ti ìgbadùn', 'Àwọn nkan tí a nílò lójoojúmọ́', 'Àwọn nkan tí a ń kójọpọ̀', 'Àwọn nkan ìgbà'],
-            answer: 1,
-            moduleId: 201,
-            moduleTopic: 'Báwo ni o ṣe le rí àwọn ọjà tí ń tà gbòógì tí àwọn ará Nàìjíríà fẹ́'
-          },
-          {
-            question: 'Báwo ni o ṣe le dán ọjà wò bóyá yóò tà dáradára kí o tó pàṣẹ ní ọ̀pọ̀lọpọ̀?',
-            options: ['Tà tẹ́lẹ̀ sí àwùjọ rẹ', 'Pàṣẹ kan ìwòntún-wò', 'Ṣàyẹ̀wò àwọn ìpalará ìgbàlódé lórí mídia sósàn', 'Gbogbo àwọn tí a dárúkọ'],
-            answer: 3,
-            moduleId: 201,
-            moduleTopic: 'Báwo ni o ṣe le rí àwọn ọjà tí ń tà gbòógì tí àwọn ará Nàìjíríà fẹ́'
-          }
-        ]
+  // Module-specific quizzes - Memoized to avoid recreating on each render
+  const quizzesByModule: QuizzesByModule = React.useMemo(() => ({
+    // Digital Marketing Module 1
+    1: [
+      {
+        question: 'What is the primary purpose of digital marketing in Nigeria?',
+        options: ['To have a website', 'To reach and engage customers online', 'To post on social media daily', 'To spend money on ads'],
+        answer: 1,
+        moduleId: 1,
+        moduleTopic: 'Intro to Digital Marketing the Naija Way'
       },
-      hausa: {
-        1: [
-          {
-            question: 'Menene manufar farko ta tallace-tallace na dijital a Najeriya?',
-            options: ['Don samun yanar gizo', 'Don kai wa da haɗa kan masu sayayya akan yanar gizo', 'Danna akan kafofin sada zumunta kowace rana', 'Don kashe kudi akan tallace-tallace'],
-            answer: 1,
-            moduleId: 1,
-            moduleTopic: 'Gabatarwa zuwa Tallace-tallace na Dijital a hanyar Naija'
-          },
-          {
-            question: 'Wanne dandali ne ya fi yawan masi amfani a Najeriya?',
-            options: ['LinkedIn', 'WhatsApp', 'Twitter', 'Snapchat'],
-            answer: 1,
-            moduleId: 1,
-            moduleTopic: 'Gabatarwa zuwa Tallace-tallace na Dijital a hanyar Naija'
-          },
-          {
-            question: 'Menene babban amfani na tallace-tallace na dijital ga kasuwancin
+      {
+        question: 'Which platform has the highest user base in Nigeria?',
+        options: ['LinkedIn', 'WhatsApp', 'Twitter', 'Snapchat'],
+        answer: 1,
+        moduleId: 1,
+        moduleTopic: 'Intro to Digital Marketing the Naija Way'
+      },
+      {
+        question: 'What is a key advantage of digital marketing for small Nigerian businesses?',
+        options: ['It requires lots of capital', 'It works without electricity', 'It allows for targeted customer reach', 'It guarantees overnight success'],
+        answer: 2,
+        moduleId: 1,
+        moduleTopic: 'Intro to Digital Marketing the Naija Way'
+      }
+    ],
+    
+    // Digital Marketing Module 2
+    2: [
+      {
+        question: 'What is the best way to organize your WhatsApp business account?',
+        options: ['Mix personal and business chats', 'Create broadcast lists for different product categories', 'Only post status updates', 'Send messages at random times'],
+        answer: 1,
+        moduleId: 2,
+        moduleTopic: 'How to Sell on WhatsApp & Instagram'
+      },
+      {
+        question: 'Which Instagram feature is best for showcasing your products?',
+        options: ['IGTV', 'Reels', 'Stories', 'Shop'],
+        answer: 3,
+        moduleId: 2,
+        moduleTopic: 'How to Sell on WhatsApp & Instagram'
+      },
+      {
+        question: 'How often should you follow up with potential customers on WhatsApp?',
+        options: ['Every hour until they respond', 'Once a week', 'Every 2-3 days', 'Never follow up'],
+        answer: 2,
+        moduleId: 2,
+        moduleTopic: 'How to Sell on WhatsApp & Instagram'
+      }
+    ],
+    
+    // Pastry Business Module 1
+    101: [
+      {
+        question: 'What is the most important factor when starting a pastry business in Nigeria?',
+        options: ['A large kitchen space', 'High-quality ingredients', 'Expensive equipment', 'Many staff members'],
+        answer: 1,
+        moduleId: 101,
+        moduleTopic: 'Intro to Baking as a Business in Nigeria'
+      },
+      {
+        question: 'What capital is typically needed to start a small pastry business from your kitchen?',
+        options: ['₦5,000 - ₦20,000', '₦20,000 - ₦50,000', '₦50,000 - ₦150,000', 'At least ₦500,000'],
+        answer: 2,
+        moduleId: 101,
+        moduleTopic: 'Intro to Baking as a Business in Nigeria'
+      },
+      {
+        question: 'Which pastry product typically has the highest profit margin in Nigeria?',
+        options: ['Bread', 'Cakes', 'Small chops', 'Pies'],
+        answer: 2,
+        moduleId: 101,
+        moduleTopic: 'Intro to Baking as a Business in Nigeria'
+      }
+    ],
+    
+    // Importation Module 1
+    201: [
+      {
+        question: 'What is the first step in finding hot-selling products for the Nigerian market?',
+        options: ['Copy what others are selling', 'Conduct market research', 'Import random items', 'Ask friends what they like'],
+        answer: 1,
+        moduleId: 201,
+        moduleTopic: 'How to Find Hot-Selling Products Nigerians Want'
+      },
+      {
+        question: 'Which category of products typically has high demand in Nigeria?',
+        options: ['Luxury items', 'Everyday essentials', 'Collectibles', 'Seasonal items'],
+        answer: 1,
+        moduleId: 201,
+        moduleTopic: 'How to Find Hot-Selling Products Nigerians Want'
+      },
+      {
+        question: 'How can you test if a product will sell well before ordering in bulk?',
+        options: ['Pre-sell to your audience', 'Order just one sample', 'Check social media trends', 'All of the above'],
+        answer: 3,
+        moduleId: 201,
+        moduleTopic: 'How to Find Hot-Selling Products Nigerians Want'
+      }
+    ]
+  }), []);
+  
+  // Translate quiz questions based on language
+  const getTranslatedQuizzes = (moduleId: number): Quiz[] => {
+    const originalQuizzes = quizzesByModule[moduleId] || [];
+    
+    // Only translate if needed - add translations for each language
+    if (currentLanguage === 'pidgin') {
+      // Apply Pidgin translations for quizzes
+      return originalQuizzes.map(quiz => {
+        if (moduleId === 1) {
+          // Example translation for moduleId 1 questions
+          if (quiz.question === 'What is the primary purpose of digital marketing in Nigeria?') {
+            return {
+              ...quiz,
+              question: 'Wetin be the main reason for digital marketing for Nigeria?',
+              options: ['To get website', 'To reach and engage customers online', 'To dey post for social media everyday', 'To spend money for ads'],
+            };
+          }
+        }
+        return quiz;
+      });
+    }
+    
+    // Add similar translations for other languages
+    
+    return originalQuizzes; // Return original if no translation
+  };
+  
+  const handleModuleSelect = (module: Module) => {
+    if (module.locked) return;
+    setSelectedModule(module);
+  };
+
+  const handleCloseModule = () => {
+    setSelectedModule(null);
+    // Refresh course progress when closing a module
+    fetchCourseProgress();
+  };
+  
+  // Handle module completion
+  const handleModuleComplete = async (moduleId: number) => {
+    try {
+      const courseId = userPrefs?.course || 'digital-marketing';
+      
+      // Update module completion in the database
+      await updateModuleCompletion({
+        courseId,
+        moduleId,
+        completed: true,
+        progress: 100
+      });
+      
+      // Update overall course progress
+      await updateCourseProgress(courseId);
+      
+      // Refresh course progress data
+      await fetchCourseProgress();
+      
+      toast({
+        title: "Module Completed!",
+        description: "Your progress has been updated.",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error("Error updating module completion:", error);
+      toast({
+        title: "Error",
+        description: "There was an error updating your progress.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+  // Handle quiz completion
+  const handleQuizComplete = async (moduleId: number, correct: boolean) => {
+    if (!correct) return;
+    
+    try {
+      const courseId = userPrefs?.course || 'digital-marketing';
+      
+      // Award points for completing the quiz
+      await awardQuizPoints(moduleId, courseId);
+      
+      // Refresh course progress
+      await fetchCourseProgress();
+      
+      toast({
+        title: "Quiz Completed!",
+        description: "You've earned points for completing the quiz!",
+        variant: "default",
+      });
+    } catch (error) {
+      console.error("Error handling quiz completion:", error);
+    }
+  };
+
+  // Use digital marketing as default course if no preference is set
+  const userCourse = userPrefs?.course ? courses[userPrefs.course] : courses['digital-marketing'];
+  
+  // Apply completion status to modules based on database data
+  const getCoursesWithCompletionStatus = () => {
+    const course = { ...userCourse };
+    
+    // Apply completion status from database
+    course.modules = course.modules.map(module => {
+      const isCompleted = courseProgress.completedModules.includes(module.id);
+      return {
+        ...module,
+        completed: isCompleted
+      };
+    });
+    
+    // Update progress percentage
+    course.progress = courseProgress.progress;
+    
+    return course;
+  };
+  
+  // Get translated course content with updated completion status
+  const getTranslatedCourse = () => {
+    const course = getCoursesWithCompletionStatus();
+    
+    // Apply translations if available
+    if (currentLanguage && course.translations && course.translations[currentLanguage]) {
+      const translation = course.translations[currentLanguage];
+      
+      // Apply translated title
+      course.title = translation.title;
+      
+      // Apply translated module titles
+      course.modules = course.modules.map(module => {
+        const translatedModule = translation.modules.find(m => m.id === module.id);
+        return translatedModule ? { ...module, title: translatedModule.title } : module;
+      });
+    }
+    
+    return course;
+  };
+  
+  const translatedCourse = getTranslatedCourse();
+
+  if (isLoading) {
+    return (
+      <DashboardLayout currentPath="/dashboard" user={user}>
+        <div className="w-full space-y-4">
+          <Skeleton className="h-40 w-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  return (
+    <DashboardLayout currentPath="/dashboard" user={user}>
+      {isPreviewMode && <PreviewMode />}
+      
+      {/* Course Info Card */}
+      <CourseHeader 
+        title={translatedCourse.title} 
+        avatar={translatedCourse.avatar} 
+        progress={translatedCourse.progress} 
+      />
+
+      {/* Main Content Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid grid-cols-2 mb-6 bg-black">
+          <TabsTrigger value="lessons" className="text-lg">
+            <Video className="mr-2 h-4 w-4" />
+            {texts.lessons}
+          </TabsTrigger>
+          <TabsTrigger value="chat" className="text-lg">
+            <MessageSquare className="mr-2 h-4 w-4" />
+            {texts.chat}
+          </TabsTrigger>
+        </TabsList>
+        
+        {/* Lessons Tab */}
+        <TabsContent value="lessons" className="space-y-4">
+          {selectedModule ? (
+            <ModuleDetail 
+              module={selectedModule} 
+              quizzes={getTranslatedQuizzes(selectedModule.id)} 
+              onClose={handleCloseModule}
+              onModuleComplete={() => handleModuleComplete(selectedModule.id)}
+              onQuizComplete={(correct) => handleQuizComplete(selectedModule.id, correct)}
+              language={currentLanguage}
+              texts={texts}
+            />
+          ) : (
+            <div>
+              <h2 className="text-xl font-bold mb-4">{texts.yourModules}</h2>
+              <ModulesList 
+                modules={translatedCourse.modules} 
+                onModuleSelect={handleModuleSelect} 
+              />
+            </div>
+          )}
+        </TabsContent>
+        
+        {/* Chat Tab */}
+        <TabsContent value="chat" className="space-y-4">
+          <AIChat 
+            courseAvatar={translatedCourse.avatar} 
+            userName={user.name} 
+          />
+        </TabsContent>
+      </Tabs>
+    </DashboardLayout>
+  );
+};
+
+export default Dashboard;

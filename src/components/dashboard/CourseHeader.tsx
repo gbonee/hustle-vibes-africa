@@ -13,9 +13,9 @@ interface CourseHeaderProps {
 // Define translations for all course titles
 const courseTranslations = {
   pidgin: {
-    'digital-marketing': 'Digital Marketing di Naija Way',
+    'digital-marketing': 'Digital Marketing the Naija Way',
     'pastry-biz': 'Pastry Business Masterclass',
-    'importation': 'Import From China & Sell for WhatsApp'
+    'importation': 'Import From China & Sell on WhatsApp'
   },
   yoruba: {
     'digital-marketing': 'Ìpolówó ojú òpó lójú kan Nàìjíríà',

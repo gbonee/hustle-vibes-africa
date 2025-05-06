@@ -21,38 +21,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     { id: 'igbo', name: 'Igbo', flag: '🌟' },
   ];
 
-  // Get localized text based on selected language (show English by default until selection)
-  const getText = () => {
-    const texts = {
-      heading: {
-        pidgin: 'Choose Your Language',
-        yoruba: 'Yan Èdè Rẹ',
-        hausa: 'Zaɓi Yarenku',
-        igbo: 'Họrọ Asụsụ Gị',
-      },
-      subheading: {
-        pidgin: 'Select the language your AI coach will speak',
-        yoruba: 'Yan èdè tí olùkọ́ AI rẹ yóò sọ',
-        hausa: 'Zaɓi harshen da malamin AI ɗinka zai yi magana',
-        igbo: 'Họrọ asụsụ nke onye nkuzi AI gị ga-asụ',
-      }
-    };
-    
-    if (!selectedLanguage) return { heading: texts.heading.pidgin, subheading: texts.subheading.pidgin };
-    
-    return {
-      heading: (texts.heading as any)[selectedLanguage] || texts.heading.pidgin,
-      subheading: (texts.subheading as any)[selectedLanguage] || texts.subheading.pidgin,
-    };
-  };
-  
-  const localizedText = getText();
-
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">{localizedText.heading}</h2>
-        <p className="text-gray-400">{localizedText.subheading}</p>
+        <h2 className="text-2xl font-bold mb-2">Choose Your Language</h2>
+        <p className="text-gray-400">Select the language your AI coach will speak</p>
       </div>
       
       <div className="grid grid-cols-2 gap-4">

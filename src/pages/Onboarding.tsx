@@ -144,8 +144,7 @@ const Onboarding: React.FC<OnboardingProps> = ({ onComplete }) => {
               <AvatarSelector 
                 avatars={avatars} 
                 selectedAvatar={avatar} 
-                onSelectAvatar={handleAvatarSelect}
-                language={language || 'pidgin'}
+                onSelectAvatar={handleAvatarSelect} 
               />
             )}
             

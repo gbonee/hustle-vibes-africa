@@ -23,45 +23,18 @@ interface AvatarSelectorProps {
   avatars: AvatarInfo[];
   selectedAvatar: Avatar | null;
   onSelectAvatar: (avatar: Avatar) => void;
-  language?: Language;
 }
 
 const AvatarSelector: React.FC<AvatarSelectorProps> = ({ 
   avatars, 
   selectedAvatar, 
-  onSelectAvatar,
-  language = 'pidgin'
+  onSelectAvatar 
 }) => {
-  // Get translations based on selected language
-  const getLocalizedText = () => {
-    const texts = {
-      heading: {
-        pidgin: 'Choose Your AI Coach',
-        yoruba: 'Yan Olùkọ́ AI Rẹ',
-        hausa: 'Zaɓi Malamin AI Naka',
-        igbo: 'Họrọ Onye Nkuzi AI Gị',
-      },
-      subheading: {
-        pidgin: 'Select who will guide you through your learning journey',
-        yoruba: 'Yan ẹniti yoo ṣe itọsọna rẹ ni gbogbo irin ajo ẹkọ rẹ',
-        hausa: 'Zaɓi wanda zai jagorance ka yayin tafiyar koyon ka',
-        igbo: 'Họrọ onye ga-edu gị n\'ụzọ nke mmụta gị',
-      }
-    };
-    
-    return {
-      heading: (texts.heading as any)[language] || texts.heading.pidgin,
-      subheading: (texts.subheading as any)[language] || texts.subheading.pidgin,
-    };
-  };
-  
-  const localizedText = getLocalizedText();
-
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">{localizedText.heading}</h2>
-        <p className="text-gray-400">{localizedText.subheading}</p>
+        <h2 className="text-2xl font-bold mb-2">Choose Your AI Coach</h2>
+        <p className="text-gray-400">Select who will guide you through your learning journey</p>
       </div>
       
       <div className="space-y-4">
