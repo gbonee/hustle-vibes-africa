@@ -129,15 +129,15 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       if (user) {
         setUserId(user.id);
         // Create a unique key for this user+course combination
-        const courseKey = `${user.id}_${currentCourse}`;
+        const courseKey = `${user.id}_${currentCourse}_${currentLanguage}`;
         setCurrentCourseKey(courseKey);
         console.log("Setting course key for logged in user:", courseKey);
         
-        // Load previous messages from localStorage for the SPECIFIC AVATAR/COURSE
+        // Load previous messages from localStorage for the SPECIFIC AVATAR/COURSE/LANGUAGE
         loadChatHistory(courseKey);
       } else {
         // Handle preview mode or user not logged in
-        const courseKey = `preview_${currentCourse}`;
+        const courseKey = `preview_${currentCourse}_${currentLanguage}`;
         setCurrentCourseKey(courseKey);
         console.log("Setting course key for preview mode:", courseKey);
         
@@ -152,7 +152,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setIsPreviewMode(preview);
 
     getUserId();
-  }, [currentCourse]); // Make sure this re-runs when currentCourse changes
+  }, [currentCourse, currentLanguage]); // Make sure this re-runs when currentCourse or language changes
 
   // Function to load chat history
   const loadChatHistory = (courseKey: string) => {
