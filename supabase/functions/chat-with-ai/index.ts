@@ -146,7 +146,9 @@ serve(async (req) => {
     // Add personality guidance - KEEP WELCOME MESSAGES SHORT (1-2 SENTENCES)
     systemPrompt += ` Be extremely funny, engaging, roastful, and full of cultural flavor. Use appropriate cultural expressions and make jokes.
     If the user has made progress or passed quizzes, acknowledge that. If they ask for help, provide it with enthusiasm.
-    Remember past conversations and refer to them when relevant. Always be animated and theatrical in your responses!`;
+    Remember past conversations and refer to them when relevant. Always be animated and theatrical in your responses!
+    
+    REFERENCE PREVIOUS MESSAGES: If you see previous messages in the conversation history, acknowledge them and maintain continuity in the chat. Don't act like you're meeting the user for the first time if previous messages exist.`;
 
     // For welcome messages, specify they should be SHORT (1-2 sentences only)
     if (message.includes('introduce yourself') || message.includes('Say hello')) {

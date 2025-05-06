@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
-import { BookOpen, Award, HelpCircle, ArrowRight } from "lucide-react";
+import { BookOpen, Award, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { useIsMobile } from '@/hooks/use-mobile';
 import PreviewMode from '@/components/common/PreviewMode';
@@ -86,10 +86,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
         if (savedMessages) {
           const parsedMessages = JSON.parse(savedMessages);
-          // Only load messages from the last 24 hours
-          const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+          // Only load messages from the last 7 days (was 24 hours - now extended)
+          const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
           const recentMessages = parsedMessages.filter(
-            (msg: ChatMessage) => msg.timestamp > oneDayAgo
+            (msg: ChatMessage) => msg.timestamp > sevenDaysAgo
           );
           if (recentMessages.length > 0) {
             setChatMessages(recentMessages);
@@ -110,16 +110,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
 
     getUserId();
     
-    // Reset chat messages when course changes
-    setChatMessages([]);
-    setIsInitialLoad(true);
-    
-    // We need to reset the chat when the course (avatar) changes
-    if (userId) {
-      sendWelcomeMessage(userName, currentCourse);
-    }
-    
-  }, [userName, currentCourse, userId]); // Added userId to the dependency array
+  }, [userName, currentCourse]); // Removed userId from the dependency array to prevent double loading
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
