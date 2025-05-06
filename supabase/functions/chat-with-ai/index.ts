@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
@@ -93,28 +94,52 @@ serve(async (req) => {
       
       // Specific example for pidgin welcome message
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        systemPrompt += ` Example introduction: "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!"`;
+        if (course === 'digital-marketing') {
+          systemPrompt += ` Example introduction: "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!"`;
+        } else if (course === 'pastry-biz') {
+          systemPrompt += ` Example introduction: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
+        } else if (course === 'importation') {
+          systemPrompt += ` Example introduction: "Oya! Uncle Musa don drop! Make we teach you importation business with correct connect!"`;
+        }
       }
     } else if (userLanguage === 'yoruba') {
       systemPrompt += ` You MUST speak PURE Yoruba language in EVERY response. ALL your messages should be FULLY in Yoruba (not mixing with English). Use proper Yoruba phrases and expressions throughout your entire messages.`;
       
       // Specific example for Yoruba welcome message
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        systemPrompt += ` Example introduction: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára. Ẹ má ṣe jẹ́ kí ó pẹ́ o!"`;
+        if (course === 'digital-marketing') {
+          systemPrompt += ` Example introduction: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára. Ẹ má ṣe jẹ́ kí ó pẹ́ o!"`;
+        } else if (course === 'pastry-biz') {
+          systemPrompt += ` Example introduction: "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!"`;
+        } else if (course === 'importation') {
+          systemPrompt += ` Example introduction: "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!"`;
+        }
       }
     } else if (userLanguage === 'hausa') {
       systemPrompt += ` You MUST speak PURE Hausa language in EVERY response. ALL your messages should be FULLY in Hausa (not mixing with English). Use proper Hausa phrases and expressions throughout your entire messages.`;
       
       // Specific example for Hausa welcome message
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        systemPrompt += ` Example introduction: "Sannu da zuwa! Ni ne Digital Mama. Na zo ne domin in koya maka yadda za ka sami kuɗi ta hanyar kasuwanci a yanar gizo. Kada ka yi jinkiri!"`;
+        if (course === 'digital-marketing') {
+          systemPrompt += ` Example introduction: "Sannu da zuwa! Ni ne Digital Mama. Na zo ne domin in koya maka yadda za ka sami kuɗi ta hanyar kasuwanci a yanar gizo. Kada ka yi jinkiri!"`;
+        } else if (course === 'pastry-biz') {
+          systemPrompt += ` Example introduction: "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!"`;
+        } else if (course === 'importation') {
+          systemPrompt += ` Example introduction: "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!"`;
+        }
       }
     } else if (userLanguage === 'igbo') {
       systemPrompt += ` You MUST speak PURE Igbo language in EVERY response. ALL your messages should be FULLY in Igbo (not mixing with English). Use proper Igbo phrases and expressions throughout your entire messages.`;
       
       // Specific example for Igbo welcome message
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        systemPrompt += ` Example introduction: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ. Emela ngwa ngwa!"`;
+        if (course === 'digital-marketing') {
+          systemPrompt += ` Example introduction: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ. Emela ngwa ngwa!"`;
+        } else if (course === 'pastry-biz') {
+          systemPrompt += ` Example introduction: "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!"`;
+        } else if (course === 'importation') {
+          systemPrompt += ` Example introduction: "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!"`;
+        }
       }
     }
     

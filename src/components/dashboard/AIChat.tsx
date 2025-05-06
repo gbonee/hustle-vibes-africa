@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -118,7 +117,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       sendWelcomeMessage(userName, currentCourse);
     }
     
-  }, [userName, currentCourse]); // Re-run when course changes
+  }, [userName, currentCourse, userId]); // Added userId to the dependency array
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
@@ -144,7 +143,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Call the edge function for AI welcome message - requesting a SHORT message
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
-          message: `Say hello to ${name} and introduce yourself as ${coachName} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${currentLanguage} language with lots of Nigerian flavor.`,
+          message: `Say hello to ${name} and introduce yourself as ${getCoachName(course)} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${currentLanguage} language with lots of Nigerian flavor.`,
           course: course,
           language: currentLanguage,
           userName: name,
@@ -168,7 +167,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Add fallback welcome message - shortened
       setChatMessages([{ 
         isUser: false, 
-        text: getLanguageSpecificFallbackWelcome(userName, coachName),
+        text: getLanguageSpecificFallbackWelcome(userName, coachName, course),
         timestamp: Date.now()
       }]);
     } finally {
@@ -178,18 +177,20 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   };
 
   // Fallback welcome message in the chosen language if API call fails
-  const getLanguageSpecificFallbackWelcome = (name: string, coach: string): string => {
+  const getLanguageSpecificFallbackWelcome = (name: string, coach: string, course: string): string => {
+    const coachWithCourse = getCoachName(course);
+    
     switch (currentLanguage) {
       case 'pidgin':
-        return `Wetin dey sup ${name}! Na me be ${coach}! Ask me anything!`;
+        return `Wetin dey sup ${name}! Na me be ${coachWithCourse}! Ask me anything!`;
       case 'yoruba':
-        return `Ẹ ku àbọ̀ ${name}! Èmi ni ${coach}! Ẹ le bi mi ohunkohun!`;
+        return `Ẹ ku àbọ̀ ${name}! Èmi ni ${coachWithCourse}! Ẹ le bi mi ohunkohun!`;
       case 'hausa':
-        return `Sannu da zuwa ${name}! Ni ne ${coach}! Ka iya tambaye ni komai!`;
+        return `Sannu da zuwa ${name}! Ni ne ${coachWithCourse}! Ka iya tambaye ni komai!`;
       case 'igbo':
-        return `Nnọọ ${name}! Abụ m ${coach}! Ị nwere ike ịjụ m ihe ọbụla!`;
+        return `Nnọọ ${name}! Abụ m ${coachWithCourse}! Ị nwere ike ịjụ m ihe ọbụla!`;
       default:
-        return `Wetin dey sup ${name}! Na me be ${coach}! Ask me anything!`;
+        return `Wetin dey sup ${name}! Na me be ${coachWithCourse}! Ask me anything!`;
     }
   };
 
