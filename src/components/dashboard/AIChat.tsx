@@ -89,44 +89,100 @@ const getCourseSpecificGreeting = (course: string): string => {
   }
 };
 
-// Fixed welcome messages for each avatar and language
-const getFixedWelcomeMessage = (course: string, language: string): string => {
+// Dynamic welcome messages for each avatar and language with culturally specific tone
+const getWelcomeMessage = (course: string, language: string): string => {
   if (language === 'pidgin') {
     if (course === 'digital-marketing') {
-      return "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!";
+      return "Oya now! Digital Mama don land for your mata! Ready to show you how to hammer big money for online space. No dull yourself o!";
     } else if (course === 'pastry-biz') {
-      return "My darling! Baker Amara don show! Ready to bake money into your life!";
+      return "My darling! Baker Amara don show! Make we bake sweet money into your life with pastry business wey go wow everybody!";
     } else if (course === 'importation') {
-      return "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!";
+      return "Oya! My guy! Uncle Musa don land with correct connect! Make I show you how to import original goods and hammer money sharp-sharp!";
     }
   } else if (language === 'yoruba') {
     if (course === 'digital-marketing') {
-      return "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!";
+      return "Ẹ káàbọ̀! Èmi ni Ìyá Díjítà. Mo ti wá láti kọ́ ọ nípa bí o ṣe lè ṣe owó púpọ̀ lórí ayélujára!";
     } else if (course === 'pastry-biz') {
-      return "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!";
+      return "Ẹ káàbọ̀, ọmọ mi! Èmi ni Aladàáná Amara. Jẹ́ kí a ṣe àwọn oúnjẹ adùn tí yóò mú owó wọlé fún ẹ!";
     } else if (course === 'importation') {
-      return "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!";
+      return "Ẹ káàbọ̀! Èmi ni Bàbá Musa. Mo ní àwọn ọ̀nà tí o lè gbà mú ọjà wọlé láti Ṣáínà kí o sì tà láti ṣe owó!";
     }
   } else if (language === 'hausa') {
     if (course === 'digital-marketing') {
-      return "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!";
+      return "Barka da zuwa! Ni ne Mama Dijital. Na zo ne domin in koya maka yadda za ka sami kudi sosai ta hanyar yanar gizo!";
     } else if (course === 'pastry-biz') {
-      return "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!";
+      return "Barka da zuwa, ƙauna! Ni ne Mai Gashi Amara. Bari mu yi abinci mai dadi wanda zai kawo maka kudi da yawa!";
     } else if (course === 'importation') {
-      return "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!";
+      return "Barka da zuwa! Ni ne Kawu Musa. Ina da hanyoyi da za ka iya shigo da kaya daga China kuma ka sayar domin samun riba mai yawa!";
     }
   } else if (language === 'igbo') {
     if (course === 'digital-marketing') {
-      return "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!";
+      return "Nnọọ! Abụ m Nne Dijitạl. Abịala m ịkụziri gị otú ị ga-esi enweta ego site n'intanetị!";
     } else if (course === 'pastry-biz') {
-      return "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!";
+      return "Nnọọ, nwa m! Abụ m Onye Nri Amara. Ka anyị mere nri ụtọ nke ga-ewetara gị ego ruru oke!";
     } else if (course === 'importation') {
-      return "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!";
+      return "Nnọọ! Abụ m Nna Nwanna Musa. Enwere m ụzọ ị ga-esi bubata ngwá ahịa site na China ma ree ha iji rite ego!";
     }
   }
   
   // Default fallback based on course
   return `Welcome! I am ${getCoachName(course)}. Let's talk about ${getCourseSpecificGreeting(course)}!`;
+};
+
+// Translated button and UI text based on language
+const getTranslatedText = (key: string, language: string): string => {
+  const translations: Record<string, Record<string, string>> = {
+    'next-lesson': {
+      pidgin: 'Next Lesson',
+      yoruba: 'Ẹ̀kọ́ Tókàn',
+      hausa: 'Darasin Gaba',
+      igbo: 'Ihe Ọmụmụ Ozugbo',
+    },
+    'take-quiz': {
+      pidgin: 'Take Quiz',
+      yoruba: 'Ṣe Idánwò',
+      hausa: 'Yi Gwaji',
+      igbo: 'Were Quiz',
+    },
+    'challenge': {
+      pidgin: 'Challenge',
+      yoruba: 'Ìdánwò',
+      hausa: 'Kalubale',
+      igbo: 'Ịma Aka',
+    },
+    'send': {
+      pidgin: 'Send',
+      yoruba: 'Firánṣẹ́',
+      hausa: 'Aika',
+      igbo: 'Zipu',
+    },
+    'ask-question': {
+      pidgin: 'Ask a question...',
+      yoruba: 'Bi ìbéèrè kan...',
+      hausa: 'Tambaya...',
+      igbo: 'Jụọ ajụjụ...',
+    },
+    'chat-with': {
+      pidgin: 'Chat with',
+      yoruba: 'Bá sọ̀rọ̀',
+      hausa: 'Yi magana da',
+      igbo: 'Soro kparịta ụka',
+    },
+    'how-far': {
+      pidgin: 'How far',
+      yoruba: 'Báwo ni',
+      hausa: 'Sannu',
+      igbo: 'Kedụ',
+    },
+    'ask-me': {
+      pidgin: 'you fit ask me anything about',
+      yoruba: 'ẹ lè bí mi nípa ohunkóhun nípa',
+      hausa: 'za ka iya tambaye ni komai game da',
+      igbo: 'ị nwere ike ịjụ m ihe ọbụla gbasara',
+    },
+  };
+  
+  return translations[key]?.[language] || translations[key]?.pidgin || key;
 };
 
 const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
@@ -159,7 +215,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       
       if (user) {
         setUserId(user.id);
-        // Create a unique key for this user+course combination
+        // Create a unique key for this user+course+language combination
         const courseKey = `${user.id}_${currentCourse}_${currentLanguage}`;
         setCurrentCourseKey(courseKey);
         console.log("Setting course key for logged in user:", courseKey);
@@ -199,29 +255,25 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         );
         
         if (recentMessages.length > 0) {
-          console.log(`Loading ${recentMessages.length} saved messages for ${courseKey}`);
           setChatMessages(recentMessages);
           setIsInitialLoad(false);
         } else {
           // If we have no recent messages, send a welcome message
-          console.log(`No recent messages for ${courseKey}, sending welcome message`);
-          sendWelcomeMessage(userName, currentCourse, currentLanguage);
+          sendWelcomeMessage();
         }
       } catch (error) {
         console.error("Error parsing saved messages:", error);
-        sendWelcomeMessage(userName, currentCourse, currentLanguage);
+        sendWelcomeMessage();
       }
     } else {
       // If we have no saved messages at all, send a welcome message
-      console.log(`No saved messages for ${courseKey}, sending welcome message`);
-      sendWelcomeMessage(userName, currentCourse, currentLanguage);
+      sendWelcomeMessage();
     }
   };
 
-  // Save messages to localStorage whenever they change - with course-specific key
+  // Save messages to localStorage whenever they change - with course+language specific key
   useEffect(() => {
     if (chatMessages.length > 0 && currentCourseKey) {
-      console.log(`Saving ${chatMessages.length} chat messages to: chat_history_${currentCourseKey}`);
       localStorage.setItem(`chat_history_${currentCourseKey}`, JSON.stringify(chatMessages));
     }
   }, [chatMessages, currentCourseKey]);
@@ -233,35 +285,30 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   }, [chatMessages]);
 
-  // Generate a welcome message using the AI
-  const sendWelcomeMessage = async (name: string, course: string, language: string) => {
+  // Generate a welcome message with avatar-specific greeting
+  const sendWelcomeMessage = async () => {
     setIsLoading(true);
     
     try {
-      const progress = getUserProgress();
-      console.log("Generating welcome message for course:", course, "language:", language);
+      // Get the welcome message for this avatar and language
+      const welcomeMessage = getWelcomeMessage(currentCourse, currentLanguage);
       
-      // Use the fixed welcome message for the specific course and language
-      const welcomeMessage = getFixedWelcomeMessage(course, language);
-      console.log("Using welcome message:", welcomeMessage);
-      
-      // Try to get a GIF for the welcome message
+      // Try to get a Nigerian GIF for the welcome message
       let gifUrl = null;
       try {
-        const giphyApiKey = "pLURtkhVrUXr4TN8PseRqbVN4n9Re7ky"; // Using a fixed GIPHY API key
-        const searchTerm = "aki and pawpaw nigerian comedy"; // Always use Aki and Pawpaw
+        const giphyApiKey = "pLURtkhVrUXr4TN8PseRqbVN4n9Re7ky"; 
+        const searchTerm = "aki and pawpaw nigerian comedy";
         
         const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
         const giphyData = await giphyResponse.json();
         
         if (giphyData.data && giphyData.data.length > 0) {
-          // Get a random GIF from the top 10 results for more variety
+          // Get a random GIF from the top results
           const randomIndex = Math.floor(Math.random() * Math.min(10, giphyData.data.length));
           gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
         }
       } catch (giphyError) {
         console.error('Giphy API error:', giphyError);
-        // Continue without a GIF if there's an error
       }
       
       // Add welcome message to chat with the GIF
@@ -277,7 +324,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Add fallback welcome message - avatar-specific
       setChatMessages([{ 
         isUser: false, 
-        text: getFixedWelcomeMessage(course, language),
+        text: getWelcomeMessage(currentCourse, currentLanguage),
         timestamp: Date.now()
       }]);
     } finally {
@@ -326,8 +373,6 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     try {
       const progress = getUserProgress();
       const previousMessages = formatChatHistoryForApi();
-
-      console.log("Sending message to AI with course:", currentCourse, "language:", currentLanguage);
 
       // Call the edge function for AI response
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
@@ -473,72 +518,6 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     return "";
   };
 
-  // Generate language-specific greeting
-  const getLanguageSpecificGreeting = (): string => {
-    switch (currentLanguage) {
-      case 'pidgin':
-        return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
-      case 'yoruba':
-        return `Báwo ni ${userName}, ẹ lè bí mi nípa ohunkóhun nípa ${courseSpecificGreeting}`;
-      case 'hausa':
-        return `Sannu ${userName}, za ka iya tambaye ni komai game da ${courseSpecificGreeting}`;
-      case 'igbo':
-        return `Kedụ ${userName}, ị nwere ike ịjụ m ihe ọbụla gbasara ${courseSpecificGreeting}`;
-      default:
-        return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
-    }
-  };
-
-  // Get translated action button labels
-  const getQuickActionButtonText = (actionType: string): string => {
-    const translations = {
-      'next-lesson': {
-        pidgin: 'Next Lesson',
-        yoruba: 'Ẹ̀kọ́ Tókàn',
-        hausa: 'Darasin Gaba',
-        igbo: 'Ihe Ọmụmụ Ozugbo',
-      },
-      'take-quiz': {
-        pidgin: 'Take Quiz',
-        yoruba: 'Ṣe Idánwò',
-        hausa: 'Yi Gwaji',
-        igbo: 'Were Quiz',
-      },
-      'challenge': {
-        pidgin: 'Challenge',
-        yoruba: 'Ìdánwò',
-        hausa: 'Kalubale',
-        igbo: 'Ịma Aka',
-      },
-    };
-    
-    return translations[actionType]?.[currentLanguage] || translations[actionType]?.pidgin || actionType;
-  };
-  
-  // Get translated "Chat with [coach]" text
-  const getChatWithCoachText = (): string => {
-    const translations = {
-      pidgin: `Chat with ${coachName}`,
-      yoruba: `Bá ${coachName} sọ̀rọ̀`,
-      hausa: `Yi magana da ${coachName}`,
-      igbo: `Soro ${coachName} kparịta ụka`,
-    };
-    
-    return translations[currentLanguage] || translations.pidgin;
-  };
-  
-  // Get placeholder text translation
-  const getPlaceholderText = (): string => {
-    const translations = {
-      pidgin: `Ask ${coachName} a question...`,
-      yoruba: `Bi ${coachName} ìbéèrè kan...`,
-      hausa: `Tambayi ${coachName} tambaya...`,
-      igbo: `Jụọ ${coachName} ajụjụ...`,
-    };
-    
-    return translations[currentLanguage] || translations.pidgin;
-  };
-
   return (
     <Card className="bg-muted border-electric">
       {isPreviewMode && (
@@ -555,8 +534,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             <AvatarFallback>AI</AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle>{getChatWithCoachText()}</CardTitle>
-            <CardDescription>{getLanguageSpecificGreeting()}</CardDescription>
+            <CardTitle>{getTranslatedText('chat-with', currentLanguage)} {coachName}</CardTitle>
+            <CardDescription>
+              {getTranslatedText('how-far', currentLanguage)} {userName}, {getTranslatedText('ask-me', currentLanguage)} {courseSpecificGreeting}
+            </CardDescription>
           </div>
         </div>
       </CardHeader>
@@ -586,7 +567,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
                   </div>
                   {msg.gif && (
                     <div className="ml-13 mt-2 max-w-[200px]">
-                      <img src={msg.gif} alt="Giphy reaction" className="rounded-lg" />
+                      <img src={msg.gif} alt="Nigerian reaction" className="rounded-lg" />
                     </div>
                   )}
                 </div>
@@ -609,7 +590,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           </div>
         </ScrollArea>
         
-        {/* Quick action buttons - now with translated text */}
+        {/* Quick action buttons - with translated text */}
         <div className="grid grid-cols-3 gap-2 mb-4">
           <Button 
             variant="outline" 
@@ -618,7 +599,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <BookOpen className="h-4 w-4 mr-1" />
-            <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('next-lesson')}</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>
+              {getTranslatedText('next-lesson', currentLanguage)}
+            </span>
           </Button>
           <Button 
             variant="outline" 
@@ -627,7 +610,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <Award className="h-4 w-4 mr-1" />
-            <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('take-quiz')}</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>
+              {getTranslatedText('take-quiz', currentLanguage)}
+            </span>
           </Button>
           <Button 
             variant="outline" 
@@ -636,7 +621,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             className="flex items-center justify-center"
           >
             <ArrowRight className="h-4 w-4 mr-1" />
-            <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('challenge')}</span>
+            <span className={isMobile ? "text-[10px]" : "text-xs"}>
+              {getTranslatedText('challenge', currentLanguage)}
+            </span>
           </Button>
         </div>
         
@@ -644,15 +631,12 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder={getPlaceholderText()}
+            placeholder={`${getTranslatedText('ask-question', currentLanguage)}`}
             className="bg-black border-gray-700"
             disabled={isLoading}
           />
           <Button type="submit" disabled={isLoading}>
-            {currentLanguage === 'pidgin' ? 'Send' : 
-             currentLanguage === 'yoruba' ? 'Firánṣẹ́' :
-             currentLanguage === 'hausa' ? 'Aika' :
-             currentLanguage === 'igbo' ? 'Zipu' : 'Send'}
+            {getTranslatedText('send', currentLanguage)}
           </Button>
         </form>
       </CardContent>
