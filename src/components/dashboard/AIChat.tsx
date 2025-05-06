@@ -68,10 +68,15 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [currentCourseKey, setCurrentCourseKey] = useState<string>('');
   const isMobile = useIsMobile();
   
+  // Always use the current course from userPrefs
   const currentCourse = userPrefs?.course || 'digital-marketing';
+  // Get the avatar-specific coach name based on the current course
   const coachName = getCoachName(currentCourse);
   const courseSpecificGreeting = getCourseSpecificGreeting(currentCourse);
   const currentLanguage = userPrefs?.language || 'pidgin';
+  
+  console.log("Current course in AIChat:", currentCourse);
+  console.log("Coach name:", coachName);
 
   // Initialize user ID and check preview mode
   useEffect(() => {
@@ -79,10 +84,13 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setUserId(user.id);
+        // Create a unique key for this user+course combination
         const courseKey = `${user.id}_${currentCourse}`;
         setCurrentCourseKey(courseKey);
         
-        // Load previous messages from localStorage for the SPECIFIC AVATAR
+        console.log("Setting course key for logged in user:", courseKey);
+        
+        // Load previous messages from localStorage for the SPECIFIC AVATAR/COURSE
         const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
         if (savedMessages) {
           const parsedMessages = JSON.parse(savedMessages);
@@ -102,6 +110,8 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         const previewCourseKey = `preview_${currentCourse}`;
         setCurrentCourseKey(previewCourseKey);
         
+        console.log("Setting course key for preview mode:", previewCourseKey);
+        
         // Check for preview chat history
         const savedMessages = localStorage.getItem(`chat_history_${previewCourseKey}`);
         if (savedMessages) {
@@ -118,10 +128,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         }
       }
 
-      // Reset messages when changing avatar/course
+      // Reset messages when changing avatar/course - this is important
       setChatMessages([]);
       
-      // We'll generate a proper welcome message via the AI specific to the current course/avatar
+      // Generate a proper welcome message for the CURRENT course/avatar
       sendWelcomeMessage(userName, currentCourse);
     };
 
@@ -131,12 +141,13 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setIsPreviewMode(preview);
 
     getUserId();
-    
-  }, [userName, currentCourse]); // Keep dependency array as is to prevent double loading
+    // Adding currentCourse to dependency array to ensure we refresh on course change
+  }, [userName, currentCourse]); 
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
     if (chatMessages.length > 0 && currentCourseKey) {
+      console.log("Saving chat messages to:", currentCourseKey);
       localStorage.setItem(`chat_history_${currentCourseKey}`, JSON.stringify(chatMessages));
     }
   }, [chatMessages, currentCourseKey]);
@@ -154,6 +165,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     
     try {
       const progress = getUserProgress();
+      console.log("Generating welcome message for course:", course);
       
       // Call the edge function for AI welcome message - requesting avatar-specific intro
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
@@ -409,6 +421,18 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
     }
   };
+
+  // Clear chat history when switching avatars/courses
+  useEffect(() => {
+    // This ensures we reset chat when course changes
+    setChatMessages([]);
+    setIsInitialLoad(true);
+    
+    // Generate new welcome message for the new coach
+    if (isInitialLoad) {
+      sendWelcomeMessage(userName, currentCourse);
+    }
+  }, [currentCourse]); // Dependency on currentCourse to ensure refresh happens
 
   return (
     <Card className="bg-muted border-electric">

@@ -23,6 +23,9 @@ serve(async (req) => {
     let systemPrompt = "";
     let searchTerm = "";
     
+    // Log the course being used to help with debugging
+    console.log(`Processing request for course: ${course}, language: ${language}`);
+    
     if (course === 'digital-marketing') {
       systemPrompt = `You are Digital Mama, a Nigerian digital marketing expert with a bold, no-nonsense, Lagos tech babe personality. 
       You have sharp mouth and sharp mind. You're direct, sassy, and don't waste time.
@@ -207,6 +210,9 @@ serve(async (req) => {
       ];
     }
     
+    // Log that we're making the OpenAI API request
+    console.log(`Making OpenAI API request for course: ${course}, message length: ${message.length}`);
+    
     // Make the request to OpenAI API
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -262,6 +268,9 @@ serve(async (req) => {
       console.error('Giphy API error:', giphyError);
       // Continue without a GIF if there's an error
     }
+
+    // Log the successful response
+    console.log(`Successfully processed request for course: ${course}, response length: ${generatedResponse.length}`);
 
     return new Response(JSON.stringify({ 
       response: generatedResponse,
