@@ -550,11 +550,11 @@ const Dashboard = () => {
             moduleTopic: 'Gabatarwa zuwa Tallace-tallace na Dijital a hanyar Naija'
           },
           {
-            question: 'Wanne dandali ne ya fi yawan masu amfani a Najeriya?',
+            question: 'Wanne dandali ne ya fi yawan masi amfani a Najeriya?',
             options: ['LinkedIn', 'WhatsApp', 'Twitter', 'Snapchat'],
             answer: 1,
             moduleId: 1,
             moduleTopic: 'Gabatarwa zuwa Tallace-tallace na Dijital a hanyar Naija'
           },
           {
-            question: 'Menene babban amfani na tallace-tallace na dijital ga kasuwancin Najeriya masu
+            question: 'Menene babban amfani na tallace-tallace na dijital ga kasuwancin
