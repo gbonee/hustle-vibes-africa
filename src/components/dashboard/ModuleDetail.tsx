@@ -7,6 +7,7 @@ import { Quiz } from '@/types/quiz';
 import VideoPlayer from './VideoPlayer';
 import QuizSection from './QuizSection';
 import VideoUploader from '../dashboard/VideoUploader';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface ModuleDetailProps {
   module: Module;
@@ -34,6 +35,7 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [quizResult, setQuizResult] = useState<'correct' | 'incorrect' | null>(null);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleStartQuiz = useCallback(() => {
     setShowQuiz(true);
@@ -84,23 +86,27 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
   // Get quiz button text based on language
   const getQuizButtonText = () => {
     const baseText = {
-      'pidgin': 'Take Quiz on',
-      'yoruba': 'Ṣe Idanwo lori',
-      'hausa': 'Yi Gwaji akan',
-      'igbo': 'Were Quiz na',
+      'pidgin': isMobile ? 'Take Quiz' : 'Take Quiz on',
+      'yoruba': isMobile ? 'Ṣe Idanwo' : 'Ṣe Idanwo lori',
+      'hausa': isMobile ? 'Yi Gwaji' : 'Yi Gwaji akan',
+      'igbo': isMobile ? 'Were Quiz' : 'Were Quiz na',
     };
     
     const selected = (baseText as any)[language] || baseText.pidgin;
+    
+    if (isMobile) {
+      return selected;
+    }
     return `${selected} ${module.title}`;
   };
 
   // Get no quiz text based on language
   const getNoQuizText = () => {
     const texts = {
-      'pidgin': 'No quiz available for dis module yet.',
-      'yoruba': 'Ko si idanwo ti o wa fun modulu yii sibẹsibẹ.',
-      'hausa': 'Babu gwaji mai samuwa don wannan module har yanzu.',
-      'igbo': 'O nweghị quiz dị maka module a ugbua.',
+      'pidgin': isMobile ? 'No quiz yet' : 'No quiz available for dis module yet.',
+      'yoruba': isMobile ? 'Ko si idanwo' : 'Ko si idanwo ti o wa fun modulu yii sibẹsibẹ.',
+      'hausa': isMobile ? 'Babu gwaji' : 'Babu gwaji mai samuwa don wannan module har yanzu.',
+      'igbo': isMobile ? 'O nweghị quiz' : 'O nweghị quiz dị maka module a ugbua.',
     };
     
     return (texts as any)[language] || texts.pidgin;
@@ -135,7 +141,7 @@ const ModuleDetail: React.FC<ModuleDetailProps> = ({
           hasQuizzes ? (
             <Button 
               onClick={handleStartQuiz} 
-              className="w-full py-6 bg-electric text-black hover:bg-electric/90"
+              className="w-full py-4 sm:py-6 bg-electric text-black hover:bg-electric/90"
             >
               {getQuizButtonText()}
             </Button>
