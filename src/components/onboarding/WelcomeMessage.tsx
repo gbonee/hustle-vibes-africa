@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Progress } from "@/components/ui/progress";
+import { avatars } from './AvatarData'; // Import the avatars data
 
 type Avatar = 'digital-mama' | 'baker-amara' | 'uncle-musa';
 type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
@@ -30,6 +31,12 @@ const WelcomeMessage: React.FC<WelcomeMessageProps> = ({
 }) => {
   if (!selectedAvatar || !language) return null;
 
+  // Find the correct avatar data from our central avatar database
+  const avatarData = avatars.find(avatar => avatar.id === selectedAvatar.id);
+  
+  // Use the intro from our avatar data if available, otherwise fallback to the prop
+  const introMessage = avatarData?.intro[language] || selectedAvatar.intro[language];
+
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-6">
       <div className="bg-muted p-6 rounded-lg max-w-md border-2 border-electric animate-slide-up">
@@ -46,7 +53,7 @@ const WelcomeMessage: React.FC<WelcomeMessageProps> = ({
         </div>
         <div className="bg-black p-4 rounded-lg border border-gray-800 mb-4">
           <p className="text-lg text-white">
-            {selectedAvatar.intro[language]}
+            {introMessage}
           </p>
         </div>
         <div className="text-center">

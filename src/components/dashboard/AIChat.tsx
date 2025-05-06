@@ -99,7 +99,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         }
       }
 
-      // We'll generate a proper welcome message via the AI
+      // Reset messages when changing avatar/course
+      setChatMessages([]);
+      
+      // We'll generate a proper welcome message via the AI specific to the current course/avatar
       sendWelcomeMessage(userName, currentCourse);
     };
 
@@ -110,7 +113,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
 
     getUserId();
     
-  }, [userName, currentCourse]); // Removed userId from the dependency array to prevent double loading
+  }, [userName, currentCourse]); // Keep dependency array as is to prevent double loading
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
@@ -126,18 +129,18 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   }, [chatMessages]);
 
-  // Generate a welcome message using the AI - updated to request shorter messages
+  // Generate a welcome message using the AI - updated to request avatar-specific messages
   const sendWelcomeMessage = async (name: string, course: string) => {
     setIsLoading(true);
     
     try {
       const progress = getUserProgress();
       
-      // Call the edge function for AI welcome message - requesting a SHORT message
+      // Call the edge function for AI welcome message - requesting avatar-specific intro
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
           message: `Say hello to ${name} and introduce yourself as ${getCoachName(course)} for the ${course} course. Be VERY BRIEF (1-2 sentences only). Speak in ${currentLanguage} language with lots of Nigerian flavor.`,
-          course: course,
+          course: course, // Make sure to pass the correct course for avatar-specific prompt
           language: currentLanguage,
           userName: name,
           progress,
@@ -157,10 +160,10 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       
     } catch (error) {
       console.error('Error calling AI function for welcome message:', error);
-      // Add fallback welcome message - shortened
+      // Add fallback welcome message - avatar-specific
       setChatMessages([{ 
         isUser: false, 
-        text: getLanguageSpecificFallbackWelcome(userName, coachName, course),
+        text: getLanguageSpecificFallbackWelcome(userName, getCoachName(course), course),
         timestamp: Date.now()
       }]);
     } finally {
