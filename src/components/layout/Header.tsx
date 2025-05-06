@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -16,8 +16,19 @@ const Header: React.FC<HeaderProps> = ({
   userAvatar
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [avatar, setAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const handleLogoClick = () => {
+    // If on dashboard/course page, navigate to courses selection
+    if (location.pathname.includes('/dashboard')) {
+      navigate('/dashboard?selectCourse=true');
+    } else {
+      // On other pages, navigate to home
+      navigate('/');
+    }
+  };
   
   useEffect(() => {
     const fetchUserAvatar = async () => {
@@ -65,14 +76,20 @@ const Header: React.FC<HeaderProps> = ({
     <header className="bg-black/90 backdrop-blur-sm border-b border-electric/30 sticky top-0 z-10">
       <div className="container mx-auto flex justify-between items-center py-3 px-4">
         <div className="flex items-center">
-          <img 
-            src="/lovable-uploads/20591bbc-87c9-4bbc-8159-3e4becbee8c8.png" 
-            alt="uSabi AI Owl Mascot" 
-            className="h-8 w-auto" 
-          />
-          <span className="text-2xl font-oswald font-bold text-electric ml-2">
-            uSabi <span className="text-white">AI</span>
-          </span>
+          <Button 
+            variant="ghost" 
+            className="p-0 hover:bg-transparent" 
+            onClick={handleLogoClick}
+          >
+            <img 
+              src="/lovable-uploads/20591bbc-87c9-4bbc-8159-3e4becbee8c8.png" 
+              alt="uSabi AI Owl Mascot" 
+              className="h-8 w-auto" 
+            />
+            <span className="text-2xl font-oswald font-bold text-electric ml-2">
+              uSabi <span className="text-white">AI</span>
+            </span>
+          </Button>
         </div>
         <Button 
           onClick={() => navigate('/profile')}
