@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 
@@ -35,15 +34,7 @@ serve(async (req) => {
       If users do well, you hype them up enthusiastically. If they slack, you playfully roast them to motivate them.`;
       
       // Always use Aki and Pawpaw for welcome messages
-      if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        searchTerm = "aki and pawpaw nigerian comedy";
-      } else if (message.toLowerCase().includes('congrat') || message.toLowerCase().includes('well done')) {
-        searchTerm = "aki and pawpaw celebration";
-      } else if (message.toLowerCase().includes('confused') || message.toLowerCase().includes('don\'t understand')) {
-        searchTerm = "aki and pawpaw confused face";
-      } else {
-        searchTerm = "aki and pawpaw nigerian comedy";
-      }
+      searchTerm = "aki and pawpaw nigerian comedy";
     } else if (course === 'pastry-biz') {
       systemPrompt = `You are Baker Amara, a Nigerian pastry business expert with sweet aunty vibes, but you still dey give small cruise.
       You're calm, motherly, and playful - like the favorite aunt everyone loves.
@@ -53,15 +44,7 @@ serve(async (req) => {
       You share practical, down-to-earth advice about baking as a business, with occasional gentle teasing.`;
       
       // Always use Aki and Pawpaw for welcome messages
-      if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        searchTerm = "aki and pawpaw nigerian comedy";
-      } else if (message.toLowerCase().includes('recipe') || message.toLowerCase().includes('bake')) {
-        searchTerm = "aki and pawpaw cooking";
-      } else if (message.toLowerCase().includes('thank')) {
-        searchTerm = "aki and pawpaw dancing";
-      } else {
-        searchTerm = "aki and pawpaw nigerian comedy";
-      }
+      searchTerm = "aki and pawpaw nigerian comedy";
     } else if (course === 'importation') {
       systemPrompt = `You are Uncle Musa, a Nigerian importation business expert with sharp Northern businessman vibes. 
       You're funny, sly, and a bit sarcastic. You will roast users if they slack.
@@ -71,15 +54,7 @@ serve(async (req) => {
       You mix tough love with humor, and you're especially impressed when users show hustle mentality.`;
       
       // Always use Aki and Pawpaw for welcome messages
-      if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        searchTerm = "aki and pawpaw nigerian comedy";
-      } else if (message.toLowerCase().includes('import') || message.toLowerCase().includes('business')) {
-        searchTerm = "aki and pawpaw money";
-      } else if (message.toLowerCase().includes('money') || message.toLowerCase().includes('profit')) {
-        searchTerm = "aki and pawpaw rich";
-      } else {
-        searchTerm = "aki and pawpaw nigerian comedy";
-      }
+      searchTerm = "aki and pawpaw nigerian comedy";
     } else {
       systemPrompt = `You are a helpful Nigerian business coach. You teach people how to start and grow profitable businesses.
       You have a friendly, encouraging personality. You're excited about empowering Nigerians to succeed in business.`;
@@ -98,11 +73,11 @@ serve(async (req) => {
       // Specific example for pidgin welcome message
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         if (course === 'digital-marketing') {
-          systemPrompt += ` Example introduction: "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR DIGITAL MAMA: "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!"`;
         } else if (course === 'pastry-biz') {
-          systemPrompt += ` Example introduction: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR BAKER AMARA: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
         } else if (course === 'importation') {
-          systemPrompt += ` Example introduction: "Oya! Uncle Musa don drop! Make we teach you importation business with correct connect!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR UNCLE MUSA: "Oya! Uncle Musa don drop! Make we teach you importation business with correct connect!"`;
         }
       }
     } else if (userLanguage === 'yoruba') {
@@ -111,11 +86,11 @@ serve(async (req) => {
       // Specific example for Yoruba welcome message
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         if (course === 'digital-marketing') {
-          systemPrompt += ` Example introduction: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára. Ẹ má ṣe jẹ́ kí ó pẹ́ o!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR DIGITAL MAMA: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára. Ẹ má ṣe jẹ́ kí ó pẹ́ o!"`;
         } else if (course === 'pastry-biz') {
-          systemPrompt += ` Example introduction: "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR BAKER AMARA: "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!"`;
         } else if (course === 'importation') {
-          systemPrompt += ` Example introduction: "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR UNCLE MUSA: "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!"`;
         }
       }
     } else if (userLanguage === 'hausa') {
@@ -124,11 +99,11 @@ serve(async (req) => {
       // Specific example for Hausa welcome message
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         if (course === 'digital-marketing') {
-          systemPrompt += ` Example introduction: "Sannu da zuwa! Ni ne Digital Mama. Na zo ne domin in koya maka yadda za ka sami kuɗi ta hanyar kasuwanci a yanar gizo. Kada ka yi jinkiri!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR DIGITAL MAMA: "Sannu da zuwa! Ni ne Digital Mama. Na zo ne domin in koya maka yadda za ka sami kuɗi ta hanyar kasuwanci a yanar gizo. Kada ka yi jinkiri!"`;
         } else if (course === 'pastry-biz') {
-          systemPrompt += ` Example introduction: "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR BAKER AMARA: "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!"`;
         } else if (course === 'importation') {
-          systemPrompt += ` Example introduction: "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR UNCLE MUSA: "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!"`;
         }
       }
     } else if (userLanguage === 'igbo') {
@@ -137,11 +112,11 @@ serve(async (req) => {
       // Specific example for Igbo welcome message
       if (message.includes('introduce yourself') || message.includes('Say hello')) {
         if (course === 'digital-marketing') {
-          systemPrompt += ` Example introduction: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ. Emela ngwa ngwa!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR DIGITAL MAMA: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ. Emela ngwa ngwa!"`;
         } else if (course === 'pastry-biz') {
-          systemPrompt += ` Example introduction: "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR BAKER AMARA: "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!"`;
         } else if (course === 'importation') {
-          systemPrompt += ` Example introduction: "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!"`;
+          systemPrompt += ` FIXED WELCOME MESSAGE FOR UNCLE MUSA: "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!"`;
         }
       }
     }
@@ -157,35 +132,36 @@ serve(async (req) => {
     if (message.includes('introduce yourself') || message.includes('Say hello')) {
       systemPrompt += ` IMPORTANT: Keep welcome messages VERY SHORT - just 1-2 sentences maximum with appropriate cultural expressions. Don't write long introductions.`;
       
+      // FORCE SPECIFIC WELCOME MESSAGES FOR EACH AVATAR
       if (course === 'digital-marketing') {
-        if (userLanguage === 'yoruba') {
-          systemPrompt += ` Use ONLY Yoruba language for your entire response. Example: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!"`;
+        if (userLanguage === 'pidgin') {
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!"`;
+        } else if (userLanguage === 'yoruba') {
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!"`;
         } else if (userLanguage === 'hausa') {
-          systemPrompt += ` Use ONLY Hausa language for your entire response. Example: "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!"`;
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!"`;
         } else if (userLanguage === 'igbo') {
-          systemPrompt += ` Use ONLY Igbo language for your entire response. Example: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!"`;
-        } else {
-          systemPrompt += ` Example short intro: "Ah! You don arrive! Digital Mama don land to teach you how to hammer for online space! No dull!"`;
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!"`;
         }
       } else if (course === 'pastry-biz') {
-        if (userLanguage === 'yoruba') {
-          systemPrompt += ` Use ONLY Yoruba language for your entire response. Example: "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!"`;
+        if (userLanguage === 'pidgin') {
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
+        } else if (userLanguage === 'yoruba') {
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!"`;
         } else if (userLanguage === 'hausa') {
-          systemPrompt += ` Use ONLY Hausa language for your entire response. Example: "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!"`;
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!"`;
         } else if (userLanguage === 'igbo') {
-          systemPrompt += ` Use ONLY Igbo language for your entire response. Example: "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!"`;
-        } else {
-          systemPrompt += ` Example short intro: "My darling! Baker Amara don show! Ready to bake money into your life!"`;
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!"`;
         }
       } else if (course === 'importation') {
-        if (userLanguage === 'yoruba') {
-          systemPrompt += ` Use ONLY Yoruba language for your entire response. Example: "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!"`;
+        if (userLanguage === 'pidgin') {
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!"`;
+        } else if (userLanguage === 'yoruba') {
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!"`;
         } else if (userLanguage === 'hausa') {
-          systemPrompt += ` Use ONLY Hausa language for your entire response. Example: "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!"`;
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!"`;
         } else if (userLanguage === 'igbo') {
-          systemPrompt += ` Use ONLY Igbo language for your entire response. Example: "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!"`;
-        } else {
-          systemPrompt += ` Example short intro for Uncle Musa: "Oya my guy! Uncle Musa don land! Ready to show you importation business with correct connect!"`;
+          systemPrompt += ` YOU MUST RETURN EXACTLY THIS WELCOME MESSAGE, DO NOT DEVIATE: "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!"`;
         }
       }
     }
@@ -242,19 +218,8 @@ serve(async (req) => {
     // Always get a related GIF from Giphy API for more engagement
     let gifUrl = null;
     try {
-      // For welcome messages, ALWAYS use Aki and Pawpaw
-      if (message.includes('introduce yourself') || message.includes('Say hello')) {
-        searchTerm = "aki and pawpaw nigerian comedy";
-      } else if (message.toLowerCase().includes('thank you') || message.toLowerCase().includes('thanks')) {
-        searchTerm = "aki and pawpaw thank you";
-      } else if (message.toLowerCase().includes('confused') || message.toLowerCase().includes('don\'t understand')) {
-        searchTerm = "aki and pawpaw confused face";
-      } else if (message.toLowerCase().includes('congratulations') || message.toLowerCase().includes('well done')) {
-        searchTerm = "aki and pawpaw celebration";
-      } else {
-        // Default to Aki and Pawpaw for all messages
-        searchTerm = "aki and pawpaw nigerian comedy";
-      }
+      // Always use Aki and Pawpaw GIFs for all messages
+      searchTerm = "aki and pawpaw nigerian comedy";
       
       const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
       const giphyData = await giphyResponse.json();

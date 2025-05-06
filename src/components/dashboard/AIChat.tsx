@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -85,56 +84,46 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   useEffect(() => {
     const getUserId = async () => {
       const { data: { user } } = await supabase.auth.getUser();
+      let courseKey = '';
+      
       if (user) {
         setUserId(user.id);
         // Create a unique key for this user+course combination
-        const courseKey = `${user.id}_${currentCourse}`;
-        setCurrentCourseKey(courseKey);
-        
+        courseKey = `${user.id}_${currentCourse}`;
         console.log("Setting course key for logged in user:", courseKey);
-        
-        // Load previous messages from localStorage for the SPECIFIC AVATAR/COURSE
-        const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
-        if (savedMessages) {
+      } else {
+        // Handle preview mode or user not logged in
+        courseKey = `preview_${currentCourse}`;
+        console.log("Setting course key for preview mode:", courseKey);
+      }
+      
+      setCurrentCourseKey(courseKey);
+      
+      // Load previous messages from localStorage for the SPECIFIC AVATAR/COURSE
+      const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
+      if (savedMessages) {
+        try {
           const parsedMessages = JSON.parse(savedMessages);
           // Only load messages from the last 7 days (was 24 hours - now extended)
           const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
           const recentMessages = parsedMessages.filter(
             (msg: ChatMessage) => msg.timestamp > sevenDaysAgo
           );
+          
           if (recentMessages.length > 0) {
+            console.log(`Loading ${recentMessages.length} saved messages for ${courseKey}`);
             setChatMessages(recentMessages);
             setIsInitialLoad(false);
             return; // Don't add welcome message if we have recent messages
           }
-        }
-      } else {
-        // Handle preview mode or user not logged in
-        const previewCourseKey = `preview_${currentCourse}`;
-        setCurrentCourseKey(previewCourseKey);
-        
-        console.log("Setting course key for preview mode:", previewCourseKey);
-        
-        // Check for preview chat history
-        const savedMessages = localStorage.getItem(`chat_history_${previewCourseKey}`);
-        if (savedMessages) {
-          const parsedMessages = JSON.parse(savedMessages);
-          const sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
-          const recentMessages = parsedMessages.filter(
-            (msg: ChatMessage) => msg.timestamp > sevenDaysAgo
-          );
-          if (recentMessages.length > 0) {
-            setChatMessages(recentMessages);
-            setIsInitialLoad(false);
-            return;
-          }
+        } catch (error) {
+          console.error("Error parsing saved messages:", error);
         }
       }
 
-      // Reset messages when changing avatar/course - this is important
-      setChatMessages([]);
-      
-      // Generate a proper welcome message for the CURRENT course/avatar
+      // If we reached here, we need to send a welcome message
+      console.log(`No saved messages for ${courseKey}, sending welcome message`);
+      setChatMessages([]); // Reset messages when changing avatar/course
       sendWelcomeMessage(userName, currentCourse);
     };
 
@@ -144,21 +133,20 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setIsPreviewMode(preview);
 
     getUserId();
-    // Adding currentCourse to dependency array to ensure we refresh on course change
-  }, [userName, currentCourse]); 
+  }, [userName, currentCourse, currentLanguage]); // Added currentLanguage as dependency
 
   // Save messages to localStorage whenever they change - with course-specific key
   useEffect(() => {
     if (chatMessages.length > 0 && currentCourseKey) {
-      console.log("Saving chat messages to:", currentCourseKey);
+      console.log(`Saving ${chatMessages.length} chat messages to: ${currentCourseKey}`);
       localStorage.setItem(`chat_history_${currentCourseKey}`, JSON.stringify(chatMessages));
     }
   }, [chatMessages, currentCourseKey]);
 
-  // Scroll to the top of messages after AI responds or on initial load
+  // Scroll to bottom of chat area when messages change
   useEffect(() => {
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = 0;
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [chatMessages]);
 
@@ -197,7 +185,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       // Add fallback welcome message - avatar-specific
       setChatMessages([{ 
         isUser: false, 
-        text: getLanguageSpecificFallbackWelcome(userName, course),
+        text: getFixedWelcomeMessage(course, currentLanguage),
         timestamp: Date.now()
       }]);
     } finally {
@@ -206,22 +194,44 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   };
 
-  // Fallback welcome message in the chosen language if API call fails
-  const getLanguageSpecificFallbackWelcome = (name: string, course: string): string => {
-    const coachWithCourse = getCoachName(course);
-    
-    switch (currentLanguage) {
-      case 'pidgin':
-        return `Wetin dey sup ${name}! Na me be ${coachWithCourse}! Ask me anything about ${getCourseSpecificGreeting(course)}!`;
-      case 'yoruba':
-        return `Ẹ ku àbọ̀ ${name}! Èmi ni ${coachWithCourse}! Ẹ le bi mi ohunkohun nípa ${getCourseSpecificGreeting(course)}!`;
-      case 'hausa':
-        return `Sannu da zuwa ${name}! Ni ne ${coachWithCourse}! Ka iya tambaye ni komai game da ${getCourseSpecificGreeting(course)}!`;
-      case 'igbo':
-        return `Nnọọ ${name}! Abụ m ${coachWithCourse}! Ị nwere ike ịjụ m ihe ọbụla gbasara ${getCourseSpecificGreeting(course)}!`;
-      default:
-        return `Wetin dey sup ${name}! Na me be ${coachWithCourse}! Ask me anything about ${getCourseSpecificGreeting(course)}!`;
+  // Fixed welcome messages for each avatar and language
+  const getFixedWelcomeMessage = (course: string, language: string): string => {
+    if (language === 'pidgin') {
+      if (course === 'digital-marketing') {
+        return "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!";
+      } else if (course === 'pastry-biz') {
+        return "My darling! Baker Amara don show! Ready to bake money into your life!";
+      } else if (course === 'importation') {
+        return "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!";
+      }
+    } else if (language === 'yoruba') {
+      if (course === 'digital-marketing') {
+        return "Ẹ ku àbọ̀! Èmi ni Digital Mama. Mo ti wá láti kọ́ ẹ nípa bí a ṣe ń ṣe owó lórí ìtakùn ayélujára!";
+      } else if (course === 'pastry-biz') {
+        return "Ẹ ku àbọ̀! Èmi ni Baker Amara. Mo wá láti kọ́ ẹ bí a ṣe ń ṣe owó pẹ̀lú àwọn oúnjẹ dídùn!";
+      } else if (course === 'importation') {
+        return "Ẹ ku àbọ̀! Èmi ni Uncle Musa. Mo wá láti kọ́ ẹ nípa bí a ṣe ń gbé ọjà wọlé láti ilẹ̀ Ṣáínà!";
+      }
+    } else if (language === 'hausa') {
+      if (course === 'digital-marketing') {
+        return "Barka da zuwa! Ni ne Digital Mama. Zan koya maka yadda za ka sami kuɗi ta hanyar dijital!";
+      } else if (course === 'pastry-biz') {
+        return "Barka da zuwa! Ni ne Baker Amara. Zan koya maka yadda za ka yi kasuwanci na abinci mai dadi!";
+      } else if (course === 'importation') {
+        return "Barka da zuwa! Ni ne Uncle Musa. Zan koya maka yadda za ka shigo da kaya daga China!";
+      }
+    } else if (language === 'igbo') {
+      if (course === 'digital-marketing') {
+        return "Nnọọ! Abụ m Digital Mama. Abịala m ịkụziri gị otú esi enweta ego site na mgbasa ozi dijitalụ!";
+      } else if (course === 'pastry-biz') {
+        return "Nnọọ! Abụ m Baker Amara. Abịala m ịkụziri gị otú isi enweta ego site na nri ụtọ!";
+      } else if (course === 'importation') {
+        return "Nnọọ! Abụ m Uncle Musa. Abịala m ịkụziri gị otú isi bubata ngwá ahịa site na China!";
+      }
     }
+    
+    // Default fallback based on course
+    return `Welcome! I am ${getCoachName(course)}. Let's talk about ${getCourseSpecificGreeting(course)}!`;
   };
 
   // Mock progress data - in a real app, this would come from the database
@@ -425,18 +435,6 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   };
 
-  // Clear chat history when switching avatars/courses
-  useEffect(() => {
-    // This ensures we reset chat when course changes
-    setChatMessages([]);
-    setIsInitialLoad(true);
-    
-    // Generate new welcome message for the new coach
-    if (isInitialLoad) {
-      sendWelcomeMessage(userName, currentCourse);
-    }
-  }, [currentCourse]); // Dependency on currentCourse to ensure refresh happens
-
   return (
     <Card className="bg-muted border-electric">
       {isPreviewMode && (
@@ -464,22 +462,8 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           className="h-80 mb-4 p-2"
           scrollHideDelay={100}
         >
-          <div className="flex flex-col-reverse space-y-reverse space-y-4">
-            {isLoading && (
-              <div className="flex mb-4">
-                <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
-                  <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
-                </div>
-                <div className="bg-muted p-3 rounded-lg max-w-[80%] flex items-center">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
-                  </div>
-                </div>
-              </div>
-            )}
-            {chatMessages.slice().reverse().map((msg, index) => (
+          <div className="flex flex-col space-y-4">
+            {chatMessages.map((msg, index) => (
               msg.isUser ? (
                 <div key={index} className="flex justify-end mb-4">
                   <div className="bg-electric text-black p-3 rounded-lg max-w-[80%]">
@@ -504,6 +488,20 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
                 </div>
               )
             ))}
+            {isLoading && (
+              <div className="flex mb-4">
+                <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
+                  <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
+                </div>
+                <div className="bg-muted p-3 rounded-lg max-w-[80%] flex items-center">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </ScrollArea>
         
