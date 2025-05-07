@@ -650,3 +650,232 @@ const Dashboard = () => {
         return 'Kedu platformụ nwere ndị ọrụ kachasị na Naịjịrịa?';
       }
       if (text === 'LinkedIn') {
+        return 'LinkedIn';
+      }
+      if (text === 'WhatsApp') {
+        return 'WhatsApp';
+      }
+      if (text === 'Twitter') {
+        return 'Twitter';
+      }
+      if (text === 'Snapchat') {
+        return 'Snapchat';
+      }
+      
+      if (text === 'What is a key advantage of digital marketing for small Nigerian businesses?') {
+        return 'Gịnị bụ uru dị mkpa nke mgbasa ozi dijitali maka obere azụmaahịa na Naịjịrịa?';
+      }
+      if (text === 'It requires lots of capital') {
+        return 'Ọ chọrọ ọtụtụ ego iji malite';
+      }
+      if (text === 'It works without electricity') {
+        return 'Ọ na-arụ ọrụ na-enweghị ọkụ electric';
+      }
+      if (text === 'It allows for targeted customer reach') {
+        return 'Ọ na-enye ohere iji rutere ndị ahịa a na-achọ';
+      }
+      if (text === 'It guarantees overnight success') {
+        return 'Ọ na-ekwe nkwa ihe nrite ozugbo';
+      }
+    }
+    
+    // Digital Marketing Module 2 translations
+    if (moduleId === 2) {
+      if (text === 'What is the best way to organize your WhatsApp business account?') {
+        return 'Kedu ụzọ kacha mma isi hazie akaụntụ WhatsApp gị maka azụmaahịa?';
+      }
+      if (text === 'Mix personal and business chats') {
+        return 'Jikọta mkparịta ụka nke onwe na nke azụmaahịa';
+      }
+      if (text === 'Create broadcast lists for different product categories') {
+        return 'Mepụta ndepụta mgbasa ozi maka nkebi ngwaahịa dị iche iche';
+      }
+      if (text === 'Only post status updates') {
+        return 'Naanị bipụta ozi gbasara ọnọdụ';
+      }
+      if (text === 'Send messages at random times') {
+        return 'Ziga ozi na oge na-enweghị usoro';
+      }
+    }
+    
+    // For other modules or unknown texts, return the original text
+    return text;
+  };
+  
+  const handleSelectModule = (module: Module) => {
+    setSelectedModule(module);
+  };
+  
+  const handleGoBack = () => {
+    setSelectedModule(null);
+  };
+  
+  // Handle module completion
+  const handleModuleComplete = async () => {
+    // If we're in preview mode or no module is selected, just update the UI
+    if (isPreviewMode || !selectedModule) {
+      // Update local UI
+      if (selectedModule) {
+        const updatedModules = courses[userPrefs?.course || 'digital-marketing'].modules.map(m => 
+          m.id === selectedModule.id ? { ...m, completed: true } : m
+        );
+        
+        // This will only update the UI temporarily since we're not persisting to a database in preview mode
+        const coursesCopy = { ...courses };
+        if (coursesCopy[userPrefs?.course || 'digital-marketing']) {
+          coursesCopy[userPrefs?.course || 'digital-marketing'].modules = updatedModules;
+        }
+      }
+      
+      return;
+    }
+    
+    try {
+      const courseId = userPrefs?.course || 'digital-marketing';
+      
+      // Save module completion to the database
+      await updateModuleCompletion(courseId, selectedModule.id, true);
+      
+      // Calculate and update overall course progress
+      await updateCourseProgress(courseId);
+      
+      // Refresh the completion data
+      await fetchCourseProgress();
+      
+      toast({
+        title: "Progress saved!",
+        description: `You've completed "${selectedModule.title}"`,
+        duration: 3000
+      });
+      
+      // Call the callback if provided
+      if (onModuleComplete) {
+        onModuleComplete();
+      }
+    } catch (error) {
+      console.error("Error saving module completion:", error);
+      toast({
+        title: "Error saving progress",
+        description: "Please try again later",
+        variant: "destructive",
+        duration: 3000
+      });
+    }
+  };
+  
+  // Handle quiz completion
+  const handleQuizComplete = async (correct: boolean) => {
+    if (isPreviewMode || !selectedModule || !correct) return;
+    
+    try {
+      // Award points for correct answer
+      const courseId = userPrefs?.course || 'digital-marketing';
+      await awardQuizPoints(courseId, selectedModule.id, 50);
+      
+      toast({
+        title: "Quiz completed!",
+        description: "You earned 50 points for your correct answer.",
+        duration: 3000
+      });
+      
+      // Call the callback if provided
+      if (onQuizComplete) {
+        onQuizComplete(correct);
+      }
+    } catch (error) {
+      console.error("Error awarding quiz points:", error);
+    }
+  };
+  
+  // Get the current course based on user preferences
+  const currentCourse = userPrefs?.course ? courses[userPrefs.course] : courses['digital-marketing'];
+  
+  // Render the modules list and selected module details
+  return (
+    <DashboardLayout>
+      {isLoading ? (
+        <div className="p-4 space-y-4">
+          <Skeleton className="h-32 rounded-lg" />
+          <div className="space-y-2">
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-20 rounded-md" />
+            <Skeleton className="h-20 rounded-md" />
+            <Skeleton className="h-20 rounded-md" />
+          </div>
+        </div>
+      ) : isPreviewMode ? (
+        <PreviewMode />
+      ) : (
+        <div className="p-4">
+          <CourseHeader 
+            title={currentCourse.title} 
+            avatar={currentCourse.avatar} 
+            progress={courseProgress.progress} 
+          />
+          
+          <Tabs 
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="space-y-4"
+          >
+            <TabsList className="w-full">
+              <TabsTrigger value="lessons" className="w-1/2">
+                <Video className="h-4 w-4 mr-2" />
+                {texts.lessons}
+              </TabsTrigger>
+              <TabsTrigger value="chat" className="w-1/2">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                {texts.chat}
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="lessons" className="space-y-4">
+              {selectedModule ? (
+                <>
+                  <Button 
+                    variant="outline" 
+                    onClick={handleGoBack}
+                    className="mb-4"
+                    size="sm"
+                  >
+                    ← {texts.back}
+                  </Button>
+                  
+                  <ModuleDetail 
+                    module={selectedModule}
+                    quizzes={getTranslatedQuizzes(selectedModule.id)}
+                    onClose={handleGoBack}
+                    onModuleComplete={handleModuleComplete}
+                    onQuizComplete={handleQuizComplete}
+                    language={currentLanguage}
+                    texts={{ 
+                      back: texts.back,
+                      loading: texts.loading
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  <h2 className="text-xl font-bold mb-4">{texts.yourModules}</h2>
+                  <ModulesList 
+                    modules={currentCourse.modules}
+                    completedModuleIds={courseProgress.completedModules}
+                    onSelectModule={handleSelectModule}
+                    currentLanguage={currentLanguage}
+                    courseTranslations={currentCourse.translations}
+                  />
+                </>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="chat">
+              <AIChat courseTitle={currentCourse.title} />
+            </TabsContent>
+          </Tabs>
+        </div>
+      )}
+    </DashboardLayout>
+  );
+};
+
+export default Dashboard;
