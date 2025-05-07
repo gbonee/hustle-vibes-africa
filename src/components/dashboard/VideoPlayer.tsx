@@ -38,7 +38,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         return;
       }
       
-      // Look for videos in the format: courseId/moduleId-filename
+      // Get user's selected language from preferences
+      const userLanguage = userPrefs?.language || 'pidgin';
+      console.log(`Looking for ${userLanguage} videos for module ${module.id}`);
+      
+      // Look for videos in the format: courseId/moduleId-language-filename
       const { data, error } = await supabase
         .storage
         .from('module-videos')
@@ -46,9 +50,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         
       if (error) throw error;
       
-      // Find the first video that starts with the module ID
+      // Find the first video that starts with the module ID AND matches the user's language
       const moduleVideo = data.find(file => 
-        file.name.startsWith(`${module.id}-`)
+        file.name.startsWith(`${module.id}-${userLanguage}`)
       );
       
       if (moduleVideo) {
@@ -57,8 +61,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
           .from('module-videos')
           .getPublicUrl(`${userPrefs.course}/${moduleVideo.name}`);
           
+        console.log(`Found ${userLanguage} video for module ${module.id}: ${moduleVideo.name}`);
         setVideoUrl(publicUrl);
       } else {
+        console.log(`No ${userLanguage} video found for module ${module.id}`);
         setVideoUrl(null);
       }
     } catch (error) {
@@ -67,7 +73,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
     } finally {
       setIsLoading(false);
     }
-  }, [module, userPrefs?.course]);
+  }, [module, userPrefs?.course, userPrefs?.language]);
   
   useEffect(() => {
     fetchModuleVideo();
@@ -113,12 +119,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
     );
   }
 
-  // Fallback when no video is available
+  // Fallback when no video is available for the selected language
   return module.hasVideo ? (
     <div className="aspect-video bg-black rounded-lg flex items-center justify-center border border-gray-800">
       <div className="text-center">
         <Video className="h-12 w-12 mx-auto mb-4 text-electric" />
-        <p className="text-gray-400">Video would play here</p>
+        <p className="text-gray-400">No video available in {userPrefs?.language || 'current'} language</p>
       </div>
     </div>
   ) : (

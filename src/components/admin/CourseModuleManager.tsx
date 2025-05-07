@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Video, Languages } from "lucide-react";
+import { Video, Languages, CheckCircle2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import VideoUploader from '@/components/admin/video-uploader/VideoUploader';
@@ -70,6 +70,7 @@ const CourseModuleManager = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<Language>('pidgin');
   const [videoUrls, setVideoUrls] = useState<Record<string, Record<number, Record<string, string>>>>({});
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchVideoUrls();
@@ -77,6 +78,7 @@ const CourseModuleManager = () => {
 
   const fetchVideoUrls = async () => {
     try {
+      setIsLoading(true);
       // Fetch from Supabase storage
       const { data, error } = await supabase
         .storage
@@ -109,8 +111,11 @@ const CourseModuleManager = () => {
         ...prev,
         [selectedCourse]: urls
       }));
+
+      setIsLoading(false);
     } catch (error) {
       console.error('Error fetching video URLs:', error);
+      setIsLoading(false);
     }
   };
 
@@ -118,21 +123,13 @@ const CourseModuleManager = () => {
     setSelectedModule(module);
   };
 
-  const handleVideoUploaded = (moduleId: number, language: Language, url: string) => {
-    setVideoUrls(prev => ({
-      ...prev,
-      [selectedCourse]: {
-        ...(prev[selectedCourse] || {}),
-        [moduleId]: {
-          ...(prev[selectedCourse]?.[moduleId] || {}),
-          [language]: url
-        }
-      }
-    }));
+  const handleVideoUploaded = (moduleId: number, url: string) => {
+    // Force refresh video URLs after upload
+    fetchVideoUrls();
     
     toast({
       title: "Video uploaded successfully",
-      description: `The ${language} video for this module has been updated.`,
+      description: `The ${selectedLanguage} video for this module has been updated.`,
       variant: "default"
     });
   };
@@ -146,6 +143,21 @@ const CourseModuleManager = () => {
       ? Object.keys(videoUrls[selectedCourse][moduleId]).length
       : 0;
     return langCount;
+  };
+
+  const getLanguageLabels = (moduleId: number) => {
+    const languages = videoUrls[selectedCourse]?.[moduleId]
+      ? Object.keys(videoUrls[selectedCourse][moduleId])
+      : [];
+    
+    const languageMap: Record<string, string> = {
+      'pidgin': '🇳🇬 Pidgin',
+      'yoruba': '🧙‍♂️ Yoruba',
+      'hausa': '🌵 Hausa',
+      'igbo': '🌟 Igbo'
+    };
+    
+    return languages.map(lang => languageMap[lang] || lang);
   };
 
   return (
@@ -175,35 +187,61 @@ const CourseModuleManager = () => {
             {selectedCourse && (
               <div className="space-y-4 mt-4">
                 <h3 className="text-lg font-bold">Modules</h3>
-                {courses[selectedCourse as keyof typeof courses].modules.map(module => (
-                  <Card 
-                    key={module.id} 
-                    className={`bg-muted cursor-pointer transition-all hover:border-electric`}
-                    onClick={() => handleSelectModule(module)}
-                  >
-                    <CardContent className="p-4 flex items-center justify-between">
-                      <div>
-                        <h4 className="font-medium">{module.title}</h4>
-                        <div className="flex items-center gap-2 mt-1">
-                          {module.hasVideo && (
-                            <span className="text-xs bg-black px-2 py-0.5 rounded-full">
-                              <Video className="inline-block w-3 h-3 mr-1" />
-                              Has Video
-                            </span>
-                          )}
+                {isLoading ? (
+                  <div className="text-center py-4">Loading modules...</div>
+                ) : (
+                  courses[selectedCourse as keyof typeof courses].modules.map(module => (
+                    <Card 
+                      key={module.id} 
+                      className={`bg-muted cursor-pointer transition-all hover:border-electric ${
+                        selectedModule?.id === module.id ? 'border-electric' : ''
+                      }`}
+                      onClick={() => handleSelectModule(module)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-medium">{module.title}</h4>
+                            <div className="flex items-center gap-2 mt-1">
+                              {module.hasVideo && (
+                                <span className="text-xs bg-black px-2 py-0.5 rounded-full">
+                                  <Video className="inline-block w-3 h-3 mr-1" />
+                                  Has Video
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {getVideoCountForModule(module.id) > 0 && (
+                              <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full flex items-center">
+                                <Languages className="w-3 h-3 mr-1" /> 
+                                {getVideoCountForModule(module.id)} language{getVideoCountForModule(module.id) !== 1 ? 's' : ''}
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
+                        
+                        {/* Languages with videos indicator */}
                         {getVideoCountForModule(module.id) > 0 && (
-                          <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full flex items-center">
-                            <Languages className="w-3 h-3 mr-1" /> 
-                            {getVideoCountForModule(module.id)} language{getVideoCountForModule(module.id) !== 1 ? 's' : ''}
-                          </span>
+                          <div className="mt-3 flex flex-wrap gap-1">
+                            {hasVideoForLanguage(module.id, 'pidgin') && (
+                              <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">🇳🇬 Pidgin</span>
+                            )}
+                            {hasVideoForLanguage(module.id, 'yoruba') && (
+                              <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">🧙‍♂️ Yoruba</span>
+                            )}
+                            {hasVideoForLanguage(module.id, 'hausa') && (
+                              <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">🌵 Hausa</span>
+                            )}
+                            {hasVideoForLanguage(module.id, 'igbo') && (
+                              <span className="text-xs bg-green-600/20 text-green-500 px-2 py-0.5 rounded-full">🌟 Igbo</span>
+                            )}
+                          </div>
                         )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -214,21 +252,33 @@ const CourseModuleManager = () => {
         <Card className="bg-muted border-electric">
           <CardContent className="p-6">
             <h2 className="text-xl font-bold mb-4">Upload Video for: {selectedModule.title}</h2>
-            <div className="mb-4">
-              <Label className="mb-2 block">Select Language</Label>
-              <LanguageSelector 
-                selectedLanguage={selectedLanguage}
-                onSelectLanguage={setSelectedLanguage}
-                mode="inline"
-              />
-            </div>
 
             <Tabs value={selectedLanguage} onValueChange={(value) => setSelectedLanguage(value as Language)}>
               <TabsList className="mb-4 bg-black">
-                <TabsTrigger value="pidgin">Pidgin 🇳🇬</TabsTrigger>
-                <TabsTrigger value="yoruba">Yoruba 🧙‍♂️</TabsTrigger>
-                <TabsTrigger value="hausa">Hausa 🌵</TabsTrigger>
-                <TabsTrigger value="igbo">Igbo 🌟</TabsTrigger>
+                <TabsTrigger value="pidgin" className="flex items-center gap-1">
+                  Pidgin 🇳🇬
+                  {hasVideoForLanguage(selectedModule.id, 'pidgin') && (
+                    <CheckCircle2 className="w-3 h-3 text-green-500 ml-1" />
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="yoruba" className="flex items-center gap-1">
+                  Yoruba 🧙‍♂️
+                  {hasVideoForLanguage(selectedModule.id, 'yoruba') && (
+                    <CheckCircle2 className="w-3 h-3 text-green-500 ml-1" />
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="hausa" className="flex items-center gap-1">
+                  Hausa 🌵
+                  {hasVideoForLanguage(selectedModule.id, 'hausa') && (
+                    <CheckCircle2 className="w-3 h-3 text-green-500 ml-1" />
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="igbo" className="flex items-center gap-1">
+                  Igbo 🌟
+                  {hasVideoForLanguage(selectedModule.id, 'igbo') && (
+                    <CheckCircle2 className="w-3 h-3 text-green-500 ml-1" />
+                  )}
+                </TabsTrigger>
               </TabsList>
 
               {(['pidgin', 'yoruba', 'hausa', 'igbo'] as Language[]).map((lang) => (
@@ -241,7 +291,7 @@ const CourseModuleManager = () => {
                   <VideoUploader 
                     courseId={selectedCourse}
                     moduleId={selectedModule.id}
-                    onVideoUploaded={(moduleId, url) => handleVideoUploaded(moduleId, lang, url)}
+                    onVideoUploaded={(moduleId, url) => handleVideoUploaded(moduleId, url)}
                     existingVideoUrl={videoUrls[selectedCourse]?.[selectedModule.id]?.[lang]}
                     language={lang}
                   />
