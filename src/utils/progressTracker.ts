@@ -306,7 +306,7 @@ export const getLeaderboard = async (limit = 10) => {
 /**
  * Award points for completing a quiz
  */
-export const awardQuizPoints = async (moduleId: number, courseId: string, points = 50) => {
+export const awardQuizPoints = async (moduleId: number, courseId: string, points: number) => {
   await addPointsForModuleCompletion(points);
   
   // Mark module as completed if it's not already
