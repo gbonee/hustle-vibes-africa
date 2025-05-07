@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { Video, MessageSquare } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -319,7 +320,7 @@ const Dashboard = () => {
         hausa: {
           title: 'Shigo daga China & Sayar a WhatsApp',
           modules: [
-            { id: 1, title: 'Yadda ake samun kayayyakin da ke sayarwa masu zafi wanda Najeriyawan ke so' },
+            { id: 1, title: 'Yadda ake samun kayayyakin da ke sayarwa masu zafi wanda Najeriawan ke so' },
             { id: 2, title: 'Inda za a saya a arha: 1688, Alibaba & hanyoyin samun masu samar da kaya na asiri' },
             { id: 3, title: 'Jigilar kaya & Isar: Yadda ake shigo ba tare da wahala ba' },
             { id: 4, title: 'Yadda ake tallata & sayar da SAURI a WhatsApp & Instagram' },
@@ -747,11 +748,6 @@ const Dashboard = () => {
         description: `You've completed "${selectedModule.title}"`,
         duration: 3000
       });
-      
-      // Call the callback if provided
-      if (onModuleComplete) {
-        onModuleComplete();
-      }
     } catch (error) {
       console.error("Error saving module completion:", error);
       toast({
@@ -777,11 +773,6 @@ const Dashboard = () => {
         description: "You earned 50 points for your correct answer.",
         duration: 3000
       });
-      
-      // Call the callback if provided
-      if (onQuizComplete) {
-        onQuizComplete(correct);
-      }
     } catch (error) {
       console.error("Error awarding quiz points:", error);
     }
@@ -790,9 +781,12 @@ const Dashboard = () => {
   // Get the current course based on user preferences
   const currentCourse = userPrefs?.course ? courses[userPrefs.course] : courses['digital-marketing'];
   
+  // Get current path for DashboardLayout
+  const currentPath = '/dashboard';
+  
   // Render the modules list and selected module details
   return (
-    <DashboardLayout>
+    <DashboardLayout currentPath={currentPath}>
       {isLoading ? (
         <div className="p-4 space-y-4">
           <Skeleton className="h-32 rounded-lg" />
@@ -869,7 +863,7 @@ const Dashboard = () => {
             </TabsContent>
             
             <TabsContent value="chat">
-              <AIChat courseTitle={currentCourse.title} />
+              <AIChat />
             </TabsContent>
           </Tabs>
         </div>

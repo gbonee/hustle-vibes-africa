@@ -13,10 +13,45 @@ export interface Module {
 
 interface ModulesListProps {
   modules: Module[];
-  onModuleSelect: (module: Module) => void;
+  onSelectModule: (module: Module) => void;
+  completedModuleIds?: number[];
+  currentLanguage?: string;
+  courseTranslations?: {
+    [key: string]: {
+      title: string;
+      modules: {
+        id: number;
+        title: string;
+      }[];
+    };
+  };
 }
 
-const ModulesList: React.FC<ModulesListProps> = ({ modules, onModuleSelect }) => {
+const ModulesList: React.FC<ModulesListProps> = ({ 
+  modules, 
+  onSelectModule, 
+  completedModuleIds = [], 
+  currentLanguage = 'pidgin',
+  courseTranslations 
+}) => {
+  // Get translated title if available
+  const getModuleTitle = (module: Module) => {
+    if (courseTranslations && courseTranslations[currentLanguage]) {
+      const translatedModule = courseTranslations[currentLanguage].modules.find(
+        m => m.id === module.id
+      );
+      if (translatedModule) {
+        return translatedModule.title;
+      }
+    }
+    return module.title;
+  };
+
+  // Check if a module is completed from the completedModuleIds array
+  const isModuleCompleted = (moduleId: number) => {
+    return completedModuleIds.includes(moduleId);
+  };
+
   return (
     <>
       <h2 className="text-xl font-bold mb-4">Your Modules</h2>
@@ -24,17 +59,17 @@ const ModulesList: React.FC<ModulesListProps> = ({ modules, onModuleSelect }) =>
         {modules.map((module) => (
           <Card 
             key={module.id}
-            onClick={() => onModuleSelect(module)}
+            onClick={() => onSelectModule(module)}
             className={`cursor-pointer transition-all hover:border-electric ${
               module.locked 
                 ? 'opacity-60' 
-                : module.completed 
+                : isModuleCompleted(module.id) || module.completed
                 ? 'border-green-500 bg-black' 
                 : 'bg-black'
             }`}
           >
             <CardContent className="p-4 flex items-center">
-              {module.completed ? (
+              {isModuleCompleted(module.id) || module.completed ? (
                 <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center mr-3">
                   <CircleCheck className="h-5 w-5 text-green-500" />
                 </div>
@@ -48,7 +83,7 @@ const ModulesList: React.FC<ModulesListProps> = ({ modules, onModuleSelect }) =>
                 </div>
               )}
               <div className="flex-1">
-                <h3 className="font-medium">{module.title}</h3>
+                <h3 className="font-medium">{getModuleTitle(module)}</h3>
                 <div className="flex items-center gap-2 mt-1">
                   {module.hasVideo && (
                     <span className="text-xs bg-muted px-2 py-0.5 rounded-full">
