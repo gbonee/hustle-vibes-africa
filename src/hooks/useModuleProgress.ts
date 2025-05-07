@@ -54,8 +54,8 @@ export const useModuleProgress = () => {
     }
     
     try {
-      // Save module completion to the database
-      await updateModuleCompletion(courseId, moduleId, true);
+      // Save module completion to the database - Fixed: Only passing courseId and moduleId
+      await updateModuleCompletion(courseId, moduleId);
       
       // Calculate and update overall course progress
       await updateCourseProgress(courseId);
