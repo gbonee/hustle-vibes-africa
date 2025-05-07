@@ -14,7 +14,7 @@ export interface Module {
 interface ModulesListProps {
   modules: Module[];
   onSelectModule: (module: Module) => void;
-  completedModuleIds?: number[];
+  completedModuleIds: number[];
   currentLanguage?: string;
   courseTranslations?: {
     [key: string]: {
@@ -54,7 +54,6 @@ const ModulesList: React.FC<ModulesListProps> = ({
 
   return (
     <>
-      <h2 className="text-xl font-bold mb-4">Your Modules</h2>
       <div className="space-y-3">
         {modules.map((module) => (
           <Card 
