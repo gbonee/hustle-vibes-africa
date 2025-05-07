@@ -13,7 +13,7 @@ const AdminDashboard = () => {
             <CardTitle className="text-2xl">Admin Dashboard</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-400 mb-4">Manage courses, modules, and videos</p>
+            <p className="text-gray-400 mb-4">Manage courses, modules, and multilingual videos</p>
           </CardContent>
         </Card>
 

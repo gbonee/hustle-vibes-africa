@@ -8,19 +8,22 @@ import UploadProgress from './UploadProgress';
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import type { Language } from '@/components/onboarding/LanguageSelector';
 
 interface VideoUploaderProps {
   courseId: string;
   moduleId: number;
   onVideoUploaded: (moduleId: number, url: string) => void;
   existingVideoUrl?: string;
+  language: Language;
 }
 
 const VideoUploader: React.FC<VideoUploaderProps> = ({ 
   courseId, 
   moduleId, 
   onVideoUploaded,
-  existingVideoUrl
+  existingVideoUrl,
+  language = 'pidgin'
 }) => {
   const {
     isUploading,
@@ -31,7 +34,12 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
     handleFileChange,
     handleRemoveVideo,
     resetFileInput
-  } = useVideoUpload({ courseId, moduleId, onVideoUploaded });
+  } = useVideoUpload({ 
+    courseId, 
+    moduleId, 
+    onVideoUploaded, 
+    language 
+  });
 
   if (existingVideoUrl) {
     return (

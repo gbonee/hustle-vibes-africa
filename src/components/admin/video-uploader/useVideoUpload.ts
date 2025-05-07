@@ -2,14 +2,21 @@
 import { useState, useRef } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import type { Language } from '@/components/onboarding/LanguageSelector';
 
 interface UseVideoUploadProps {
   courseId: string;
   moduleId: number;
   onVideoUploaded: (moduleId: number, url: string) => void;
+  language: Language;
 }
 
-export const useVideoUpload = ({ courseId, moduleId, onVideoUploaded }: UseVideoUploadProps) => {
+export const useVideoUpload = ({ 
+  courseId, 
+  moduleId, 
+  onVideoUploaded,
+  language
+}: UseVideoUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -18,6 +25,13 @@ export const useVideoUpload = ({ courseId, moduleId, onVideoUploaded }: UseVideo
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const resetFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    setPreviewUrl(null);
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,10 +66,12 @@ export const useVideoUpload = ({ courseId, moduleId, onVideoUploaded }: UseVideo
       const videoObjectUrl = URL.createObjectURL(file);
       setPreviewUrl(videoObjectUrl);
       
-      // Define file path in storage bucket
-      const filePath = `${courseId}/${moduleId}-${file.name.replace(/\s+/g, '-')}`;
+      // Define file path in storage bucket with language code
+      // Format: courseId/moduleId-language-filename.mp4
+      const fileName = file.name.replace(/\s+/g, '-');
+      const filePath = `${courseId}/${moduleId}-${language}-${fileName}`;
       
-      // Set up the upload with manual progress tracking
+      // Set up the upload
       const { data, error } = await supabase.storage
         .from('module-videos')
         .upload(filePath, file, {
@@ -63,8 +79,7 @@ export const useVideoUpload = ({ courseId, moduleId, onVideoUploaded }: UseVideo
           upsert: true
         });
       
-      // Manually track upload progress (since onUploadProgress isn't available)
-      // We'll just set it to 100% when complete
+      // Set to 100% when complete
       setProgress(100);
       
       if (error) throw error;
@@ -75,11 +90,11 @@ export const useVideoUpload = ({ courseId, moduleId, onVideoUploaded }: UseVideo
         .getPublicUrl(filePath);
       
       // Call completion callback
-      onVideoUploaded(moduleId, publicUrl);
+      onVideoUploaded(moduleId, filePath);
       
       toast({
         title: "Video uploaded successfully",
-        description: "Your module video has been uploaded.",
+        description: `The ${language} video for this module has been uploaded.`,
         variant: "default"
       });
     } catch (error) {
@@ -99,8 +114,6 @@ export const useVideoUpload = ({ courseId, moduleId, onVideoUploaded }: UseVideo
   };
 
   const handleRemoveVideo = async (existingVideoUrl: string) => {
-    if (!existingVideoUrl) return;
-    
     try {
       const { error } = await supabase.storage
         .from('module-videos')
@@ -113,7 +126,7 @@ export const useVideoUpload = ({ courseId, moduleId, onVideoUploaded }: UseVideo
       
       toast({
         title: "Video removed",
-        description: "The module video has been removed.",
+        description: `The ${language} video has been removed.`,
         variant: "default"
       });
     } catch (error) {
@@ -124,13 +137,6 @@ export const useVideoUpload = ({ courseId, moduleId, onVideoUploaded }: UseVideo
         variant: "destructive"
       });
     }
-  };
-
-  const resetFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-    setPreviewUrl(null);
   };
 
   return {

@@ -1,12 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Video } from "lucide-react";
+import { Video, Languages } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import VideoUploader from '@/components/admin/video-uploader/VideoUploader';
+import LanguageSelector, { Language } from '@/components/onboarding/LanguageSelector';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface Course {
   id: string;
@@ -19,6 +22,10 @@ interface Module {
   title: string;
   hasVideo: boolean;
   videoUrl?: string;
+}
+
+interface VideosByLanguage {
+  [language: string]: string;
 }
 
 const courses = {
@@ -60,61 +67,85 @@ const courses = {
 const CourseModuleManager = () => {
   const [selectedCourse, setSelectedCourse] = useState<string>('digital-marketing');
   const [selectedModule, setSelectedModule] = useState<Module | null>(null);
-  const [videoUrls, setVideoUrls] = useState<Record<string, Record<number, string>>>({});
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>('pidgin');
+  const [videoUrls, setVideoUrls] = useState<Record<string, Record<number, Record<string, string>>>>({});
   const { toast } = useToast();
 
   useEffect(() => {
-    const fetchVideoUrls = async () => {
-      try {
-        // In a real app, fetch from Supabase storage
-        const { data, error } = await supabase
-          .storage
-          .from('module-videos')
-          .list(`${selectedCourse}`);
-          
-        if (error) throw error;
-        
-        // Process data to map module IDs to video URLs
-        const urls: Record<number, string> = {};
-        data?.forEach(file => {
-          const moduleId = parseInt(file.name.split('-')[0]);
-          if (!isNaN(moduleId)) {
-            urls[moduleId] = `${selectedCourse}/${file.name}`;
-          }
-        });
-        
-        setVideoUrls(prev => ({
-          ...prev,
-          [selectedCourse]: urls
-        }));
-      } catch (error) {
-        console.error('Error fetching video URLs:', error);
-      }
-    };
-    
     fetchVideoUrls();
   }, [selectedCourse]);
+
+  const fetchVideoUrls = async () => {
+    try {
+      // Fetch from Supabase storage
+      const { data, error } = await supabase
+        .storage
+        .from('module-videos')
+        .list(`${selectedCourse}`);
+        
+      if (error) throw error;
+      
+      // Process data to map module IDs and languages to video URLs
+      const urls: Record<number, Record<string, string>> = {};
+      
+      data?.forEach(file => {
+        // Expected format: moduleId-language-filename.mp4
+        // Example: 1-pidgin-intro.mp4
+        const parts = file.name.split('-');
+        if (parts.length >= 2) {
+          const moduleId = parseInt(parts[0]);
+          const language = parts[1];
+          
+          if (!isNaN(moduleId) && ['pidgin', 'yoruba', 'hausa', 'igbo'].includes(language)) {
+            if (!urls[moduleId]) {
+              urls[moduleId] = {};
+            }
+            urls[moduleId][language] = `${selectedCourse}/${file.name}`;
+          }
+        }
+      });
+      
+      setVideoUrls(prev => ({
+        ...prev,
+        [selectedCourse]: urls
+      }));
+    } catch (error) {
+      console.error('Error fetching video URLs:', error);
+    }
+  };
 
   const handleSelectModule = (module: Module) => {
     setSelectedModule(module);
   };
 
-  const handleVideoUploaded = (moduleId: number, url: string) => {
+  const handleVideoUploaded = (moduleId: number, language: Language, url: string) => {
     setVideoUrls(prev => ({
       ...prev,
       [selectedCourse]: {
         ...(prev[selectedCourse] || {}),
-        [moduleId]: url
+        [moduleId]: {
+          ...(prev[selectedCourse]?.[moduleId] || {}),
+          [language]: url
+        }
       }
     }));
     
     toast({
       title: "Video uploaded successfully",
-      description: "The module video has been updated.",
+      description: `The ${language} video for this module has been updated.`,
       variant: "default"
     });
-    
-    setSelectedModule(null);
+  };
+
+  const hasVideoForLanguage = (moduleId: number, language: Language): boolean => {
+    return Boolean(videoUrls[selectedCourse]?.[moduleId]?.[language]);
+  };
+
+  const getVideoCountForModule = (moduleId: number): number => {
+    const langCount = videoUrls[selectedCourse]?.[moduleId]
+      ? Object.keys(videoUrls[selectedCourse][moduleId]).length
+      : 0;
+    return langCount;
   };
 
   return (
@@ -162,14 +193,11 @@ const CourseModuleManager = () => {
                           )}
                         </div>
                       </div>
-                      <div>
-                        {videoUrls[selectedCourse]?.[module.id] ? (
-                          <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
-                            Video Uploaded
-                          </span>
-                        ) : (
-                          <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">
-                            No Video
+                      <div className="flex items-center gap-2">
+                        {getVideoCountForModule(module.id) > 0 && (
+                          <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full flex items-center">
+                            <Languages className="w-3 h-3 mr-1" /> 
+                            {getVideoCountForModule(module.id)} language{getVideoCountForModule(module.id) !== 1 ? 's' : ''}
                           </span>
                         )}
                       </div>
@@ -186,12 +214,41 @@ const CourseModuleManager = () => {
         <Card className="bg-muted border-electric">
           <CardContent className="p-6">
             <h2 className="text-xl font-bold mb-4">Upload Video for: {selectedModule.title}</h2>
-            <VideoUploader 
-              courseId={selectedCourse}
-              moduleId={selectedModule.id}
-              onVideoUploaded={handleVideoUploaded}
-              existingVideoUrl={videoUrls[selectedCourse]?.[selectedModule.id]}
-            />
+            <div className="mb-4">
+              <Label className="mb-2 block">Select Language</Label>
+              <LanguageSelector 
+                selectedLanguage={selectedLanguage}
+                onSelectLanguage={setSelectedLanguage}
+                mode="inline"
+              />
+            </div>
+
+            <Tabs value={selectedLanguage} onValueChange={(value) => setSelectedLanguage(value as Language)}>
+              <TabsList className="mb-4 bg-black">
+                <TabsTrigger value="pidgin">Pidgin 🇳🇬</TabsTrigger>
+                <TabsTrigger value="yoruba">Yoruba 🧙‍♂️</TabsTrigger>
+                <TabsTrigger value="hausa">Hausa 🌵</TabsTrigger>
+                <TabsTrigger value="igbo">Igbo 🌟</TabsTrigger>
+              </TabsList>
+
+              {(['pidgin', 'yoruba', 'hausa', 'igbo'] as Language[]).map((lang) => (
+                <TabsContent key={lang} value={lang} className="mt-0">
+                  <div className="p-4 bg-black/40 rounded-md mb-4">
+                    <p className="text-sm mb-2">Uploading <strong>{lang}</strong> language video for:</p>
+                    <p className="font-bold">{selectedModule.title}</p>
+                  </div>
+                  
+                  <VideoUploader 
+                    courseId={selectedCourse}
+                    moduleId={selectedModule.id}
+                    onVideoUploaded={(moduleId, url) => handleVideoUploaded(moduleId, lang, url)}
+                    existingVideoUrl={videoUrls[selectedCourse]?.[selectedModule.id]?.[lang]}
+                    language={lang}
+                  />
+                </TabsContent>
+              ))}
+            </Tabs>
+
             <Button 
               variant="ghost" 
               className="mt-4 w-full"

@@ -3,16 +3,20 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
-type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
+export type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
 
 interface LanguageSelectorProps {
   selectedLanguage: Language | null;
   onSelectLanguage: (language: Language) => void;
+  mode?: 'grid' | 'inline';
+  size?: 'small' | 'large';
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ 
   selectedLanguage, 
-  onSelectLanguage 
+  onSelectLanguage,
+  mode = 'grid',
+  size = 'large'
 }) => {
   const languages = [
     { id: 'pidgin', name: 'Pidgin English', flag: '🇳🇬' },
@@ -20,6 +24,28 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     { id: 'hausa', name: 'Hausa', flag: '🌵' },
     { id: 'igbo', name: 'Igbo', flag: '🌟' },
   ];
+
+  if (mode === 'inline') {
+    return (
+      <div className="flex gap-2 flex-wrap">
+        {languages.map((lang) => (
+          <Button
+            key={lang.id}
+            onClick={() => onSelectLanguage(lang.id as Language)}
+            variant={selectedLanguage === lang.id ? "default" : "outline"}
+            size="sm"
+            className={`flex items-center gap-1 ${
+              size === 'small' ? 'text-xs py-1 px-2 h-auto' : ''
+            }`}
+          >
+            <span>{lang.flag}</span>
+            <span>{lang.name}</span>
+            {selectedLanguage === lang.id && <Check className="w-3 h-3 ml-1" />}
+          </Button>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
