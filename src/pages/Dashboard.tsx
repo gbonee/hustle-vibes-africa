@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -767,7 +766,11 @@ const Dashboard = () => {
     try {
       // Award points for correct answer
       const courseId = userPrefs?.course || 'digital-marketing';
-      await awardQuizPoints(courseId, selectedModule.id, 50);
+      
+      // Ensure moduleId is treated as a number
+      const moduleId = typeof selectedModule.id === 'string' ? parseInt(selectedModule.id, 10) : selectedModule.id;
+      
+      await awardQuizPoints(courseId, moduleId, 50);
       
       toast({
         title: "Quiz completed!",
@@ -876,4 +879,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
