@@ -4,8 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CourseModuleManager from '@/components/admin/CourseModuleManager';
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const AdminDashboard = () => {
+  const { toast } = useToast();
+  
   // Initialize storage bucket on component mount
   useEffect(() => {
     const initStorage = async () => {
@@ -16,18 +19,39 @@ const AdminDashboard = () => {
         
         if (!bucketExists) {
           // Create bucket if it doesn't exist
-          await supabase.storage.createBucket('module-videos', {
+          const { data, error } = await supabase.storage.createBucket('module-videos', {
             public: true, // Make it publicly accessible
             fileSizeLimit: 1024 * 1024 * 1000, // 1000 MB
           });
+          
+          if (error) {
+            console.error("Error creating storage bucket:", error);
+            toast({
+              title: "Storage initialization failed",
+              description: "There was an error setting up storage. Please try again later.",
+              variant: "destructive"
+            });
+          } else {
+            console.log("Storage bucket created successfully:", data);
+            toast({
+              title: "Storage initialized",
+              description: "Video storage is ready to use.",
+              variant: "default"
+            });
+          }
         }
       } catch (error) {
         console.error("Error initializing storage:", error);
+        toast({
+          title: "Storage initialization failed",
+          description: "Please make sure you are authenticated as an admin.",
+          variant: "destructive"
+        });
       }
     };
     
     initStorage();
-  }, []);
+  }, [toast]);
 
   return (
     <div className="min-h-screen bg-black text-white">

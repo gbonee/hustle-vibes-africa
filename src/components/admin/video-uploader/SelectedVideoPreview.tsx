@@ -1,18 +1,22 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Upload, X } from "lucide-react";
+import { Upload, X, Check } from "lucide-react";
 
 interface SelectedVideoPreviewProps {
   previewUrl: string;
   onCancel: () => void;
   onReplace: () => void;
+  onUpload: () => void;
+  isUploading: boolean;
 }
 
 const SelectedVideoPreview: React.FC<SelectedVideoPreviewProps> = ({ 
   previewUrl, 
   onCancel, 
-  onReplace 
+  onReplace,
+  onUpload,
+  isUploading
 }) => {
   return (
     <div>
@@ -28,6 +32,7 @@ const SelectedVideoPreview: React.FC<SelectedVideoPreviewProps> = ({
           onClick={onCancel}
           variant="outline"
           className="flex-1"
+          disabled={isUploading}
         >
           <X size={16} className="mr-2" />
           Cancel
@@ -36,11 +41,22 @@ const SelectedVideoPreview: React.FC<SelectedVideoPreviewProps> = ({
           onClick={onReplace}
           variant="secondary"
           className="flex-1"
+          disabled={isUploading}
         >
           <Upload size={16} className="mr-2" />
           Choose Different Video
         </Button>
       </div>
+      
+      <Button 
+        onClick={onUpload}
+        variant="default" 
+        className="w-full mt-2"
+        disabled={isUploading}
+      >
+        <Check size={16} className="mr-2" />
+        {isUploading ? "Uploading..." : "Upload Now"}
+      </Button>
     </div>
   );
 };

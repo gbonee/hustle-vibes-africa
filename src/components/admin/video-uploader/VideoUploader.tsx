@@ -61,19 +61,9 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
             previewUrl={previewUrl}
             onCancel={resetFileInput}
             onReplace={handleUploadClick}
+            onUpload={uploadSelectedFile}
+            isUploading={isUploading}
           />
-          
-          <div className="flex gap-2 mt-2">
-            <Button 
-              onClick={uploadSelectedFile}
-              variant="default" 
-              className="flex-1"
-              disabled={isUploading || !selectedFile}
-            >
-              <Check size={16} className="mr-2" />
-              Upload Now
-            </Button>
-          </div>
         </div>
       ) : (
         <VideoDropzone onClick={handleUploadClick} />
