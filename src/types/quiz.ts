@@ -7,4 +7,11 @@ export interface Quiz {
   moduleTopic?: string; // To identify which module topic this quiz belongs to
   difficulty?: 'easy' | 'medium' | 'hard'; // To categorize quizzes by difficulty
   explanation?: string; // To provide an explanation for the correct answer
+  translations?: {
+    [key: string]: {
+      question: string;
+      options: string[];
+      explanation?: string;
+    }
+  }; // To store translations for different languages
 }

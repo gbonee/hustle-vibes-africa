@@ -1,9 +1,11 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { CircleCheck, CircleX } from "lucide-react";
+import { Check, CircleCheck, CircleX } from "lucide-react";
 import { Quiz } from '@/types/quiz';
 import { useIsMobile } from '@/hooks/use-mobile';
+
+export type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
 
 interface QuizSectionProps {
   quiz: Quiz;
@@ -92,6 +94,23 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
     }
     return topic;
   };
+
+  // Get the translated question and options based on language
+  const getTranslatedQuiz = () => {
+    if (language && language !== 'pidgin' && quiz.translations && quiz.translations[language]) {
+      return {
+        question: quiz.translations[language].question,
+        options: quiz.translations[language].options
+      };
+    }
+    
+    return {
+      question: quiz.question,
+      options: quiz.options
+    };
+  };
+
+  const translatedQuiz = getTranslatedQuiz();
   
   return (
     <div className="bg-black p-4 sm:p-6 rounded-lg border border-gray-800">
@@ -103,9 +122,9 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
       </p>
       
       <div className="mb-4 sm:mb-6">
-        <h4 className="text-base sm:text-lg mb-3 sm:mb-4">{quiz.question}</h4>
+        <h4 className="text-base sm:text-lg mb-3 sm:mb-4">{translatedQuiz.question}</h4>
         <div className="space-y-1 sm:space-y-2">
-          {quiz.options.map((option, index) => (
+          {translatedQuiz.options.map((option, index) => (
             <Button 
               key={index}
               onClick={() => onAnswerSelect(index)}

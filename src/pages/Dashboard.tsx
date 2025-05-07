@@ -447,215 +447,206 @@ const Dashboard = () => {
   const getTranslatedQuizzes = (moduleId: number): Quiz[] => {
     const originalQuizzes = quizzesByModule[moduleId] || [];
     
-    // Only translate if needed - add translations for each language
-    if (currentLanguage === 'pidgin') {
-      // Apply Pidgin translations for quizzes
-      return originalQuizzes.map(quiz => {
-        if (moduleId === 1) {
-          // Example translation for moduleId 1 questions
-          if (quiz.question === 'What is the primary purpose of digital marketing in Nigeria?') {
-            return {
-              ...quiz,
-              question: 'Wetin be the main reason for digital marketing for Nigeria?',
-              options: ['To get website', 'To reach and engage customers online', 'To dey post for social media everyday', 'To spend money for ads'],
-            };
+    if (!originalQuizzes.length) return [];
+    
+    // Clone quizzes to avoid mutating the original
+    return originalQuizzes.map(quiz => {
+      // Add translations for each quiz
+      const quizWithTranslations = {
+        ...quiz,
+        translations: {
+          yoruba: {
+            question: getYorubaTranslation(quiz.question, moduleId),
+            options: quiz.options.map(option => getYorubaTranslation(option, moduleId)),
+          },
+          hausa: {
+            question: getHausaTranslation(quiz.question, moduleId),
+            options: quiz.options.map(option => getHausaTranslation(option, moduleId)),
+          },
+          igbo: {
+            question: getIgboTranslation(quiz.question, moduleId),
+            options: quiz.options.map(option => getIgboTranslation(option, moduleId)),
           }
         }
-        return quiz;
-      });
-    }
-    
-    // Add similar translations for other languages
-    
-    return originalQuizzes; // Return original if no translation
-  };
-  
-  const handleModuleSelect = (module: Module) => {
-    if (module.locked) return;
-    setSelectedModule(module);
-  };
-
-  const handleCloseModule = () => {
-    setSelectedModule(null);
-    // Refresh course progress when closing a module
-    fetchCourseProgress();
-  };
-  
-  // Handle module completion
-  const handleModuleComplete = async (moduleId: number) => {
-    try {
-      const courseId = userPrefs?.course || 'digital-marketing';
-      
-      // Update module completion in the database
-      await updateModuleCompletion({
-        courseId,
-        moduleId,
-        completed: true,
-        progress: 100
-      });
-      
-      // Update overall course progress
-      await updateCourseProgress(courseId);
-      
-      // Refresh course progress data
-      await fetchCourseProgress();
-      
-      toast({
-        title: "Module Completed!",
-        description: "Your progress has been updated.",
-        variant: "default",
-      });
-    } catch (error) {
-      console.error("Error updating module completion:", error);
-      toast({
-        title: "Error",
-        description: "There was an error updating your progress.",
-        variant: "destructive",
-      });
-    }
-  };
-  
-  // Handle quiz completion
-  const handleQuizComplete = async (moduleId: number, correct: boolean) => {
-    if (!correct) return;
-    
-    try {
-      const courseId = userPrefs?.course || 'digital-marketing';
-      
-      // Award points for completing the quiz
-      await awardQuizPoints(moduleId, courseId);
-      
-      // Refresh course progress
-      await fetchCourseProgress();
-      
-      toast({
-        title: "Quiz Completed!",
-        description: "You've earned points for completing the quiz!",
-        variant: "default",
-      });
-    } catch (error) {
-      console.error("Error handling quiz completion:", error);
-    }
-  };
-
-  // Use digital marketing as default course if no preference is set
-  const userCourse = userPrefs?.course ? courses[userPrefs.course] : courses['digital-marketing'];
-  
-  // Apply completion status to modules based on database data
-  const getCoursesWithCompletionStatus = () => {
-    const course = { ...userCourse };
-    
-    // Apply completion status from database
-    course.modules = course.modules.map(module => {
-      const isCompleted = courseProgress.completedModules.includes(module.id);
-      return {
-        ...module,
-        completed: isCompleted
       };
+      
+      return quizWithTranslations;
     });
-    
-    // Update progress percentage
-    course.progress = courseProgress.progress;
-    
-    return course;
   };
   
-  // Get translated course content with updated completion status
-  const getTranslatedCourse = () => {
-    const course = getCoursesWithCompletionStatus();
-    
-    // Apply translations if available
-    if (currentLanguage && course.translations && course.translations[currentLanguage]) {
-      const translation = course.translations[currentLanguage];
+  // Helper function for Yoruba translations
+  const getYorubaTranslation = (text: string, moduleId: number): string => {
+    // Digital Marketing Module 1 translations
+    if (moduleId === 1) {
+      if (text === 'What is the primary purpose of digital marketing in Nigeria?') {
+        return 'Kí ni ète àkọkọ fún ìpolówó ojú òpó lójú kan ní Nàìjíríà?';
+      }
+      if (text === 'To have a website') {
+        return 'Láti ní ojú òpó ayelujára';
+      }
+      if (text === 'To reach and engage customers online') {
+        return 'Láti dé àti ṣe àkíyèsí àwọn oníbàárà lórí ayélujára';
+      }
+      if (text === 'To post on social media daily') {
+        return 'Láti fi sí orí àwọn amòránmọ́ra lójoojúmọ́';
+      }
+      if (text === 'To spend money on ads') {
+        return 'Láti ná owó lórí àwọn ìpolówó';
+      }
       
-      // Apply translated title
-      course.title = translation.title;
+      if (text === 'Which platform has the highest user base in Nigeria?') {
+        return 'Èwo nínú àwọn ojú òpó ní àwọn olùlò tó pọ̀jù ní Nàìjíríà?';
+      }
+      if (text === 'LinkedIn') {
+        return 'LinkedIn';
+      }
+      if (text === 'WhatsApp') {
+        return 'WhatsApp';
+      }
+      if (text === 'Twitter') {
+        return 'Twitter';
+      }
+      if (text === 'Snapchat') {
+        return 'Snapchat';
+      }
       
-      // Apply translated module titles
-      course.modules = course.modules.map(module => {
-        const translatedModule = translation.modules.find(m => m.id === module.id);
-        return translatedModule ? { ...module, title: translatedModule.title } : module;
-      });
+      if (text === 'What is a key advantage of digital marketing for small Nigerian businesses?') {
+        return 'Kí ni àǹfààní pàtàkì fún ìpolówó ojú òpó lójú kan fún àwọn iṣé ọnà kékeré ní Nàìjíríà?';
+      }
+      if (text === 'It requires lots of capital') {
+        return 'Ó nílò owó tó pọ̀';
+      }
+      if (text === 'It works without electricity') {
+        return 'Ó ń ṣiṣẹ́ láìsí iná';
+      }
+      if (text === 'It allows for targeted customer reach') {
+        return 'Ó fààyè gba àfojúsùn dé ọ̀dọ̀ oníbàárà';
+      }
+      if (text === 'It guarantees overnight success') {
+        return 'Ó ṣèlérí àṣeyọrí lójú kan';
+      }
     }
     
-    return course;
+    // Digital Marketing Module 2 translations
+    if (moduleId === 2) {
+      if (text === 'What is the best way to organize your WhatsApp business account?') {
+        return 'Kí ni ọ̀nà tó dára jùlọ láti to àkọsílẹ̀ iṣé WhatsApp rẹ dáradára?';
+      }
+      if (text === 'Mix personal and business chats') {
+        return 'Da àwọn ìbáraẹnisọ̀rọ̀ ara ẹni àti iṣẹ́ pọ̀';
+      }
+      if (text === 'Create broadcast lists for different product categories') {
+        return 'Da àwọn àkójọpọ̀ ìgbésókè fún oríṣiríṣi ẹ̀ka ọjà';
+      }
+      if (text === 'Only post status updates') {
+        return 'Fi àlàyé ipo sí nìkan';
+      }
+      if (text === 'Send messages at random times') {
+        return 'Fi àwọn ìfiránṣẹ́ ránṣẹ́ ní àkókò làálàáránṣọ̀nà';
+      }
+    }
+    
+    // For other modules or unknown texts, return the original text
+    return text;
   };
   
-  const translatedCourse = getTranslatedCourse();
-
-  if (isLoading) {
-    return (
-      <DashboardLayout currentPath="/dashboard" user={user}>
-        <div className="w-full space-y-4">
-          <Skeleton className="h-40 w-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  return (
-    <DashboardLayout currentPath="/dashboard" user={user}>
-      {isPreviewMode && <PreviewMode />}
+  // Helper function for Hausa translations
+  const getHausaTranslation = (text: string, moduleId: number): string => {
+    // Digital Marketing Module 1 translations
+    if (moduleId === 1) {
+      if (text === 'What is the primary purpose of digital marketing in Nigeria?') {
+        return 'Menene manufar farko na tallace-tallace na dijital a Najeriya?';
+      }
+      if (text === 'To have a website') {
+        return 'Don samun gidan yanar gizo';
+      }
+      if (text === 'To reach and engage customers online') {
+        return 'Don isa ga masu saye da haɗa hannu da su akan layi';
+      }
+      if (text === 'To post on social media daily') {
+        return 'Don yin posts a kafofin sada zumunta a kullum';
+      }
+      if (text === 'To spend money on ads') {
+        return 'Don kashe kudi akan talla';
+      }
       
-      {/* Course Info Card */}
-      <CourseHeader 
-        title={translatedCourse.title} 
-        avatar={translatedCourse.avatar} 
-        progress={translatedCourse.progress} 
-      />
-
-      {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 mb-6 bg-black">
-          <TabsTrigger value="lessons" className="text-lg">
-            <Video className="mr-2 h-4 w-4" />
-            {texts.lessons}
-          </TabsTrigger>
-          <TabsTrigger value="chat" className="text-lg">
-            <MessageSquare className="mr-2 h-4 w-4" />
-            {texts.chat}
-          </TabsTrigger>
-        </TabsList>
-        
-        {/* Lessons Tab */}
-        <TabsContent value="lessons" className="space-y-4">
-          {selectedModule ? (
-            <ModuleDetail 
-              module={selectedModule} 
-              quizzes={getTranslatedQuizzes(selectedModule.id)} 
-              onClose={handleCloseModule}
-              onModuleComplete={() => handleModuleComplete(selectedModule.id)}
-              onQuizComplete={(correct) => handleQuizComplete(selectedModule.id, correct)}
-              language={currentLanguage}
-              texts={texts}
-            />
-          ) : (
-            <div>
-              <h2 className="text-xl font-bold mb-4">{texts.yourModules}</h2>
-              <ModulesList 
-                modules={translatedCourse.modules} 
-                onModuleSelect={handleModuleSelect} 
-              />
-            </div>
-          )}
-        </TabsContent>
-        
-        {/* Chat Tab */}
-        <TabsContent value="chat" className="space-y-4">
-          <AIChat 
-            courseAvatar={translatedCourse.avatar} 
-            userName={user.name} 
-          />
-        </TabsContent>
-      </Tabs>
-    </DashboardLayout>
-  );
-};
-
-export default Dashboard;
+      if (text === 'Which platform has the highest user base in Nigeria?') {
+        return 'Wanne dandali ne ya fi yawan masu amfani a Najeriya?';
+      }
+      if (text === 'LinkedIn') {
+        return 'LinkedIn';
+      }
+      if (text === 'WhatsApp') {
+        return 'WhatsApp';
+      }
+      if (text === 'Twitter') {
+        return 'Twitter';
+      }
+      if (text === 'Snapchat') {
+        return 'Snapchat';
+      }
+      
+      if (text === 'What is a key advantage of digital marketing for small Nigerian businesses?') {
+        return 'Menene babban fa\'idar tallace-tallace na dijital ga kananan sana\'o\'i na Najeriya?';
+      }
+      if (text === 'It requires lots of capital') {
+        return 'Yana buƙatar jari mai yawa';
+      }
+      if (text === 'It works without electricity') {
+        return 'Yana aiki ba tare da wutar lantarki ba';
+      }
+      if (text === 'It allows for targeted customer reach') {
+        return 'Yana ba da damar kai ga masu saye da ake nufin';
+      }
+      if (text === 'It guarantees overnight success') {
+        return 'Yana tabbatar da nasara nan take';
+      }
+    }
+    
+    // Digital Marketing Module 2 translations
+    if (moduleId === 2) {
+      if (text === 'What is the best way to organize your WhatsApp business account?') {
+        return 'Menene mafi kyawun hanyar tsara asusun kasuwancin WhatsApp ɗinka?';
+      }
+      if (text === 'Mix personal and business chats') {
+        return 'Haɗa zance na sirri da na kasuwanci';
+      }
+      if (text === 'Create broadcast lists for different product categories') {
+        return 'Ƙirƙiri jerin aika wa jama\'a na nau\'ikan kayayyaki daban-daban';
+      }
+      if (text === 'Only post status updates') {
+        return 'Saka kawai sabbin bayanai na matsayi';
+      }
+      if (text === 'Send messages at random times') {
+        return 'Aika saƙonni a lokuta ba tare da tsari ba';
+      }
+    }
+    
+    // For other modules or unknown texts, return the original text
+    return text;
+  };
+  
+  // Helper function for Igbo translations
+  const getIgboTranslation = (text: string, moduleId: number): string => {
+    // Digital Marketing Module 1 translations
+    if (moduleId === 1) {
+      if (text === 'What is the primary purpose of digital marketing in Nigeria?') {
+        return 'Gịnị bụ ebumnuche izizi nke mgbasa ozi dijitali na Naịjịrịa?';
+      }
+      if (text === 'To have a website') {
+        return 'Inwe weebụsaịtị';
+      }
+      if (text === 'To reach and engage customers online') {
+        return 'Irute na ijikọta ndị ahịa na ịntanetị';
+      }
+      if (text === 'To post on social media daily') {
+        return 'Ibipụta na mgbasa ozi mmekọrịta kwa ụbọchị';
+      }
+      if (text === 'To spend money on ads') {
+        return 'Iji ego mee mgbasa ozi';
+      }
+      
+      if (text === 'Which platform has the highest user base in Nigeria?') {
+        return 'Kedu platformụ nwere ndị ọrụ kachasị na Naịjịrịa?';
+      }
+      if (text === 'LinkedIn') {
