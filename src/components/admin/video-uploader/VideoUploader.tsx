@@ -6,7 +6,7 @@ import VideoDropzone from './VideoDropzone';
 import SelectedVideoPreview from './SelectedVideoPreview';
 import UploadProgress from './UploadProgress';
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Language } from '@/components/onboarding/LanguageSelector';
 
@@ -33,7 +33,9 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
     handleUploadClick,
     handleFileChange,
     handleRemoveVideo,
-    resetFileInput
+    resetFileInput,
+    selectedFile,
+    uploadSelectedFile
   } = useVideoUpload({ 
     courseId, 
     moduleId, 
@@ -54,11 +56,25 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({
   return (
     <div className="space-y-4">
       {previewUrl ? (
-        <SelectedVideoPreview 
-          previewUrl={previewUrl}
-          onCancel={resetFileInput}
-          onReplace={handleUploadClick}
-        />
+        <div className="space-y-4">
+          <SelectedVideoPreview 
+            previewUrl={previewUrl}
+            onCancel={resetFileInput}
+            onReplace={handleUploadClick}
+          />
+          
+          <div className="flex gap-2 mt-2">
+            <Button 
+              onClick={uploadSelectedFile}
+              variant="default" 
+              className="flex-1"
+              disabled={isUploading || !selectedFile}
+            >
+              <Check size={16} className="mr-2" />
+              Upload Now
+            </Button>
+          </div>
+        </div>
       ) : (
         <VideoDropzone onClick={handleUploadClick} />
       )}

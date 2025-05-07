@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
+import { Upload, X } from "lucide-react";
 
 interface SelectedVideoPreviewProps {
   previewUrl: string;
@@ -28,14 +29,16 @@ const SelectedVideoPreview: React.FC<SelectedVideoPreviewProps> = ({
           variant="outline"
           className="flex-1"
         >
+          <X size={16} className="mr-2" />
           Cancel
         </Button>
         <Button 
           onClick={onReplace}
-          variant="default"
+          variant="secondary"
           className="flex-1"
         >
-          Replace
+          <Upload size={16} className="mr-2" />
+          Choose Different Video
         </Button>
       </div>
     </div>

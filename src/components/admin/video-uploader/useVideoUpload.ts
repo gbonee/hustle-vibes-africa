@@ -20,6 +20,7 @@ export const useVideoUpload = ({
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -32,6 +33,7 @@ export const useVideoUpload = ({
       fileInputRef.current.value = '';
     }
     setPreviewUrl(null);
+    setSelectedFile(null);
   };
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,23 +60,38 @@ export const useVideoUpload = ({
       return;
     }
 
+    // Create local preview
+    const videoObjectUrl = URL.createObjectURL(file);
+    setPreviewUrl(videoObjectUrl);
+    setSelectedFile(file);
+  };
+
+  const uploadSelectedFile = async () => {
+    if (!selectedFile) {
+      toast({
+        title: "No file selected",
+        description: "Please select a video file to upload.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setIsUploading(true);
       setProgress(0);
       
-      // Create local preview
-      const videoObjectUrl = URL.createObjectURL(file);
-      setPreviewUrl(videoObjectUrl);
-      
       // Define file path in storage bucket with language code
       // Format: courseId/moduleId-language-filename.mp4
-      const fileName = file.name.replace(/\s+/g, '-');
+      const fileName = selectedFile.name.replace(/\s+/g, '-');
       const filePath = `${courseId}/${moduleId}-${language}-${fileName}`;
       
+      // Create bucket if it doesn't exist
+      // This is done automatically by Supabase
+
       // Set up the upload
       const { data, error } = await supabase.storage
         .from('module-videos')
-        .upload(filePath, file, {
+        .upload(filePath, selectedFile, {
           cacheControl: '3600',
           upsert: true
         });
@@ -84,11 +101,6 @@ export const useVideoUpload = ({
       
       if (error) throw error;
       
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('module-videos')
-        .getPublicUrl(filePath);
-      
       // Call completion callback
       onVideoUploaded(moduleId, filePath);
       
@@ -97,15 +109,19 @@ export const useVideoUpload = ({
         description: `The ${language} video for this module has been uploaded.`,
         variant: "default"
       });
-    } catch (error) {
+
+      // Reset the file input and preview after successful upload
+      resetFileInput();
+    } catch (error: any) {
       console.error("Error uploading video:", error);
       toast({
         title: "Upload failed",
-        description: "There was a problem uploading your video. Please try again.",
+        description: error.message || "There was a problem uploading your video. Please try again.",
         variant: "destructive"
       });
     } finally {
       setIsUploading(false);
+      
       // Clean up local preview
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
@@ -144,8 +160,10 @@ export const useVideoUpload = ({
     progress,
     previewUrl,
     fileInputRef,
+    selectedFile,
     handleUploadClick,
     handleFileChange,
+    uploadSelectedFile,
     handleRemoveVideo,
     resetFileInput
   };

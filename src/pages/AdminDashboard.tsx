@@ -1,10 +1,34 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CourseModuleManager from '@/components/admin/CourseModuleManager';
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminDashboard = () => {
+  // Initialize storage bucket on component mount
+  useEffect(() => {
+    const initStorage = async () => {
+      try {
+        // Check if bucket exists
+        const { data } = await supabase.storage.listBuckets();
+        const bucketExists = data?.some(bucket => bucket.name === 'module-videos');
+        
+        if (!bucketExists) {
+          // Create bucket if it doesn't exist
+          await supabase.storage.createBucket('module-videos', {
+            public: true, // Make it publicly accessible
+            fileSizeLimit: 1024 * 1024 * 1000, // 1000 MB
+          });
+        }
+      } catch (error) {
+        console.error("Error initializing storage:", error);
+      }
+    };
+    
+    initStorage();
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto py-8 px-4">
