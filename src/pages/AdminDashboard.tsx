@@ -41,6 +41,19 @@ const AdminDashboard = () => {
     const initStorage = async () => {
       setIsLoading(true);
       try {
+        // Create bucket if it doesn't exist
+        const { data: bucketData, error: bucketError } = await supabase.storage.createBucket('module-videos', {
+          public: false,
+          fileSizeLimit: 50 * 1024 * 1024, // 50MB
+        });
+        
+        if (bucketError) {
+          // If error is "Bucket already exists", that's fine - continue
+          if (!bucketError.message.includes('already exists')) {
+            throw bucketError;
+          }
+        }
+        
         // Check if bucket exists
         const { data, error } = await supabase.storage.listBuckets();
         
@@ -51,26 +64,18 @@ const AdminDashboard = () => {
         const bucketExists = data?.some(bucket => bucket.name === 'module-videos');
         
         if (!bucketExists) {
-          // Inform user that we'll use existing bucket instead
-          console.log("Storage bucket doesn't exist, we'll use existing storage.");
-          setStorageInitialized(true);
-          toast({
-            title: "Storage ready",
-            description: "We'll use the default storage for videos.",
-            variant: "default"
-          });
-        } else {
-          setStorageInitialized(true);
-          console.log("Storage bucket already exists");
+          throw new Error("Storage bucket could not be initialized");
         }
+
+        setStorageInitialized(true);
+        console.log("Storage bucket initialized successfully");
       } catch (error: any) {
         console.error("Error initializing storage:", error);
-        // Mark as initialized anyway to prevent blocking the UI
         setStorageInitialized(false);
         toast({
-          title: "Storage initialization note",
-          description: "Admin permissions may be required for storage management. Continuing in limited mode.",
-          variant: "default"
+          title: "Storage initialization failed",
+          description: "There was an error setting up storage. Please try again later.",
+          variant: "destructive"
         });
       } finally {
         setIsLoading(false);

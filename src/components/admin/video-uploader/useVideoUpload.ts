@@ -80,15 +80,18 @@ export const useVideoUpload = ({
       setIsUploading(true);
       setProgress(0);
       
+      // First check if we have a valid session to avoid RLS issues
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        throw new Error('Authentication required. Please sign in to upload videos.');
+      }
+      
       // Define file path in storage bucket with language code
       // Format: courseId/moduleId-language-filename.mp4
       const fileName = selectedFile.name.replace(/\s+/g, '-');
       const filePath = `${courseId}/${moduleId}-${language}-${fileName}`;
       
-      // Create bucket if it doesn't exist
-      // This is done automatically by Supabase
-
-      // Set up the upload
+      // Upload the file with the authenticated session
       const { data, error } = await supabase.storage
         .from('module-videos')
         .upload(filePath, selectedFile, {
@@ -131,6 +134,12 @@ export const useVideoUpload = ({
 
   const handleRemoveVideo = async (existingVideoUrl: string) => {
     try {
+      // First check if we have a valid session to avoid RLS issues
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        throw new Error('Authentication required. Please sign in to remove videos.');
+      }
+      
       const { error } = await supabase.storage
         .from('module-videos')
         .remove([existingVideoUrl]);
@@ -145,11 +154,11 @@ export const useVideoUpload = ({
         description: `The ${language} video has been removed.`,
         variant: "default"
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error removing video:", error);
       toast({
         title: "Removal failed",
-        description: "There was a problem removing the video. Please try again.",
+        description: error.message || "There was a problem removing the video. Please try again.",
         variant: "destructive"
       });
     }
