@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -853,7 +854,6 @@ const Dashboard = () => {
                   <h2 className="text-xl font-bold mb-4">{texts.yourModules}</h2>
                   <ModulesList 
                     modules={currentCourse.modules}
-                    completedModuleIds={courseProgress.completedModules}
                     onSelectModule={handleSelectModule}
                     currentLanguage={currentLanguage}
                     courseTranslations={currentCourse.translations}
@@ -863,7 +863,10 @@ const Dashboard = () => {
             </TabsContent>
             
             <TabsContent value="chat">
-              <AIChat />
+              <AIChat
+                courseAvatar={currentCourse.avatar}
+                userName={user.name}
+              />
             </TabsContent>
           </Tabs>
         </div>
@@ -873,3 +876,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
