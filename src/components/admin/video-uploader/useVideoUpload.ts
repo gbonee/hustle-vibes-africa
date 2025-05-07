@@ -50,11 +50,11 @@ export const useVideoUpload = ({
       return;
     }
 
-    // Check file size (limit to 1000MB)
-    if (file.size > 1000 * 1024 * 1024) {
+    // Check file size (limit to 50MB to match bucket limit)
+    if (file.size > 50 * 1024 * 1024) {
       toast({
         title: "File too large",
-        description: "Video must be less than 1000MB.",
+        description: "Video must be less than 50MB.",
         variant: "destructive"
       });
       return;

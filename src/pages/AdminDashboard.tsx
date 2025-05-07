@@ -19,9 +19,10 @@ const AdminDashboard = () => {
         
         if (!bucketExists) {
           // Create bucket if it doesn't exist
+          // Using a more reasonable file size limit (50MB)
           const { data, error } = await supabase.storage.createBucket('module-videos', {
             public: true, // Make it publicly accessible
-            fileSizeLimit: 1024 * 1024 * 1000, // 1000 MB
+            fileSizeLimit: 1024 * 1024 * 50, // 50 MB
           });
           
           if (error) {
