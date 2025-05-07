@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CourseModuleManager from '@/components/admin/CourseModuleManager';
@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
+  const [storageInitialized, setStorageInitialized] = useState(false);
   
   // Initialize storage bucket on component mount
   useEffect(() => {
@@ -19,7 +20,7 @@ const AdminDashboard = () => {
         
         if (!bucketExists) {
           // Create bucket if it doesn't exist
-          // Using a more reasonable file size limit (50MB)
+          // Using a reasonable file size limit (50MB)
           const { data, error } = await supabase.storage.createBucket('module-videos', {
             public: true, // Make it publicly accessible
             fileSizeLimit: 1024 * 1024 * 50, // 50 MB
@@ -34,12 +35,16 @@ const AdminDashboard = () => {
             });
           } else {
             console.log("Storage bucket created successfully:", data);
+            setStorageInitialized(true);
             toast({
               title: "Storage initialized",
               description: "Video storage is ready to use.",
               variant: "default"
             });
           }
+        } else {
+          setStorageInitialized(true);
+          console.log("Storage bucket already exists");
         }
       } catch (error) {
         console.error("Error initializing storage:", error);
@@ -63,6 +68,9 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <p className="text-gray-400 mb-4">Manage courses, modules, and multilingual videos</p>
+            {!storageInitialized && (
+              <p className="text-amber-400 text-sm">Initializing storage...</p>
+            )}
           </CardContent>
         </Card>
 
@@ -73,7 +81,15 @@ const AdminDashboard = () => {
           </TabsList>
           
           <TabsContent value="courses">
-            <CourseModuleManager />
+            {storageInitialized ? (
+              <CourseModuleManager />
+            ) : (
+              <Card className="bg-black">
+                <CardContent className="p-6 flex items-center justify-center">
+                  <p className="text-amber-400">Setting up storage... Please wait.</p>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
           
           <TabsContent value="users">
