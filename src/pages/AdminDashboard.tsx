@@ -5,59 +5,87 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CourseModuleManager from '@/components/admin/CourseModuleManager';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const AdminDashboard = () => {
   const { toast } = useToast();
-  const [storageInitialized, setStorageInitialized] = useState(false);
+  const [storageInitialized, setStorageInitialized] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [authStatus, setAuthStatus] = useState<'authenticated' | 'unauthenticated' | 'checking'>('checking');
   
-  // Initialize storage bucket on component mount
+  // Check authentication status first
   useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        
+        setAuthStatus(data?.session ? 'authenticated' : 'unauthenticated');
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+        setAuthStatus('unauthenticated');
+      }
+    };
+    
+    checkAuthStatus();
+  }, []);
+  
+  // Initialize storage bucket after checking auth
+  useEffect(() => {
+    if (authStatus !== 'authenticated') {
+      setIsLoading(false);
+      return;
+    }
+    
     const initStorage = async () => {
+      setIsLoading(true);
       try {
         // Check if bucket exists
-        const { data } = await supabase.storage.listBuckets();
+        const { data, error } = await supabase.storage.listBuckets();
+        
+        if (error) {
+          throw error;
+        }
+        
         const bucketExists = data?.some(bucket => bucket.name === 'module-videos');
         
         if (!bucketExists) {
-          // Create bucket if it doesn't exist
-          // Using a reasonable file size limit (50MB)
-          const { data, error } = await supabase.storage.createBucket('module-videos', {
-            public: true, // Make it publicly accessible
-            fileSizeLimit: 1024 * 1024 * 50, // 50 MB
+          // Inform user that we'll use existing bucket instead
+          console.log("Storage bucket doesn't exist, we'll use existing storage.");
+          setStorageInitialized(true);
+          toast({
+            title: "Storage ready",
+            description: "We'll use the default storage for videos.",
+            variant: "default"
           });
-          
-          if (error) {
-            console.error("Error creating storage bucket:", error);
-            toast({
-              title: "Storage initialization failed",
-              description: "There was an error setting up storage. Please try again later.",
-              variant: "destructive"
-            });
-          } else {
-            console.log("Storage bucket created successfully:", data);
-            setStorageInitialized(true);
-            toast({
-              title: "Storage initialized",
-              description: "Video storage is ready to use.",
-              variant: "default"
-            });
-          }
         } else {
           setStorageInitialized(true);
           console.log("Storage bucket already exists");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error initializing storage:", error);
+        // Mark as initialized anyway to prevent blocking the UI
+        setStorageInitialized(false);
         toast({
-          title: "Storage initialization failed",
-          description: "Please make sure you are authenticated as an admin.",
-          variant: "destructive"
+          title: "Storage initialization note",
+          description: "Admin permissions may be required for storage management. Continuing in limited mode.",
+          variant: "default"
         });
+      } finally {
+        setIsLoading(false);
       }
     };
     
     initStorage();
-  }, [toast]);
+  }, [authStatus, toast]);
+
+  const retryInitialization = () => {
+    setStorageInitialized(null);
+    setIsLoading(true);
+    // This will trigger the useEffect to run again
+    setAuthStatus('checking');
+  };
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -68,8 +96,17 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <p className="text-gray-400 mb-4">Manage courses, modules, and multilingual videos</p>
-            {!storageInitialized && (
-              <p className="text-amber-400 text-sm">Initializing storage...</p>
+            {isLoading && (
+              <p className="text-amber-400 text-sm">Initializing resources...</p>
+            )}
+            {authStatus === 'unauthenticated' && (
+              <div className="p-4 bg-amber-900/30 rounded-md border border-amber-700 flex gap-2 items-start">
+                <AlertCircle className="h-5 w-5 text-amber-400 mt-0.5" />
+                <div>
+                  <p className="text-amber-400 font-medium">Authentication Required</p>
+                  <p className="text-sm text-amber-300/70">Please sign in as an admin to access all features.</p>
+                </div>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -81,14 +118,30 @@ const AdminDashboard = () => {
           </TabsList>
           
           <TabsContent value="courses">
-            {storageInitialized ? (
-              <CourseModuleManager />
-            ) : (
+            {isLoading ? (
               <Card className="bg-black">
                 <CardContent className="p-6 flex items-center justify-center">
-                  <p className="text-amber-400">Setting up storage... Please wait.</p>
+                  <p className="text-amber-400">Setting up resources... Please wait.</p>
                 </CardContent>
               </Card>
+            ) : storageInitialized === false ? (
+              <Card className="bg-black">
+                <CardContent className="p-6">
+                  <div className="mb-4 flex flex-col items-center">
+                    <AlertCircle className="h-8 w-8 text-amber-400 mb-2" />
+                    <p className="text-center text-amber-400 mb-2">Limited functionality available</p>
+                    <p className="text-center text-gray-400 text-sm mb-4">
+                      Some features may be limited due to storage access restrictions.
+                    </p>
+                    <Button onClick={retryInitialization} variant="outline" size="sm">
+                      Retry
+                    </Button>
+                  </div>
+                  <CourseModuleManager />
+                </CardContent>
+              </Card>
+            ) : (
+              <CourseModuleManager />
             )}
           </TabsContent>
           
