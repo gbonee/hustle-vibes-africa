@@ -129,7 +129,7 @@ const QuizSection: React.FC<QuizSectionProps> = React.memo(({
               key={index}
               onClick={() => onAnswerSelect(index)}
               variant="outline"
-              className="w-full justify-start text-left h-auto py-2 sm:py-3 px-3 sm:px-4 text-sm"
+              className="w-full justify-start text-left h-auto py-2 sm:py-3 px-3 sm:px-4 text-sm sm:text-base break-words whitespace-normal"
               disabled={result !== null}
             >
               {option}

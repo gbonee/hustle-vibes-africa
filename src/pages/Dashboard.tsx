@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import CourseHeader from '@/components/dashboard/CourseHeader';
 import ModulesList, { Module } from '@/components/dashboard/ModulesList';
 import ModuleDetail from '@/components/dashboard/ModuleDetail';
-import AIChat from '@/components/dashboard/AIChat';
+import AIChat from '@/components/dashboard/chat/AIChat';
 import { Quiz } from '@/types/quiz';
 import { Skeleton } from '@/components/ui/skeleton';
 import PreviewMode from '@/components/common/PreviewMode';
@@ -866,7 +867,7 @@ const Dashboard = () => {
             )}
           </TabsContent>
           
-          <TabsContent value="chat" className="mt-6 h-[calc(80vh-120px)]">
+          <TabsContent value="chat" className="mt-6 h-[calc(80vh-120px)] md:h-[calc(70vh-120px)]">
             <AIChat 
               courseAvatar={currentCourse.avatar} 
               userName={user.name}
