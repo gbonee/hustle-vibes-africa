@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -13,9 +12,8 @@ import AIChat from '@/components/dashboard/AIChat';
 import { Quiz } from '@/types/quiz';
 import { Skeleton } from '@/components/ui/skeleton';
 import PreviewMode from '@/components/common/PreviewMode';
-import { updateModuleCompletion, updateCourseProgress, getUserCourseProgress, getModuleCompletionData, awardQuizPoints } from '@/utils/progressTracker';
-import { useToast } from '@/hooks/use-toast';
 import { useModuleProgress } from '@/hooks/useModuleProgress';
+import { useToast } from '@/hooks/use-toast';
 
 // Define types
 interface Course {
@@ -404,7 +402,7 @@ const Dashboard = () => {
     102: [
       {
         question: 'What makes puff-puff stand out in the Nigerian snack market?',
-        options: ['It's expensive', 'It's quick to make and popular', 'It's not found in other countries', 'It requires special equipment'],
+        options: ["It's expensive", "It's quick to make and popular", "It's not found in other countries", "It requires special equipment"],
         answer: 1,
         moduleId: 102,
         moduleTopic: 'How to Make Puff-Puff That Sells'
@@ -461,7 +459,7 @@ const Dashboard = () => {
       },
       {
         question: 'What is a key strategy for negotiating better prices with Chinese suppliers?',
-        options: ['Always accept their first offer', 'Request samples from multiple suppliers', 'Pretend you don't speak English well', 'Only communicate via email'],
+        options: ['Always accept their first offer', 'Request samples from multiple suppliers', 'Pretend you don\'t speak English well', 'Only communicate via email'],
         answer: 1,
         moduleId: 202,
         moduleTopic: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks'
