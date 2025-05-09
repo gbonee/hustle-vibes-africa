@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -9,7 +10,7 @@ import PreviewMode from '@/components/common/PreviewMode';
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Import types and helper functions
-import { AIChatProps, ChatMessage as IChatMessage } from './types';
+import { AIChatProps, ChatMessage as IChatMessage, Progress } from './types';
 import { 
   getTranslatedCoachName, 
   getCourseSpecificGreeting 
@@ -93,7 +94,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   }, [chatMessages]);
 
   // Mock progress data - in a real app, this would come from the database
-  const getUserProgress = (): { completed: number; total: number; percentage: number } => {
+  const getUserProgress = (): Progress => {
     // For now, return mock data
     return {
       completed: 2,
