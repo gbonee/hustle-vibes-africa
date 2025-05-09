@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -30,7 +31,7 @@ interface Course {
         id: number;
         title: string;
       }[];
-    }
+    };
   };
 }
 
@@ -216,51 +217,51 @@ const Dashboard = () => {
       avatar: 'https://media.istockphoto.com/id/1269519579/photo/small-bakery-shop-owner-standing-in-front-of-store.jpg?s=612x612&w=0&k=20&c=h0Hu3UFEREi-V186FkkoQGNQYkBbOn9fkj_FJ2q3rPU=',
       progress: 20,
       modules: [
-        { id: 1, title: 'Intro to Baking as a Business in Nigeria', hasVideo: false, completed: true, locked: false },
-        { id: 2, title: 'How to Make Puff-Puff That Sells', hasVideo: true, completed: false, locked: false },
-        { id: 3, title: 'How to Make Nigerian Meatpie', hasVideo: false, completed: false, locked: true },
-        { id: 4, title: 'Branding & Packaging for Pastry Biz', hasVideo: true, completed: false, locked: true },
-        { id: 5, title: 'How to Find Your First Customers & Start Selling', hasVideo: true, completed: false, locked: true }
+        { id: 101, title: 'Intro to Baking as a Business in Nigeria', hasVideo: false, completed: true, locked: false },
+        { id: 102, title: 'How to Make Puff-Puff That Sells', hasVideo: true, completed: false, locked: false },
+        { id: 103, title: 'How to Make Nigerian Meatpie', hasVideo: false, completed: false, locked: true },
+        { id: 104, title: 'Branding & Packaging for Pastry Biz', hasVideo: true, completed: false, locked: true },
+        { id: 105, title: 'How to Find Your First Customers & Start Selling', hasVideo: true, completed: false, locked: true }
       ],
       translations: {
         pidgin: {
           title: 'Start Pastry Business From Your Kitchen',
           modules: [
-            { id: 1, title: 'Introduction to Baking as Business for Nigeria' },
-            { id: 2, title: 'How to Make Puff-Puff Wey Go Sell Well-well' },
-            { id: 3, title: 'How to Make Nigerian Meatpie' },
-            { id: 4, title: 'Branding & Packaging for Pastry Business' },
-            { id: 5, title: 'How to Find Your First Customers & Begin Sell' }
+            { id: 101, title: 'Introduction to Baking as Business for Nigeria' },
+            { id: 102, title: 'How to Make Puff-Puff Wey Go Sell Well-well' },
+            { id: 103, title: 'How to Make Nigerian Meatpie' },
+            { id: 104, title: 'Branding & Packaging for Pastry Business' },
+            { id: 105, title: 'How to Find Your First Customers & Begin Sell' }
           ]
         },
         yoruba: {
           title: 'Bẹrẹ Iṣẹ́ àwọn oúnjẹ adùn láti inú kíchẹ́ẹ̀nì rẹ',
           modules: [
-            { id: 1, title: 'Ìfihan sí Ìdáná gẹ́gẹ́ bí Iṣẹ́ ní Nàìjíríà' },
-            { id: 2, title: 'Báwo ni o ṣe le ṣe Puff-Puff tí yóò tà' },
-            { id: 3, title: 'Báwo ni o ṣe le ṣe Ẹran-àkàrà Nàìjíríà' },
-            { id: 4, title: 'Àmì & Ipèsè fún Iṣẹ́ Ìdáná' },
-            { id: 5, title: 'Báwo ni o ṣe le rí àwọn Oníbàárà àkọ́kọ́ rẹ & Bẹrẹ Títà' }
+            { id: 101, title: 'Ìfihan sí Ìdáná gẹ́gẹ́ bí Iṣẹ́ ní Nàìjíríà' },
+            { id: 102, title: 'Báwo ni o ṣe le ṣe Puff-Puff tí yóò tà' },
+            { id: 103, title: 'Báwo ni o ṣe le ṣe Ẹran-àkàrà Nàìjíríà' },
+            { id: 104, title: 'Àmì & Ipèsè fún Iṣẹ́ Ìdáná' },
+            { id: 105, title: 'Báwo ni o ṣe le rí àwọn Oníbàárà àkọ́kọ́ rẹ & Bẹrẹ Títà' }
           ]
         },
         hausa: {
           title: 'Fara Harkar Abinci Mai Zaki Daga Dakin Girkinki',
           modules: [
-            { id: 1, title: 'Gabatarwa zuwa Gashin Burodi a matsayin Kasuwanci a Najeriya' },
-            { id: 2, title: 'Yadda ake yin Puff-Puff da ke sayarwa' },
-            { id: 3, title: 'Yadda ake yin Meatpie na Najeriya' },
-            { id: 4, title: 'Branding & Packaging domin Kasuwancin Pastry' },
-            { id: 5, title: 'Yadda ake samun Masu Sayayya na Farko & Fara Sayarwa' }
+            { id: 101, title: 'Gabatarwa zuwa Gashin Burodi a matsayin Kasuwanci a Najeriya' },
+            { id: 102, title: 'Yadda ake yin Puff-Puff da ke sayarwa' },
+            { id: 103, title: 'Yadda ake yin Meatpie na Najeriya' },
+            { id: 104, title: 'Branding & Packaging domin Kasuwancin Pastry' },
+            { id: 105, title: 'Yadda ake samun Masu Sayayya na Farko & Fara Sayarwa' }
           ]
         },
         igbo: {
           title: "Malite azumaahia pastry site na ulo nri gi",
           modules: [
-            { id: 1, title: "Mmalite na ihe mgbaka di ka azumaahia na Naijiria" },
-            { id: 2, title: "Otu e si eme puff-puff nke na-ere ere" },
-            { id: 3, title: "Otu e si eme Meatpie Naijiria" },
-            { id: 4, title: "Branding & Packaging maka azumaahia Pastry" },
-            { id: 5, title: "Otu iga achota ndi ahia mbu gi & malite ire" }
+            { id: 101, title: "Mmalite na ihe mgbaka di ka azumaahia na Naijiria" },
+            { id: 102, title: "Otu e si eme puff-puff nke na-ere ere" },
+            { id: 103, title: "Otu e si eme Meatpie Naijiria" },
+            { id: 104, title: "Branding & Packaging maka azumaahia Pastry" },
+            { id: 105, title: "Otu iga achota ndi ahia mbu gi & malite ire" }
           ]
         }
       }
@@ -271,51 +272,51 @@ const Dashboard = () => {
       avatar: 'https://media.istockphoto.com/id/1296271163/photo/confident-businessman-with-arms-crossed.jpg?s=612x612&w=0&k=20&c=StyHxyC8uUIVVV4UFHb141gIahiNr0fKurV-fiNb2oU=',
       progress: 15,
       modules: [
-        { id: 1, title: 'How to Find Hot-Selling Products Nigerians Want', hasVideo: false, completed: true, locked: false },
-        { id: 2, title: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks', hasVideo: true, completed: false, locked: false },
-        { id: 3, title: 'Shipping & Delivery: How to Import Without Wahala', hasVideo: false, completed: false, locked: true },
-        { id: 4, title: 'How to Market & Sell FAST on WhatsApp & Instagram', hasVideo: true, completed: false, locked: true },
-        { id: 5, title: 'Pricing, Profit & Customer Service Tips to Keep Sales Coming', hasVideo: false, completed: false, locked: true }
+        { id: 201, title: 'How to Find Hot-Selling Products Nigerians Want', hasVideo: false, completed: true, locked: false },
+        { id: 202, title: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks', hasVideo: true, completed: false, locked: false },
+        { id: 203, title: 'Shipping & Delivery: How to Import Without Wahala', hasVideo: false, completed: false, locked: true },
+        { id: 204, title: 'How to Market & Sell FAST on WhatsApp & Instagram', hasVideo: true, completed: false, locked: true },
+        { id: 205, title: 'Pricing, Profit & Customer Service Tips to Keep Sales Coming', hasVideo: false, completed: false, locked: true }
       ],
       translations: {
         pidgin: {
           title: 'Import From China & Sell for WhatsApp',
           modules: [
-            { id: 1, title: 'How to Find Hot-Selling Products Wey Nigerians Want' },
-            { id: 2, title: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks' },
-            { id: 3, title: 'Shipping & Delivery: How to Import Without Wahala' },
-            { id: 4, title: 'How to Market & Sell FAST for WhatsApp & Instagram' },
-            { id: 5, title: 'Pricing, Profit & Customer Service Tips to Keep Sales Coming' }
+            { id: 201, title: 'How to Find Hot-Selling Products Wey Nigerians Want' },
+            { id: 202, title: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks' },
+            { id: 203, title: 'Shipping & Delivery: How to Import Without Wahala' },
+            { id: 204, title: 'How to Market & Sell FAST for WhatsApp & Instagram' },
+            { id: 205, title: 'Pricing, Profit & Customer Service Tips to Keep Sales Coming' }
           ]
         },
         yoruba: {
           title: 'Mú wá láti Ṣáínà & Ta lórí WhatsApp',
           modules: [
-            { id: 1, title: 'Báwo ni o ṣe le rí àwọn ọjà tí ń tà gbòógì tí àwọn ará Nàìjíríà fẹ́' },
-            { id: 2, title: 'Níbo ni o le rà ní ìdíẹ̀: 1688, Alibaba & àwọn èdí àwọn olùpèsè' },
-            { id: 3, title: 'Ìfiránṣẹ́ & Ìfì ránṣẹ́: Báwo ni o ṣe le mú wọlé láìsí wàhálà' },
-            { id: 4, title: 'Báwo ni o ṣe le polowo & tà KÍÁKÍÁ lórí WhatsApp & Instagram' },
-            { id: 5, title: 'Àwọn ìdámọ̀ràn Ìdíyelé, Èrè & Iṣẹ́ Oníbàárà láti jẹ́ kí àwọn ìtàjà máa bá wọlé' }
+            { id: 201, title: 'Báwo ni o ṣe le rí àwọn ọjà tí ń tà gbòógì tí àwọn ará Nàìjíríà fẹ́' },
+            { id: 202, title: 'Níbo ni o le rà ní ìdíẹ̀: 1688, Alibaba & àwọn èdí àwọn olùpèsè' },
+            { id: 203, title: 'Ìfiránṣẹ́ & Ìfì ránṣẹ́: Báwo ni o ṣe le mú wọlé láìsí wàhálà' },
+            { id: 204, title: 'Báwo ni o ṣe le polowo & tà KÍÁKÍÁ lórí WhatsApp & Instagram' },
+            { id: 205, title: 'Àwọn ìdámọ̀ràn Ìdíyelé, Èrè & Iṣẹ́ Oníbàárà láti jẹ́ kí àwọn ìtàjà máa bá wọlé' }
           ]
         },
         hausa: {
           title: 'Shigo daga China & Sayar a WhatsApp',
           modules: [
-            { id: 1, title: 'Yadda ake samun kayayyakin da ke sayarwa masu zafi wanda Najeriawan ke so' },
-            { id: 2, title: 'Inda za a saya a arha: 1688, Alibaba & hanyoyin samun masu samar da kaya na asiri' },
-            { id: 3, title: 'Jigilar kaya & Isar: Yadda ake shigo ba tare da wahala ba' },
-            { id: 4, title: 'Yadda ake tallata & sayar da SAURI a WhatsApp & Instagram' },
-            { id: 5, title: 'Shawarwari game da farashin, riba & hidimar abokin ciniki don ci gaba da sayarwa' }
+            { id: 201, title: 'Yadda ake samun kayayyakin da ke sayarwa masu zafi wanda Najeriawan ke so' },
+            { id: 202, title: 'Inda za a saya a arha: 1688, Alibaba & hanyoyin samun masu samar da kaya na asiri' },
+            { id: 203, title: 'Jigilar kaya & Isar: Yadda ake shigo ba tare da wahala ba' },
+            { id: 204, title: 'Yadda ake tallata & sayar da SAURI a WhatsApp & Instagram' },
+            { id: 205, title: 'Shawarwari game da farashin, riba & hidimar abokin ciniki don ci gaba da sayarwa' }
           ]
         },
         igbo: {
           title: "Bubata site na China & Ree na WhatsApp",
           modules: [
-            { id: 1, title: "Otu iga achota ngwa ahia ndi na-ere oku ndi Naijiria choro" },
-            { id: 2, title: "Ebe i ga-azuta onu ala: 1688, Alibaba & usoro nzuzo nke ndi na-eweta ngwa ahia" },
-            { id: 3, title: "Mbupu & Nnyefe: Otu e si ebubata na-enwegh nsogbu" },
-            { id: 4, title: "Otu e si eme mgbasa ozi & ree NGWA NGWA na WhatsApp & Instagram" },
-            { id: 5, title: "Ndumoodu maka iko ugwo, uru & oru ndi ahia iji na-eleta ahia" }
+            { id: 201, title: "Otu iga achota ngwa ahia ndi na-ere oku ndi Naijiria choro" },
+            { id: 202, title: "Ebe i ga-azuta onu ala: 1688, Alibaba & usoro nzuzo nke ndi na-eweta ngwa ahia" },
+            { id: 203, title: "Mbupu & Nnyefe: Otu e si ebubata na-enwegh nsogbu" },
+            { id: 204, title: "Otu e si eme mgbasa ozi & ree NGWA NGWA na WhatsApp & Instagram" },
+            { id: 205, title: "Ndumoodu maka iko ugwo, uru & oru ndi ahia iji na-eleta ahia" }
           ]
         }
       }
@@ -399,6 +400,31 @@ const Dashboard = () => {
       }
     ],
     
+    // Pastry Business Module 2
+    102: [
+      {
+        question: 'What makes puff-puff stand out in the Nigerian snack market?',
+        options: ['It's expensive', 'It's quick to make and popular', 'It's not found in other countries', 'It requires special equipment'],
+        answer: 1,
+        moduleId: 102,
+        moduleTopic: 'How to Make Puff-Puff That Sells'
+      },
+      {
+        question: 'What is the key to making puff-puff with the perfect texture?',
+        options: ['Using cold water', 'Proper fermentation time', 'Adding baking powder', 'Using only premium flour'],
+        answer: 1,
+        moduleId: 102,
+        moduleTopic: 'How to Make Puff-Puff That Sells'
+      },
+      {
+        question: 'How can you differentiate your puff-puff business from competitors?',
+        options: ['By selling at a lower price', 'By offering unique flavors', 'By making them larger than normal', 'By using imported ingredients'],
+        answer: 1,
+        moduleId: 102,
+        moduleTopic: 'How to Make Puff-Puff That Sells'
+      }
+    ],
+    
     // Importation Module 1
     201: [
       {
@@ -421,6 +447,31 @@ const Dashboard = () => {
         answer: 3,
         moduleId: 201,
         moduleTopic: 'How to Find Hot-Selling Products Nigerians Want'
+      }
+    ],
+    
+    // Importation Module 2
+    202: [
+      {
+        question: 'What is the advantage of sourcing products from 1688 over Alibaba?',
+        options: ['Better quality', 'Lower prices', 'Faster shipping', 'More payment options'],
+        answer: 1,
+        moduleId: 202,
+        moduleTopic: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks'
+      },
+      {
+        question: 'What is a key strategy for negotiating better prices with Chinese suppliers?',
+        options: ['Always accept their first offer', 'Request samples from multiple suppliers', 'Pretend you don't speak English well', 'Only communicate via email'],
+        answer: 1,
+        moduleId: 202,
+        moduleTopic: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks'
+      },
+      {
+        question: 'Which payment method is usually safest when dealing with new Chinese suppliers?',
+        options: ['Western Union', 'Bank transfer', 'Alibaba Trade Assurance', 'Cash on delivery'],
+        answer: 2,
+        moduleId: 202,
+        moduleTopic: 'Where to Buy Cheap: 1688, Alibaba & Hidden Supplier Hacks'
       }
     ]
   }), []);
@@ -527,6 +578,20 @@ const Dashboard = () => {
         return 'Fi àwọn ìfiránṣẹ́ ránṣẹ́ ní àkókò làálàáránṣọ̀nà';
       }
     }
+
+    // Pastry Business translations (Modules 101-105)
+    if (moduleId >= 101 && moduleId <= 105) {
+      // Add specific translations for pastry business modules
+      // This is a placeholder - you would add actual translations here
+      return text;
+    }
+    
+    // Importation Business translations (Modules 201-205)
+    if (moduleId >= 201 && moduleId <= 205) {
+      // Add specific translations for importation business modules
+      // This is a placeholder - you would add actual translations here
+      return text;
+    }
     
     // For other modules or unknown texts, return the original text
     return text;
@@ -603,6 +668,18 @@ const Dashboard = () => {
         return 'Aika saƙonni a lokuta ba tare da tsari ba';
       }
     }
+
+    // Pastry Business translations (Modules 101-105)
+    if (moduleId >= 101 && moduleId <= 105) {
+      // Add specific translations for pastry business modules
+      return text;
+    }
+    
+    // Importation Business translations (Modules 201-205)
+    if (moduleId >= 201 && moduleId <= 205) {
+      // Add specific translations for importation business modules
+      return text;
+    }
     
     // For other modules or unknown texts, return the original text
     return text;
@@ -645,4 +722,155 @@ const Dashboard = () => {
       }
       
       if (text === 'What is a key advantage of digital marketing for small Nigerian businesses?') {
-        return 'Gịnị bụ uru dị mkpa nke mgbasa ozi dijitali maka obere azụmaahịa na Naịjịrịa?
+        return 'Gịnị bụ uru dị mkpa nke mgbasa ozi dijitali maka obere azụmaahịa na Naịjịrịa?';
+      }
+      if (text === 'It requires lots of capital') {
+        return 'Ọ chọrọ nnukwu ego';
+      }
+      if (text === 'It works without electricity') {
+        return 'Ọ na-arụ ọrụ na-enweghị ọkụ latrik';
+      }
+      if (text === 'It allows for targeted customer reach') {
+        return 'Ọ na-enye ohere maka iru ndị ahịa edobere';
+      }
+      if (text === 'It guarantees overnight success') {
+        return 'Ọ na-ekwe nkwa ọganiru n\'abalị';
+      }
+    }
+    
+    // Digital Marketing Module 2 translations
+    if (moduleId === 2) {
+      if (text === 'What is the best way to organize your WhatsApp business account?') {
+        return 'Gịnị bụ ụzọ kachasị mma isi hazie akaụntụ azụmahịa WhatsApp gị?';
+      }
+      if (text === 'Mix personal and business chats') {
+        return 'Gwakọta mkparịta ụka nke onwe na azụmahịa';
+      }
+      if (text === 'Create broadcast lists for different product categories') {
+        return 'Mepụta ndepụta mgbasama maka ụdị ngwongwo dị iche iche';
+      }
+      if (text === 'Only post status updates') {
+        return 'Naanị depụta mmelite ọnọdụ';
+      }
+      if (text === 'Send messages at random times') {
+        return 'Ziga ozi na mgbe na-enweghị usoro';
+      }
+    }
+
+    // Pastry Business translations (Modules 101-105)
+    if (moduleId >= 101 && moduleId <= 105) {
+      // Add specific translations for pastry business modules
+      return text;
+    }
+    
+    // Importation Business translations (Modules 201-205)
+    if (moduleId >= 201 && moduleId <= 205) {
+      // Add specific translations for importation business modules
+      return text;
+    }
+    
+    // For other modules or unknown texts, return the original text
+    return text;
+  };
+
+  // Get current course information based on user preferences
+  const currentCourse = useMemo(() => {
+    return courses[courseId] || courses['digital-marketing'];
+  }, [courseId]);
+  
+  // Handle module selection
+  const handleModuleSelect = (module: Module) => {
+    if (module.locked) {
+      toast({
+        title: "Module locked",
+        description: "Complete the previous modules to unlock this one!",
+        variant: "destructive",
+        duration: 3000
+      });
+      return;
+    }
+    
+    setSelectedModule(module);
+  };
+  
+  // Get module-specific quizzes based on the selected module
+  const getQuizzesForModule = (): Quiz[] => {
+    if (!selectedModule) return [];
+    
+    // Get the quizzes specific to this module
+    return getTranslatedQuizzes(selectedModule.id);
+  };
+  
+  return (
+    <DashboardLayout>
+      {isPreviewMode && <PreviewMode />}
+      
+      <CourseHeader 
+        user={user}
+        course={currentCourse}
+        progress={courseProgress.progress}
+        currentLanguage={currentLanguage}
+      />
+      
+      <div className="container mx-auto px-4 mb-16">
+        <Tabs
+          defaultValue="lessons"
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="mt-6"
+        >
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="lessons" className="text-xs sm:text-base">
+              <Video className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              {texts.lessons}
+            </TabsTrigger>
+            <TabsTrigger value="chat" className="text-xs sm:text-base">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              {texts.chat}
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="lessons" className="mt-6 space-y-6">
+            {isLoading ? (
+              <div className="space-y-4">
+                <Skeleton className="h-8 w-32 rounded-md" />
+                <div className="space-y-3">
+                  {[1, 2, 3, 4].map(i => (
+                    <Skeleton key={i} className="h-20 rounded-md" />
+                  ))}
+                </div>
+              </div>
+            ) : selectedModule ? (
+              <ModuleDetail 
+                module={selectedModule} 
+                quizzes={getQuizzesForModule()}
+                onClose={() => setSelectedModule(null)}
+                onModuleComplete={() => handleModuleComplete(selectedModule)}
+                onQuizComplete={(correct) => handleQuizComplete(selectedModule, correct)}
+                language={currentLanguage}
+                texts={{
+                  back: texts.back,
+                  loading: texts.loading
+                }}
+              />
+            ) : (
+              <ModulesList 
+                modules={currentCourse.modules} 
+                onSelectModule={handleModuleSelect}
+                completedModuleIds={courseProgress.completedModules}
+                currentLanguage={currentLanguage}
+                courseTranslations={currentCourse.translations}
+              />
+            )}
+          </TabsContent>
+          
+          <TabsContent value="chat" className="mt-6 h-[calc(80vh-120px)]">
+            <AIChat />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </DashboardLayout>
+  );
+};
+
+export default Dashboard;

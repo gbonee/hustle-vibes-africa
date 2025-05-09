@@ -310,10 +310,14 @@ export const awardQuizPoints = async (moduleId: number, courseId: string, points
   await addPointsForModuleCompletion(points);
   
   // Mark module as completed if it's not already
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (!user) return { success: false, error: 'User not authenticated' };
+  
   const { data: moduleCompletion } = await supabase
     .from('module_completion')
     .select('*')
-    .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+    .eq('user_id', user.id)
     .eq('course_id', courseId)
     .eq('module_id', moduleId)
     .maybeSingle();

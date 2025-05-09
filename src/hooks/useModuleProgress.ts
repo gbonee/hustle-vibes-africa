@@ -94,7 +94,6 @@ export const useModuleProgress = (courseId: string = 'digital-marketing') => {
     
     try {
       // Award points for correct answer
-      
       // Ensure moduleId is treated as a number
       const moduleId = typeof selectedModule.id === 'string' ? parseInt(selectedModule.id, 10) : selectedModule.id;
       
