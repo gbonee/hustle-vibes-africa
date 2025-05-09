@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -10,6 +11,9 @@ import { toast } from "sonner";
 import { useIsMobile } from '@/hooks/use-mobile';
 import PreviewMode from '@/components/common/PreviewMode';
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+// Import Progress type from chat types file
+import { Progress } from './chat/types';
 
 interface ChatMessage {
   isUser: boolean;
