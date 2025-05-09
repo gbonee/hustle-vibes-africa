@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import PreviewMode from '@/components/common/PreviewMode';
 import { useModuleProgress } from '@/hooks/useModuleProgress';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'react-router-dom';
 
 // Define types
 interface Course {
@@ -90,6 +91,7 @@ const Dashboard = () => {
     email: 'preview@example.com',
     avatar: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1'
   });
+  const location = useLocation(); // Get current path for DashboardLayout
   
   // Get current language for translations (default to English if not set)
   const currentLanguage = userPrefs?.language || 'pidgin';
@@ -800,14 +802,16 @@ const Dashboard = () => {
   };
   
   return (
-    <DashboardLayout>
+    <DashboardLayout 
+      currentPath={location.pathname} 
+      user={user}
+    >
       {isPreviewMode && <PreviewMode />}
       
       <CourseHeader 
-        user={user}
-        course={currentCourse}
+        title={currentCourse.title}
+        avatar={currentCourse.avatar}
         progress={courseProgress.progress}
-        currentLanguage={currentLanguage}
       />
       
       <div className="container mx-auto px-4 mb-16">
@@ -863,7 +867,10 @@ const Dashboard = () => {
           </TabsContent>
           
           <TabsContent value="chat" className="mt-6 h-[calc(80vh-120px)]">
-            <AIChat />
+            <AIChat 
+              courseAvatar={currentCourse.avatar} 
+              userName={user.name}
+            />
           </TabsContent>
         </Tabs>
       </div>

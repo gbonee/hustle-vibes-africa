@@ -23,12 +23,6 @@ interface AIChatProps {
   userName: string;
 }
 
-interface Progress {
-  completed: number;
-  total: number;
-  percentage: number;
-}
-
 // Map course types to coach names
 const getCoachName = (course: string): string => {
   switch (course) {
