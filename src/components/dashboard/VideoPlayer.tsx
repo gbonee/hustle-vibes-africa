@@ -56,6 +56,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
       );
       
       if (moduleVideo) {
+        // Get the public URL for the video - this is the key fix
         const { data: { publicUrl } } = supabase
           .storage
           .from('module-videos')
