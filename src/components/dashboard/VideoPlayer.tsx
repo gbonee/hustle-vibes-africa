@@ -34,16 +34,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
       
       // If there's no course preference, we can't fetch the video
       if (!userPrefs?.course) {
-        console.log("No course selected in user preferences");
         setIsLoading(false);
         return;
       }
       
       // Get user's selected language from preferences
       const userLanguage = userPrefs?.language || 'pidgin';
-      console.log(`Looking for videos for module ${module.id} in course ${userPrefs.course}, language: ${userLanguage}`);
+      console.log(`Looking for ${userLanguage} videos for module ${module.id}`);
       
-      // List all videos in the bucket/folder to diagnose what's there
+      // Look for videos in the format: courseId/moduleId-language-filename
       const { data, error } = await supabase
         .storage
         .from('module-videos')
@@ -51,44 +50,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         
       if (error) throw error;
       
-      console.log(`Available videos in ${userPrefs.course} course:`, data);
-      
-      // Convert module.id to string for safer comparison
-      const moduleIdStr = String(module.id);
-      
-      // Try multiple patterns to find the video
-      // 1. First look for exact match: moduleId-language-*
-      let moduleVideo = data.find(file => 
-        file.name.startsWith(`${moduleIdStr}-${userLanguage}`)
+      // Find the first video that starts with the module ID AND matches the user's language
+      const moduleVideo = data.find(file => 
+        file.name.startsWith(`${module.id}-${userLanguage}`)
       );
       
-      // 2. If not found, look for a video that contains the module ID anywhere
-      if (!moduleVideo) {
-        moduleVideo = data.find(file => 
-          file.name.includes(`-${moduleIdStr}-`) || 
-          file.name.includes(`/${moduleIdStr}-`) || 
-          file.name.startsWith(`${moduleIdStr}-`)
-        );
-      }
-      
       if (moduleVideo) {
-        // Get the public URL for the video
         const { data: { publicUrl } } = supabase
           .storage
           .from('module-videos')
           .getPublicUrl(`${userPrefs.course}/${moduleVideo.name}`);
           
-        console.log(`Found video for module ${module.id}: ${moduleVideo.name}`);
-        console.log(`Video URL: ${publicUrl}`);
+        console.log(`Found ${userLanguage} video for module ${module.id}: ${moduleVideo.name}`);
         setVideoUrl(publicUrl);
       } else {
-        console.log(`No video found for module ${module.id} in course ${userPrefs.course}`);
-        console.log(`Videos available:`, data.map(d => d.name).join(", "));
-        
-        // Check if id is not a number (like "201") that might not match our pattern
-        if (isNaN(Number(module.id))) {
-          console.log(`Warning: Module ID ${module.id} is not a number, which might not match our naming pattern`);
-        }
+        console.log(`No ${userLanguage} video found for module ${module.id}`);
         setVideoUrl(null);
       }
     } catch (error) {

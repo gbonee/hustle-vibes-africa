@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,24 +31,6 @@ import ChatMessage, { LoadingChatMessage } from './components/ChatMessage';
 import QuickActionButtons from './components/QuickActionButtons';
 import ChatForm from './components/ChatForm';
 
-// Preload common chat assets
-const preloadAssets = () => {
-  // Preload coach avatars
-  const avatars = [
-    'https://img.freepik.com/premium-photo/mature-elderly-black-woman-wearing-traditional-nigerian-clothes-african-american-grandmother-is_777271-18892.jpg',
-    'https://media.istockphoto.com/id/1269519579/photo/small-bakery-shop-owner-standing-in-front-of-store.jpg',
-    'https://media.istockphoto.com/id/1296271163/photo/confident-businessman-with-arms-crossed.jpg'
-  ];
-  
-  avatars.forEach(avatar => {
-    const img = new Image();
-    img.src = avatar;
-  });
-};
-
-// Preload assets when module loads
-preloadAssets();
-
 const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const [message, setMessage] = useState("");
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -76,9 +59,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     isInitialLoad 
   } = useChatHistory(currentCourseKey, currentCourse, currentLanguage, userName);
 
-  // Initialize user ID and check preview mode - use useCallback to optimize
-  const initializeChat = useCallback(async () => {
-    try {
+  // Initialize user ID and check preview mode
+  useEffect(() => {
+    const getUserId = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
@@ -93,26 +76,19 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         setCurrentCourseKey(courseKey);
         console.log("Setting course key for preview mode:", courseKey);
       }
-    } catch (error) {
-      console.error("Error initializing chat:", error);
-      // Set a fallback course key
-      const fallbackKey = `fallback_${currentCourse}_${currentLanguage}`;
-      setCurrentCourseKey(fallbackKey);
-    }
-  }, [currentCourse, currentLanguage]);
+    };
 
-  useEffect(() => {
     // Check if we're in preview mode
     const urlParams = new URLSearchParams(window.location.search);
     const preview = urlParams.get('forcePreview') === 'true';
     setIsPreviewMode(preview);
 
-    initializeChat();
-  }, [initializeChat]); // Depend only on the memoized function
+    getUserId();
+  }, [currentCourse, currentLanguage]); // Make sure this re-runs when currentCourse or language changes
 
   // Scroll to bottom of chat area when messages change
   useEffect(() => {
-    if (scrollAreaRef.current && chatMessages.length > 0) {
+    if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [chatMessages]);
@@ -128,14 +104,14 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   };
 
   // Format chat history for API
-  const formatChatHistoryForApi = useCallback(() => {
+  const formatChatHistoryForApi = () => {
     // Only send the last 10 messages to keep context manageable
     const recentMessages = chatMessages.slice(-10);
     return recentMessages.map(msg => ({
       role: msg.isUser ? 'user' : 'assistant',
       content: msg.text
     }));
-  }, [chatMessages]);
+  };
 
   const handleMessageSend = async (e: React.FormEvent) => {
     e.preventDefault();
