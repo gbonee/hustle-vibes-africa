@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import AvatarSelector from '@/components/AvatarSelector';
@@ -44,27 +43,6 @@ const Index = () => {
       <PricingSection />
       
       <CTASection handleJoinWaitlist={handleJoinWaitlist} />
-      
-      <div className="container mx-auto px-4 py-8 text-center">
-        <h3 className="text-xl font-bold mb-4">Preview Pages</h3>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link to="/auth?forcePreview=true">
-            <Button variant="outline">Auth Page</Button>
-          </Link>
-          <Link to="/onboarding?forcePreview=true">
-            <Button variant="outline">Onboarding</Button>
-          </Link>
-          <Link to="/dashboard?forcePreview=true">
-            <Button variant="outline">Dashboard</Button>
-          </Link>
-          <Link to="/profile?forcePreview=true">
-            <Button variant="outline">Profile</Button>
-          </Link>
-          <Link to="/leaderboard?forcePreview=true">
-            <Button variant="outline">Leaderboard</Button>
-          </Link>
-        </div>
-      </div>
       
       <Footer />
     </div>
