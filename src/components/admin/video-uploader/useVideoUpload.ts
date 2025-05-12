@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -131,7 +130,7 @@ export const useVideoUpload = ({
       
       // Clean up local preview
       if (previewUrl) {
-        URL.revoObjectURL(previewUrl);
+        URL.revokeObjectURL(previewUrl);
       }
     }
   };
