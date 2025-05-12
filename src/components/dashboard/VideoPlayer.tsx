@@ -34,13 +34,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
       
       // If there's no course preference, we can't fetch the video
       if (!userPrefs?.course) {
+        console.log("No course selected in user preferences");
         setIsLoading(false);
         return;
       }
       
       // Get user's selected language from preferences
       const userLanguage = userPrefs?.language || 'pidgin';
-      console.log(`Looking for ${userLanguage} videos for module ${module.id}`);
+      console.log(`Looking for videos for module ${module.id} in course ${userPrefs.course}, language: ${userLanguage}`);
       
       // Look for videos in the format: courseId/moduleId-language-filename
       const { data, error } = await supabase
@@ -50,11 +51,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         
       if (error) throw error;
       
-      console.log("Available videos:", data);
+      console.log(`Available videos in ${userPrefs.course} course:`, data);
+      
+      // Convert module.id to string for safer comparison
+      const moduleIdStr = String(module.id);
       
       // Find the first video that starts with the module ID AND matches the user's language
       const moduleVideo = data.find(file => 
-        file.name.startsWith(`${module.id}-${userLanguage}`)
+        file.name.startsWith(`${moduleIdStr}-${userLanguage}`)
       );
       
       if (moduleVideo) {
@@ -68,9 +72,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         console.log(`Video URL: ${publicUrl}`);
         setVideoUrl(publicUrl);
       } else {
-        // As a fallback, try to find any video for this module
+        // As a fallback, try to find any video for this module regardless of language
         const anyModuleVideo = data.find(file => 
-          file.name.startsWith(`${module.id}-`)
+          file.name.startsWith(`${moduleIdStr}-`)
         );
         
         if (anyModuleVideo) {
@@ -83,7 +87,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
           console.log(`Fallback video URL: ${publicUrl}`);
           setVideoUrl(publicUrl);
         } else {
-          console.log(`No video found for module ${module.id}`);
+          console.log(`No video found for module ${module.id} in course ${userPrefs.course}`);
+          // Check if id is not a number (like "201") that might not match our pattern
+          if (isNaN(Number(module.id))) {
+            console.log(`Warning: Module ID ${module.id} is not a number, which might not match our naming pattern`);
+          }
           setVideoUrl(null);
         }
       }
