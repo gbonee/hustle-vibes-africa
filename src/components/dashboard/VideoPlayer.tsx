@@ -50,23 +50,42 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         
       if (error) throw error;
       
+      console.log("Available videos:", data);
+      
       // Find the first video that starts with the module ID AND matches the user's language
       const moduleVideo = data.find(file => 
         file.name.startsWith(`${module.id}-${userLanguage}`)
       );
       
       if (moduleVideo) {
-        // Get the public URL for the video - this is the key fix
+        // Get the public URL for the video
         const { data: { publicUrl } } = supabase
           .storage
           .from('module-videos')
           .getPublicUrl(`${userPrefs.course}/${moduleVideo.name}`);
           
         console.log(`Found ${userLanguage} video for module ${module.id}: ${moduleVideo.name}`);
+        console.log(`Video URL: ${publicUrl}`);
         setVideoUrl(publicUrl);
       } else {
-        console.log(`No ${userLanguage} video found for module ${module.id}`);
-        setVideoUrl(null);
+        // As a fallback, try to find any video for this module
+        const anyModuleVideo = data.find(file => 
+          file.name.startsWith(`${module.id}-`)
+        );
+        
+        if (anyModuleVideo) {
+          const { data: { publicUrl } } = supabase
+            .storage
+            .from('module-videos')
+            .getPublicUrl(`${userPrefs.course}/${anyModuleVideo.name}`);
+            
+          console.log(`Found fallback video for module ${module.id}: ${anyModuleVideo.name}`);
+          console.log(`Fallback video URL: ${publicUrl}`);
+          setVideoUrl(publicUrl);
+        } else {
+          console.log(`No video found for module ${module.id}`);
+          setVideoUrl(null);
+        }
       }
     } catch (error) {
       console.error("Error fetching module video:", error);
