@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Users, Flag } from "lucide-react";
@@ -62,7 +63,7 @@ const Hero = () => {
           </div>
           
           <p className="mt-4 text-electric animate-slide-up text-lg font-medium" style={{animationDelay: '0.5s'}}>
-            First 1000 users pay what they want! 🔥
+            First 100 users win free data, cash prizes, phones & beta access! 🔥
           </p>
           
           <div className="mt-8 md:mt-12 flex flex-wrap justify-center gap-8 text-sm md:text-base animate-slide-up" style={{animationDelay: '0.6s'}}>
