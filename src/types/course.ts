@@ -1,5 +1,6 @@
 
 import { Module } from '@/components/dashboard/ModulesList';
+import { Quiz } from '@/types/quiz';
 
 export interface Course {
   id: string;
