@@ -88,7 +88,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
       defaultValue="lessons"
       value={activeTab}
       onValueChange={setActiveTab}
-      className="mt-6"
+      className="mt-6 h-full"
     >
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="lessons" className="text-xs sm:text-base">
