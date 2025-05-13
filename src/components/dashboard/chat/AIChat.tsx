@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -177,7 +177,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   };
 
   return (
-    <Card className="bg-muted border-electric">
+    <Card className="bg-muted border-electric flex flex-col h-full">
       {isPreviewMode && (
         <PreviewMode 
           onLanguageChange={(lang) => {}} 
@@ -185,7 +185,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         />
       )}
       
-      <CardHeader>
+      <CardHeader className="pb-2">
         <div className="flex items-center">
           <Avatar className="mr-3">
             <AvatarImage src={courseAvatar} />
@@ -197,13 +197,14 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-4">
+      
+      <CardContent className="flex-grow p-4 pb-0 overflow-hidden">
         <ScrollArea 
           ref={scrollAreaRef}
-          className="h-80 mb-4 p-2"
+          className="h-[45vh] sm:h-[55vh] mb-2 p-2 overflow-y-auto"
           scrollHideDelay={100}
         >
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4 pb-4">
             {chatMessages.map((msg, index) => (
               <ChatMessage 
                 key={index}
@@ -216,7 +217,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
             )}
           </div>
         </ScrollArea>
-        
+      </CardContent>
+      
+      <CardFooter className="flex flex-col gap-3 p-4 pt-2 mt-auto">
         {/* Quick action buttons */}
         <QuickActionButtons 
           currentLanguage={currentLanguage}
@@ -233,7 +236,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           coachName={coachName}
           currentLanguage={currentLanguage}
         />
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 };
