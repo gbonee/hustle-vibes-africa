@@ -16,7 +16,7 @@ const QuickActionButtons: React.FC<QuickActionButtonsProps> = ({
   isMobile
 }) => {
   return (
-    <div className="grid grid-cols-3 gap-2 mb-4">
+    <div className="grid grid-cols-3 gap-2 w-full">
       <Button 
         variant="outline" 
         size="sm"
