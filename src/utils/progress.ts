@@ -1,5 +1,6 @@
 
-import { updateModuleCompletion, updateCourseProgress, getUserCourseProgress, getModuleCompletionData } from './progress/moduleProgress';
+import { updateModuleCompletion, getModuleCompletionData } from './progress/moduleProgress';
+import { getUserCourseProgress, updateCourseProgress } from './progress/courseProgress';
 import { getLeaderboard, getUserLeaderboardEntry, addPointsForModuleCompletion, awardQuizPoints } from './progress/leaderboardProgress';
 import { debugVideoAvailability as debugVideo } from './progress/index';
 
