@@ -40,7 +40,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
       
       // Get user's selected language from preferences
       const userLanguage = userPrefs?.language || 'pidgin';
-      console.log(`Looking for ${userLanguage} videos for module ${module.id}`);
+      console.log(`Looking for ${userLanguage} videos for module ${module.id} in course ${userPrefs.course}`);
       
       // Look for videos in the format: courseId/moduleId-language-filename
       const { data, error } = await supabase
@@ -49,6 +49,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         .list(userPrefs.course);
         
       if (error) throw error;
+      
+      console.log(`Found ${data.length} files in the ${userPrefs.course} folder`);
       
       // Find the first video that starts with the module ID AND matches the user's language
       const moduleVideo = data.find(file => 
@@ -64,7 +66,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         console.log(`Found ${userLanguage} video for module ${module.id}: ${moduleVideo.name}`);
         setVideoUrl(publicUrl);
       } else {
-        console.log(`No ${userLanguage} video found for module ${module.id}`);
+        // Debug output to help diagnose the issue
+        console.log(`No ${userLanguage} video found for module ${module.id}. Available files:`, 
+          data.map(file => file.name));
         setVideoUrl(null);
       }
     } catch (error) {
