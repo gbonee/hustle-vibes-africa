@@ -83,3 +83,6 @@ export const updateModuleCompletion = async (data: ModuleCompletionData) => {
   
   return { success: true };
 };
+
+// Export the getUserCourseProgress function to fix the export error
+export { getUserCourseProgress } from './courseProgress';

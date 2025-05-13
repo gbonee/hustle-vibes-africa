@@ -106,3 +106,6 @@ export const getLeaderboard = async (limit = 10) => {
     };
   });
 };
+
+// Add awardQuizPoints export to fix the missing export error
+export { awardQuizPoints } from './courseProgress';
