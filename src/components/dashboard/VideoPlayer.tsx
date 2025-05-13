@@ -5,6 +5,7 @@ import { Module } from './ModulesList';
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { Skeleton } from '@/components/ui/skeleton';
+import { debugVideoAvailability } from '@/utils/progress';
 
 interface VideoPlayerProps {
   module: Module;
@@ -14,6 +15,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
   const { userPrefs } = useUserPreferences();
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [debugInfo, setDebugInfo] = useState<{available: any[], all: any[]} | null>(null);
   
   const fetchModuleVideo = useCallback(async () => {
     if (!module) {
@@ -52,10 +54,21 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
       
       console.log(`Found ${data.length} files in the ${userPrefs.course} folder`);
       
-      // Find the first video that starts with the module ID AND matches the user's language
-      const moduleVideo = data.find(file => 
+      // Two potential naming patterns:
+      // 1. moduleId-language-filename (new format)
+      // 2. moduleId-filename-language (potential old format)
+      // Focus on new format first
+      let moduleVideo = data.find(file => 
         file.name.startsWith(`${module.id}-${userLanguage}`)
       );
+      
+      // If not found, try to match by checking if language code exists anywhere in the filename
+      if (!moduleVideo) {
+        moduleVideo = data.find(file => 
+          file.name.startsWith(`${module.id}-`) && 
+          file.name.includes(`-${userLanguage}`)
+        );
+      }
       
       if (moduleVideo) {
         const { data: { publicUrl } } = supabase
@@ -69,6 +82,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
         // Debug output to help diagnose the issue
         console.log(`No ${userLanguage} video found for module ${module.id}. Available files:`, 
           data.map(file => file.name));
+        
+        // Store debug info for display to admin users
+        const debug = await debugVideoAvailability(userPrefs.course, userLanguage);
+        setDebugInfo(debug);
+        
         setVideoUrl(null);
       }
     } catch (error) {
@@ -129,6 +147,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
       <div className="text-center">
         <Video className="h-12 w-12 mx-auto mb-4 text-electric" />
         <p className="text-gray-400">No video available in {userPrefs?.language || 'current'} language</p>
+        {debugInfo && (
+          <div className="mt-4 text-xs text-gray-500">
+            <p>Available videos: {debugInfo.available.length}</p>
+            <p>Total files: {debugInfo.all.length}</p>
+            <p className="mt-2">Naming format should be: {module.id}-{userPrefs?.language}-filename</p>
+          </div>
+        )}
       </div>
     </div>
   ) : (

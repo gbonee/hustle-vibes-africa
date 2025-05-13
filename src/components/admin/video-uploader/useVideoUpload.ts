@@ -1,3 +1,4 @@
+
 import { useState, useRef } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -77,7 +78,7 @@ export const useVideoUpload = ({
     }
 
     try {
-      setIsLoading(true);
+      setIsUploading(true);
       setProgress(0);
       
       // First check if we have a valid session to avoid RLS issues
@@ -87,9 +88,10 @@ export const useVideoUpload = ({
       }
       
       // Define file path in storage bucket with language code
-      // Format: courseId/moduleId-language-filename.mp4
-      const fileName = selectedFile.name.replace(/\s+/g, '-');
-      const filePath = `${courseId}/${moduleId}-${language}-${fileName}`;
+      // IMPORTANT: Always use moduleId-language-filename.ext format consistently
+      const originalFileName = selectedFile.name.replace(/\s+/g, '-');
+      // Ensure the file follows the required naming convention
+      const filePath = `${courseId}/${moduleId}-${language}-${originalFileName}`;
       
       console.log(`Uploading video to path: ${filePath}`);
       
@@ -111,7 +113,7 @@ export const useVideoUpload = ({
       
       toast({
         title: "Video uploaded successfully",
-        description: `The ${language} video for this module has been uploaded.`,
+        description: `The ${language} video for this module has been uploaded with the correct naming format.`,
         variant: "default"
       });
 
@@ -125,7 +127,7 @@ export const useVideoUpload = ({
         variant: "destructive"
       });
     } finally {
-      setIsLoading(false);
+      setIsUploading(false);
       
       // Clean up local preview
       if (previewUrl) {
