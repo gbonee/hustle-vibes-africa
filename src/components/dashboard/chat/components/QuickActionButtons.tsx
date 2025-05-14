@@ -21,28 +21,34 @@ const QuickActionButtons: React.FC<QuickActionButtonsProps> = ({
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('next-lesson')}
-        className="flex items-center justify-center"
+        className="flex flex-col h-auto py-2 items-center justify-center"
       >
-        <BookOpen className="h-4 w-4 mr-1" />
-        <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('next-lesson', currentLanguage)}</span>
+        <BookOpen className="h-3.5 w-3.5 mb-1" />
+        <span className={`${isMobile ? "text-[9px]" : "text-xs"} text-center leading-tight`}>
+          {getQuickActionButtonText('next-lesson', currentLanguage)}
+        </span>
       </Button>
       <Button 
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('take-quiz')}
-        className="flex items-center justify-center"
+        className="flex flex-col h-auto py-2 items-center justify-center"
       >
-        <Award className="h-4 w-4 mr-1" />
-        <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('take-quiz', currentLanguage)}</span>
+        <Award className="h-3.5 w-3.5 mb-1" />
+        <span className={`${isMobile ? "text-[9px]" : "text-xs"} text-center leading-tight`}>
+          {getQuickActionButtonText('take-quiz', currentLanguage)}
+        </span>
       </Button>
       <Button 
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('challenge')}
-        className="flex items-center justify-center"
+        className="flex flex-col h-auto py-2 items-center justify-center"
       >
-        <ArrowRight className="h-4 w-4 mr-1" />
-        <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('challenge', currentLanguage)}</span>
+        <ArrowRight className="h-3.5 w-3.5 mb-1" />
+        <span className={`${isMobile ? "text-[9px]" : "text-xs"} text-center leading-tight`}>
+          {getQuickActionButtonText('challenge', currentLanguage)}
+        </span>
       </Button>
     </div>
   );

@@ -20,10 +20,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   return (
     <ScrollArea 
       ref={scrollAreaRef}
-      className="h-[50vh] sm:h-[60vh] mb-4 p-2 overflow-y-auto"
+      className="h-[40vh] sm:h-[50vh] mb-2 p-2 overflow-y-auto"
       scrollHideDelay={100}
     >
-      <div className="flex flex-col space-y-6 pb-6">
+      <div className="flex flex-col space-y-6 pb-4">
         {chatMessages.map((msg, index) => (
           <ChatMessage 
             key={index}
