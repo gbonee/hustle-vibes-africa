@@ -1,6 +1,7 @@
-import * as React from "react"
 
-import type {
+import * as React from "react"
+import {
+  Toast,
   ToastActionElement,
   ToastProps,
 } from "@/components/ui/toast"
@@ -22,33 +23,13 @@ const actionTypes = {
   REMOVE_TOAST: "REMOVE_TOAST",
 } as const
 
-let count = 0
-
-function genId() {
-  count = (count + 1) % Number.MAX_VALUE
-  return count.toString()
-}
-
 type ActionType = typeof actionTypes
 
-type Action =
-  | {
-      type: ActionType["ADD_TOAST"]
-      toast: ToasterToast
-    }
-  | {
-      type: ActionType["UPDATE_TOAST"]
-      toast: Partial<ToasterToast>
-      id: string
-    }
-  | {
-      type: ActionType["DISMISS_TOAST"]
-      toastId?: string
-    }
-  | {
-      type: ActionType["REMOVE_TOAST"]
-      toastId?: string
-    }
+interface Action {
+  type: ActionType[keyof ActionType]
+  toast?: ToasterToast
+  toastId?: string
+}
 
 interface State {
   toasts: ToasterToast[]
@@ -77,22 +58,20 @@ export const reducer = (state: State, action: Action): State => {
     case actionTypes.ADD_TOAST:
       return {
         ...state,
-        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
+        toasts: [action.toast!, ...state.toasts].slice(0, TOAST_LIMIT),
       }
 
     case actionTypes.UPDATE_TOAST:
       return {
         ...state,
         toasts: state.toasts.map((t) =>
-          t.id === action.id ? { ...t, ...action.toast } : t
+          t.id === action.toast!.id ? { ...t, ...action.toast } : t
         ),
       }
 
     case actionTypes.DISMISS_TOAST: {
       const { toastId } = action
 
-      // ! Side effects ! - This could be extracted into a dismissToast() action,
-      // but I'll keep it here for simplicity
       if (toastId) {
         addToRemoveQueue(toastId)
       } else {
@@ -113,6 +92,7 @@ export const reducer = (state: State, action: Action): State => {
         ),
       }
     }
+
     case actionTypes.REMOVE_TOAST:
       if (action.toastId === undefined) {
         return {
@@ -138,18 +118,16 @@ function dispatch(action: Action) {
   })
 }
 
-interface Toast extends Omit<ToasterToast, "id"> {}
+type Toast = Omit<ToasterToast, "id">
 
 function toast({ ...props }: Toast) {
-  const id = genId()
+  const id = crypto.randomUUID()
 
   const update = (props: ToasterToast) =>
     dispatch({
       type: actionTypes.UPDATE_TOAST,
-      id,
-      toast: props,
+      toast: { ...props, id },
     })
-
   const dismiss = () => dispatch({ type: actionTypes.DISMISS_TOAST, toastId: id })
 
   dispatch({
@@ -185,9 +163,9 @@ function useToast() {
   }, [state])
 
   return {
-    ...state,
     toast,
     dismiss: (toastId?: string) => dispatch({ type: actionTypes.DISMISS_TOAST, toastId }),
+    toasts: state.toasts,
   }
 }
 

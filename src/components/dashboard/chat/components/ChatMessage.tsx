@@ -24,7 +24,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   }
   
   return (
-    <div className="flex flex-col mb-4">
+    <div className="flex flex-col mb-5">
       <div className="flex">
         <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden mr-2 sm:mr-3 flex-shrink-0">
           <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
@@ -34,8 +34,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         </div>
       </div>
       {message.gif && (
-        <div className="ml-10 mt-2 max-w-[250px] sm:max-w-[300px]">
-          <img src={message.gif} alt="Giphy reaction" className="rounded-lg w-full" />
+        <div className="ml-10 mt-2 max-w-[200px] sm:max-w-[250px]">
+          <img 
+            src={message.gif} 
+            alt="Giphy reaction" 
+            className="rounded-lg w-full h-auto object-contain"
+            loading="lazy"
+          />
         </div>
       )}
     </div>

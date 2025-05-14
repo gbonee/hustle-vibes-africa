@@ -4,6 +4,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { toast } from "@/hooks/use-toast";
 
 // Import types and helper functions
 import { 
@@ -104,7 +105,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         isPreviewMode={isPreviewMode}
       />
       
-      <CardContent className="flex-grow p-4 pb-0 overflow-hidden">
+      <CardContent className="flex-grow p-3 pb-0 overflow-hidden">
         <ChatContainer 
           chatMessages={chatMessages}
           isLoading={isLoading}
@@ -112,7 +113,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         />
       </CardContent>
       
-      <CardFooter className="flex flex-col gap-3 p-3 pt-2 mt-auto pb-safe">
+      <CardFooter className="flex flex-col gap-2 p-3 pt-1 mt-auto pb-safe">
         {/* Quick action buttons */}
         <QuickActionButtons 
           currentLanguage={currentLanguage}
