@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ChatMessage, { LoadingChatMessage } from './ChatMessage';
 import { ChatMessage as IChatMessage } from '../types';
@@ -16,22 +16,14 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   courseAvatar
 }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  
-  // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
-    if (scrollAreaRef.current) {
-      const scrollContainer = scrollAreaRef.current;
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
-    }
-  }, [chatMessages, isLoading]);
 
   return (
     <ScrollArea 
       ref={scrollAreaRef}
-      className="h-[65vh] sm:h-[70vh] mb-2 p-2 overflow-y-auto"
+      className="h-[50vh] sm:h-[60vh] mb-4 p-2 overflow-y-auto"
       scrollHideDelay={100}
     >
-      <div className="flex flex-col space-y-3 pb-4">
+      <div className="flex flex-col space-y-6 pb-6">
         {chatMessages.map((msg, index) => (
           <ChatMessage 
             key={index}

@@ -3,7 +3,6 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { getSendButtonText, getPlaceholderText } from '../chatTranslations';
 import { Textarea } from "@/components/ui/textarea";
-import { Send } from "lucide-react";
 
 interface ChatFormProps {
   message: string;
@@ -23,24 +22,20 @@ const ChatForm: React.FC<ChatFormProps> = ({
   currentLanguage
 }) => {
   return (
-    <form onSubmit={onSubmit} className="flex flex-col sm:flex-row w-full gap-2 sticky bottom-0 bg-muted pt-1">
+    <form onSubmit={onSubmit} className="flex flex-col sm:flex-row w-full gap-2">
       <Textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         placeholder={getPlaceholderText(coachName, currentLanguage)}
-        className="bg-black border-gray-700 flex-grow min-h-[32px] max-h-[60px] sm:min-h-[36px] resize-none p-2"
+        className="bg-black border-gray-700 flex-grow min-h-[60px] sm:min-h-[40px] resize-none"
         disabled={isLoading}
       />
       <Button 
         type="submit" 
         disabled={isLoading}
-        className="w-full sm:w-auto py-1 h-8"
-        size="sm"
+        className="w-full sm:w-auto"
       >
-        <Send className="h-4 w-4 mr-1" />
-        <span className="text-xs">
-          {getSendButtonText(currentLanguage)}
-        </span>
+        {getSendButtonText(currentLanguage)}
       </Button>
     </form>
   );
