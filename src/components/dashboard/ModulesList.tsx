@@ -108,6 +108,9 @@ const ModulesList: React.FC<ModulesListProps> = ({
             locked: !unlocked && !module.completed && !isModuleCompleted(module.id)
           };
           
+          // Get the translated title based on the current language
+          const translatedTitle = getModuleTitle(updatedModule);
+          
           return (
             <Card 
               key={module.id}
@@ -135,7 +138,7 @@ const ModulesList: React.FC<ModulesListProps> = ({
                   </div>
                 )}
                 <div className="flex-1">
-                  <h3 className="font-medium">{getModuleTitle(module)}</h3>
+                  <h3 className="font-medium">{translatedTitle}</h3>
                   <div className="flex items-center gap-2 mt-1">
                     {module.hasVideo && (
                       <span className="text-xs bg-muted px-2 py-0.5 rounded-full">
