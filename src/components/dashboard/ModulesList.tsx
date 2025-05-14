@@ -34,6 +34,21 @@ const ModulesList: React.FC<ModulesListProps> = ({
   currentLanguage = 'pidgin',
   courseTranslations 
 }) => {
+  // Get translated header text based on language
+  const getHeaderText = () => {
+    switch (currentLanguage) {
+      case 'yoruba':
+        return 'Àwọn Módù Rẹ';
+      case 'hausa':
+        return 'Modules Naka';
+      case 'igbo':
+        return 'Modules Gị';
+      case 'pidgin':
+      default:
+        return 'Your Modules';
+    }
+  };
+
   // Get translated title if available
   const getModuleTitle = (module: Module) => {
     if (courseTranslations && courseTranslations[currentLanguage]) {
@@ -64,9 +79,24 @@ const ModulesList: React.FC<ModulesListProps> = ({
     return previousModule && (previousModule.completed || isModuleCompleted(previousModule.id));
   };
 
+  // Get translated "Video" text
+  const getVideoText = () => {
+    switch (currentLanguage) {
+      case 'yoruba':
+        return 'Fídíò';
+      case 'hausa':
+        return 'Bidiyo';
+      case 'igbo':
+        return 'Vidio';
+      case 'pidgin':
+      default:
+        return 'Video';
+    }
+  };
+
   return (
     <>
-      <h2 className="text-xl font-bold mb-4">Your Modules</h2>
+      <h2 className="text-xl font-bold mb-4">{getHeaderText()}</h2>
       <div className="space-y-3">
         {modules.map((module, index) => {
           // Determine if the module should be locked or unlocked
@@ -110,7 +140,7 @@ const ModulesList: React.FC<ModulesListProps> = ({
                     {module.hasVideo && (
                       <span className="text-xs bg-muted px-2 py-0.5 rounded-full">
                         <Video className="inline-block w-3 h-3 mr-1" />
-                        Video
+                        {getVideoText()}
                       </span>
                     )}
                   </div>
