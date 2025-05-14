@@ -1,13 +1,13 @@
 
 import { useState, useEffect } from 'react';
 import { ChatMessage } from '../types';
-import { getFixedWelcomeMessage } from '../welcomeMessages';
 
 export const useChatHistory = (
   courseKey: string, 
   currentCourse: string,
   currentLanguage: string,
-  userName: string
+  userName: string,
+  sendWelcomeMessage: () => Promise<void>
 ) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -48,58 +48,9 @@ export const useChatHistory = (
         sendWelcomeMessage();
       }
     };
-    
-    // Generate a welcome message
-    const sendWelcomeMessage = async () => {
-      try {
-        console.log("Generating welcome message for course:", currentCourse, "language:", currentLanguage);
-        
-        // Use the fixed welcome message for the specific course and language
-        const welcomeMessage = getFixedWelcomeMessage(currentCourse, currentLanguage);
-        console.log("Using welcome message:", welcomeMessage);
-        
-        // Try to get a GIF for the welcome message
-        let gifUrl = null;
-        try {
-          const giphyApiKey = "pLURtkhVrUXr4TN8PseRqbVN4n9Re7ky"; // Using a fixed GIPHY API key
-          const searchTerm = "aki and pawpaw nigerian comedy"; // Always use Aki and Pawpaw
-          
-          const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
-          const giphyData = await giphyResponse.json();
-          
-          if (giphyData.data && giphyData.data.length > 0) {
-            // Get a random GIF from the top 10 results for more variety
-            const randomIndex = Math.floor(Math.random() * Math.min(10, giphyData.data.length));
-            gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
-          }
-        } catch (giphyError) {
-          console.error('Giphy API error:', giphyError);
-          // Continue without a GIF if there's an error
-        }
-        
-        // Add welcome message to chat with the GIF
-        setChatMessages([{ 
-          isUser: false, 
-          text: welcomeMessage,
-          gif: gifUrl,
-          timestamp: Date.now()
-        }]);
-        
-      } catch (error) {
-        console.error('Error generating welcome message:', error);
-        // Add fallback welcome message - avatar-specific
-        setChatMessages([{ 
-          isUser: false, 
-          text: getFixedWelcomeMessage(currentCourse, currentLanguage),
-          timestamp: Date.now()
-        }]);
-      } finally {
-        setIsInitialLoad(false);
-      }
-    };
 
     loadChatHistory();
-  }, [courseKey, currentCourse, currentLanguage, userName]);
+  }, [courseKey, currentCourse, currentLanguage, userName, sendWelcomeMessage]);
 
   // Save messages to localStorage whenever they change
   useEffect(() => {
