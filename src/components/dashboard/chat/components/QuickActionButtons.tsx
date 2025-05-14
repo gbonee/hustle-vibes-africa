@@ -21,10 +21,10 @@ const QuickActionButtons: React.FC<QuickActionButtonsProps> = ({
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('next-lesson')}
-        className="flex flex-col h-auto py-2 items-center justify-center"
+        className="flex flex-col h-auto py-1 items-center justify-center"
       >
-        <BookOpen className="h-3.5 w-3.5 mb-1" />
-        <span className={`${isMobile ? "text-[9px]" : "text-xs"} text-center leading-tight`}>
+        <BookOpen className="h-3 w-3 mb-0.5" />
+        <span className={`${isMobile ? "text-[8px]" : "text-xs"} text-center leading-tight`}>
           {getQuickActionButtonText('next-lesson', currentLanguage)}
         </span>
       </Button>
@@ -32,10 +32,10 @@ const QuickActionButtons: React.FC<QuickActionButtonsProps> = ({
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('take-quiz')}
-        className="flex flex-col h-auto py-2 items-center justify-center"
+        className="flex flex-col h-auto py-1 items-center justify-center"
       >
-        <Award className="h-3.5 w-3.5 mb-1" />
-        <span className={`${isMobile ? "text-[9px]" : "text-xs"} text-center leading-tight`}>
+        <Award className="h-3 w-3 mb-0.5" />
+        <span className={`${isMobile ? "text-[8px]" : "text-xs"} text-center leading-tight`}>
           {getQuickActionButtonText('take-quiz', currentLanguage)}
         </span>
       </Button>
@@ -43,10 +43,10 @@ const QuickActionButtons: React.FC<QuickActionButtonsProps> = ({
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('challenge')}
-        className="flex flex-col h-auto py-2 items-center justify-center"
+        className="flex flex-col h-auto py-1 items-center justify-center"
       >
-        <ArrowRight className="h-3.5 w-3.5 mb-1" />
-        <span className={`${isMobile ? "text-[9px]" : "text-xs"} text-center leading-tight`}>
+        <ArrowRight className="h-3 w-3 mb-0.5" />
+        <span className={`${isMobile ? "text-[8px]" : "text-xs"} text-center leading-tight`}>
           {getQuickActionButtonText('challenge', currentLanguage)}
         </span>
       </Button>
