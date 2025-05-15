@@ -17,33 +17,37 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
-  // Enhanced auto-scroll implementation that accounts for GIFs and dynamic content
+  // Comprehensive auto-scroll implementation with multiple fallbacks
   useEffect(() => {
-    if (scrollAreaRef.current) {
+    if (!scrollAreaRef.current) return;
+    
+    const scrollToBottom = () => {
+      if (!scrollAreaRef.current) return;
       const scrollElement = scrollAreaRef.current;
-      
-      // Use a longer delay to ensure GIFs have started loading
-      const scrollToBottom = () => {
-        scrollElement.scrollTop = scrollElement.scrollHeight;
-      };
-      
-      // Initial scroll attempt
-      scrollToBottom();
-      
-      // Multiple delayed attempts to handle different content loading speeds
-      setTimeout(scrollToBottom, 100);
-      setTimeout(scrollToBottom, 300);
-      setTimeout(scrollToBottom, 500);
-    }
+      scrollElement.scrollTop = scrollElement.scrollHeight;
+    };
+
+    // Immediate scroll
+    scrollToBottom();
+    
+    // Multiple delayed attempts to handle different content loading speeds
+    const timeouts = [50, 100, 300, 500, 1000].map(delay => 
+      setTimeout(scrollToBottom, delay)
+    );
+    
+    // Clean up timeouts
+    return () => {
+      timeouts.forEach(timeout => clearTimeout(timeout));
+    };
   }, [chatMessages, isLoading]);
 
   return (
     <ScrollArea 
       ref={scrollAreaRef}
-      className="h-[80vh] mb-2 p-2 overflow-y-auto"
+      className="h-[calc(100vh-320px)] mb-2 p-2 overflow-y-auto"
       scrollHideDelay={100}
     >
-      <div className="flex flex-col space-y-6 pb-16">
+      <div className="flex flex-col space-y-6 pb-24">
         {chatMessages.map((msg, index) => (
           <ChatMessage 
             key={index}

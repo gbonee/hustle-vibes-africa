@@ -15,23 +15,51 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const gifRef = useRef<HTMLImageElement>(null);
   
-  // Add onLoad event handler for GIF images to trigger scroll update
+  // Enhanced image loading handler for better scroll behavior
   useEffect(() => {
-    if (message.gif && gifRef.current) {
-      const img = gifRef.current;
-      img.onload = () => {
-        // Find the ScrollArea parent and scroll it to bottom
-        let parent = img.parentElement;
-        while (parent && !parent.classList.contains('overflow-y-auto')) {
-          parent = parent.parentElement;
+    if (!message.gif || !gifRef.current) return;
+    
+    const img = gifRef.current;
+    
+    const handleImageLoad = () => {
+      // Find all ScrollArea parents and scroll them to bottom
+      let parent = img.parentElement;
+      const scrollParents = [];
+      
+      // Collect all potential scroll containers
+      while (parent) {
+        if (parent.classList.contains('overflow-y-auto') || 
+            parent.classList.contains('scroll-area') ||
+            parent.getAttribute('data-radix-scroll-area-viewport') !== null) {
+          scrollParents.push(parent);
         }
-        if (parent) {
-          setTimeout(() => {
-            parent.scrollTop = parent.scrollHeight;
-          }, 100);
-        }
-      };
-    }
+        parent = parent.parentElement;
+      }
+      
+      // Scroll all potential containers to bottom with multiple attempts
+      scrollParents.forEach(scrollParent => {
+        const scrollToBottom = () => {
+          scrollParent.scrollTop = scrollParent.scrollHeight;
+        };
+        
+        // Multiple scroll attempts with increasing delays
+        scrollToBottom();
+        setTimeout(scrollToBottom, 50);
+        setTimeout(scrollToBottom, 150);
+        setTimeout(scrollToBottom, 300);
+      });
+    };
+    
+    // Add event listeners
+    img.addEventListener('load', handleImageLoad);
+    
+    // Also set a fallback timer in case the load event doesn't fire
+    const fallbackTimer = setTimeout(handleImageLoad, 1000);
+    
+    return () => {
+      img.removeEventListener('load', handleImageLoad);
+      clearTimeout(fallbackTimer);
+    };
   }, [message.gif]);
 
   if (message.isUser) {
@@ -61,6 +89,24 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             src={message.gif} 
             alt="Giphy reaction" 
             className="rounded-lg w-full" 
+            loading="eager"
+            onLoad={(e) => {
+              // Additional inline onload handler as a fallback
+              const scrollToBottomOnce = () => {
+                let currentElement = e.currentTarget;
+                while (currentElement.parentElement) {
+                  currentElement = currentElement.parentElement;
+                  if (currentElement.classList.contains('overflow-y-auto')) {
+                    currentElement.scrollTop = currentElement.scrollHeight;
+                    break;
+                  }
+                }
+              };
+              
+              // Multiple scroll attempts
+              scrollToBottomOnce();
+              setTimeout(scrollToBottomOnce, 100);
+            }}
           />
         </div>
       )}
