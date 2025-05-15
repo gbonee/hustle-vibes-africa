@@ -27,6 +27,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
     setIsLoading(true);
     
     try {
+      // Fallback to YouTube for specific modules - check this first for faster loading
+      if (module.id === 1 && module.title === "Intro to Digital Marketing the Naija Way") {
+        setVideoUrl("https://www.youtube.com/embed/tlCqenvEmNg");
+        setIsLoading(false);
+        return;
+      }
+      
       // If there's no course preference, we can't fetch the video
       if (!userPrefs?.course) {
         setIsLoading(false);
@@ -138,7 +145,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
     );
   }
 
-  // YouTube video embed - removed special case for intro module
+  // YouTube video embed
   if (videoUrl?.includes('youtube.com')) {
     return (
       <div className="aspect-video bg-black rounded-lg flex items-center justify-center border border-gray-800">

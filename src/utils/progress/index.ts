@@ -14,7 +14,7 @@ export const debugVideoAvailability = async (courseId: string, language: string)
     if (error) throw error;
     
     return {
-      available: data.filter(file => file.name.includes(`-${language}`)),
+      available: data.filter(file => file.name.includes(`-${language}-`)),
       all: data
     };
   } catch (error) {
