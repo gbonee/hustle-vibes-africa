@@ -1,5 +1,5 @@
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect, useState, useCallback } from 'react';
 import Header from './Header';
 import BottomNavigation from './BottomNavigation';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -57,16 +57,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
   }, [location.search, navigate]);
   
-  const handleCourseSelect = async (courseId: string) => {
+  // Optimize this function with useCallback to prevent unnecessary re-renders
+  const handleCourseSelect = useCallback(async (courseId: string) => {
     try {
-      // Update user preference with the selected course
-      await updateUserPreferences({ course: courseId });
-      
-      // Close the dialog
+      // First close the dialog to improve perceived performance
       setCourseSelectionOpen(false);
       
-      // Refresh the page to load the new course content
-      window.location.reload();
+      // Show loading toast
+      toast({
+        title: "Changing course...",
+        description: "Please wait while we update your preferences",
+        variant: "default",
+      });
+      
+      // Update user preference with the selected course
+      await updateUserPreferences({ course: courseId });
       
       // Show success toast
       toast({
@@ -74,6 +79,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         description: "Your course has been updated.",
         variant: "default",
       });
+      
+      // Refresh the page to load the new course content, but with a slight delay
+      // to allow the UI to update first
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error) {
       console.error("Error changing course:", error);
       toast({
@@ -82,7 +93,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         variant: "destructive",
       });
     }
-  };
+  }, [updateUserPreferences, toast]);
   
   return (
     <div className="min-h-screen bg-black pb-20">

@@ -1,4 +1,3 @@
-
 import { useState, useRef } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -91,6 +90,8 @@ export const useVideoUpload = ({
       const fileName = selectedFile.name.replace(/\s+/g, '-');
       const filePath = `${courseId}/${moduleId}-${language}-${fileName}`;
       
+      console.log(`Uploading video to path: ${filePath}`);
+      
       // Upload the file with the authenticated session
       const { data, error } = await supabase.storage
         .from('module-videos')
@@ -103,6 +104,8 @@ export const useVideoUpload = ({
       setProgress(100);
       
       if (error) throw error;
+      
+      console.log(`Video uploaded successfully to ${filePath}`);
       
       // Call completion callback
       onVideoUploaded(moduleId, filePath);
@@ -140,11 +143,15 @@ export const useVideoUpload = ({
         throw new Error('Authentication required. Please sign in to remove videos.');
       }
       
+      console.log(`Removing video: ${existingVideoUrl}`);
+      
       const { error } = await supabase.storage
         .from('module-videos')
         .remove([existingVideoUrl]);
       
       if (error) throw error;
+      
+      console.log(`Video removed successfully: ${existingVideoUrl}`);
       
       // Call completion callback with empty URL
       onVideoUploaded(moduleId, '');

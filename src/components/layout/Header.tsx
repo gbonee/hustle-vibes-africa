@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -19,16 +19,31 @@ const Header: React.FC<HeaderProps> = ({
   const location = useLocation();
   const [avatar, setAvatar] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
   
-  const handleLogoClick = () => {
+  const handleLogoClick = useCallback(() => {
+    // Prevent multiple rapid clicks
+    if (isNavigating) return;
+    setIsNavigating(true);
+    
     // If on dashboard/course page, navigate to courses selection
     if (location.pathname.includes('/dashboard')) {
-      navigate('/dashboard?selectCourse=true');
+      // Use state update to give visual feedback before actual navigation
+      const searchParams = new URLSearchParams(location.search);
+      searchParams.set('selectCourse', 'true');
+      
+      // Navigate immediately instead of URL change + detection cycle
+      navigate('/dashboard?' + searchParams.toString(), { replace: true });
     } else {
       // On other pages, navigate to home
       navigate('/');
     }
-  };
+    
+    // Reset navigation lock after a short delay
+    setTimeout(() => {
+      setIsNavigating(false);
+    }, 500);
+  }, [location.pathname, location.search, navigate, isNavigating]);
   
   useEffect(() => {
     const fetchUserAvatar = async () => {
@@ -78,8 +93,9 @@ const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center">
           <Button 
             variant="ghost" 
-            className="p-0 hover:bg-transparent" 
+            className={`p-0 hover:bg-transparent ${isNavigating ? 'opacity-70' : ''}`} 
             onClick={handleLogoClick}
+            disabled={isNavigating}
           >
             <img 
               src="/lovable-uploads/20591bbc-87c9-4bbc-8159-3e4becbee8c8.png" 
