@@ -15,7 +15,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   if (message.isUser) {
     return (
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-end mb-5">
         <div className="bg-electric text-black p-3 rounded-lg max-w-[80%]">
           <p>{message.text}</p>
         </div>
@@ -24,7 +24,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   }
   
   return (
-    <div className="flex flex-col mb-4">
+    <div className="flex flex-col mb-6">
       <div className="flex">
         <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
           <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
@@ -44,7 +44,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 
 export const LoadingChatMessage: React.FC<{ courseAvatar: string }> = ({ courseAvatar }) => {
   return (
-    <div className="flex mb-4">
+    <div className="flex mb-5">
       <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
         <img src={courseAvatar} alt="AI Avatar" className="w-full h-full object-cover" />
       </div>

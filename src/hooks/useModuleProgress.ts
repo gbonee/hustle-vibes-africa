@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { 
   updateModuleCompletion, 
@@ -7,7 +7,7 @@ import {
   getUserCourseProgress, 
   getModuleCompletionData, 
   awardQuizPoints 
-} from '@/utils/progressTracker';
+} from '@/utils/progress';
 import { Module } from '@/components/dashboard/ModulesList';
 
 /**
@@ -41,10 +41,19 @@ export const useModuleProgress = (courseId: string = 'digital-marketing') => {
         progress: courseProgressData?.progress_percentage || 0,
         completedModules: completedModuleIds
       });
+      
+      console.log('Completed modules:', completedModuleIds);
     } catch (error) {
       console.error("Error fetching course progress:", error);
     }
   };
+
+  // Fetch course progress on initial load and courseId change
+  useEffect(() => {
+    if (!isPreviewMode) {
+      fetchCourseProgress();
+    }
+  }, [courseId, isPreviewMode]);
 
   /**
    * Handle module completion
@@ -56,6 +65,8 @@ export const useModuleProgress = (courseId: string = 'digital-marketing') => {
     }
     
     try {
+      console.log('Completing module:', selectedModule.id);
+      
       // Save module completion to the database
       await updateModuleCompletion({
         courseId,
@@ -93,11 +104,16 @@ export const useModuleProgress = (courseId: string = 'digital-marketing') => {
     if (isPreviewMode || !selectedModule || !correct) return;
     
     try {
+      console.log('Completing quiz for module:', selectedModule.id);
+      
       // Award points for correct answer
       // Ensure moduleId is treated as a number
       const moduleId = typeof selectedModule.id === 'string' ? parseInt(selectedModule.id, 10) : selectedModule.id;
       
       await awardQuizPoints(moduleId, courseId, 50);
+      
+      // Mark the module as completed when quiz is correct
+      await handleModuleComplete(selectedModule);
       
       toast({
         title: "Quiz completed!",
