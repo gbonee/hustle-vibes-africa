@@ -7,7 +7,7 @@ import {
   getUserCourseProgress, 
   getModuleCompletionData, 
   awardQuizPoints 
-} from '@/utils/progressTracker';
+} from '@/utils/progress';
 import { Module } from '@/components/dashboard/ModulesList';
 
 /**

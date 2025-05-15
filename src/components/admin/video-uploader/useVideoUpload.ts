@@ -18,6 +18,7 @@ export const useVideoUpload = ({
   language
 }: UseVideoUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -87,9 +88,12 @@ export const useVideoUpload = ({
       }
       
       // Define file path in storage bucket with language code
-      // Format: courseId/moduleId-language-filename.mp4
-      const fileName = selectedFile.name.replace(/\s+/g, '-');
-      const filePath = `${courseId}/${moduleId}-${language}-${fileName}`;
+      // IMPORTANT: Always use moduleId-language-filename.ext format consistently
+      const originalFileName = selectedFile.name.replace(/\s+/g, '-');
+      // Ensure the file follows the required naming convention
+      const filePath = `${courseId}/${moduleId}-${language}-${originalFileName}`;
+      
+      console.log(`Uploading video to path: ${filePath}`);
       
       // Upload the file with the authenticated session
       const { data, error } = await supabase.storage
@@ -109,7 +113,7 @@ export const useVideoUpload = ({
       
       toast({
         title: "Video uploaded successfully",
-        description: `The ${language} video for this module has been uploaded.`,
+        description: `The ${language} video for this module has been uploaded with the correct naming format.`,
         variant: "default"
       });
 
