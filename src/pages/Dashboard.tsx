@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -154,6 +153,33 @@ const Dashboard = () => {
     
     fetchUserData();
   }, [fetchCourseProgress]);
+  
+  // Update modules with completion status and unlocking logic
+  const getUpdatedModulesWithProgress = useMemo(() => {
+    const course = courses[courseId] || courses['digital-marketing'];
+    if (!course) return [];
+    
+    // Create a copy of the modules array
+    return course.modules.map((module, index) => {
+      // Check if module is completed
+      const isCompleted = courseProgress.completedModules.includes(module.id);
+      
+      // Check if module should be unlocked
+      let shouldBeUnlocked = index === 0; // First module is always unlocked
+      if (index > 0) {
+        // Module is unlocked if previous module is completed
+        const previousModule = course.modules[index - 1];
+        shouldBeUnlocked = courseProgress.completedModules.includes(previousModule.id) || previousModule.completed;
+      }
+      
+      // Return updated module with progress information
+      return {
+        ...module,
+        completed: isCompleted || module.completed,
+        locked: !shouldBeUnlocked && !isCompleted && !module.completed
+      };
+    });
+  }, [courseId, courseProgress.completedModules, courses]);
   
   // Mock course data with translations
   const courses: Record<string, Course> = {
@@ -323,7 +349,7 @@ const Dashboard = () => {
       }
     }
   };
-
+  
   // Module-specific quizzes - Memoized to avoid recreating on each render
   const quizzesByModule: QuizzesByModule = React.useMemo(() => ({
     // Digital Marketing Module 1
@@ -776,8 +802,15 @@ const Dashboard = () => {
 
   // Get current course information based on user preferences
   const currentCourse = useMemo(() => {
-    return courses[courseId] || courses['digital-marketing'];
-  }, [courseId]);
+    const course = courses[courseId] || courses['digital-marketing'];
+    if (course) {
+      return {
+        ...course,
+        modules: getUpdatedModulesWithProgress
+      };
+    }
+    return courses['digital-marketing'];
+  }, [courseId, courses, getUpdatedModulesWithProgress]);
   
   // Handle module selection
   const handleModuleSelect = (module: Module) => {
