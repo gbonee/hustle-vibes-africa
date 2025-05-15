@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { ChatMessage } from '../types';
+import { toast } from "@/hooks/use-toast";
 
 export const useChatHistory = (
   courseKey: string, 
@@ -11,13 +12,15 @@ export const useChatHistory = (
 ) => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Load chat history or send welcome message
   useEffect(() => {
     if (!courseKey) return;
     
     // Function to load chat history
-    const loadChatHistory = () => {
+    const loadChatHistory = async () => {
+      setIsLoading(true);
       const savedMessages = localStorage.getItem(`chat_history_${courseKey}`);
       
       if (savedMessages) {
@@ -33,19 +36,31 @@ export const useChatHistory = (
             console.log(`Loading ${recentMessages.length} saved messages for ${courseKey}`);
             setChatMessages(recentMessages);
             setIsInitialLoad(false);
+            setIsLoading(false);
           } else {
             // If we have no recent messages, send a welcome message
             console.log(`No recent messages for ${courseKey}, sending welcome message`);
-            sendWelcomeMessage();
+            await sendWelcomeMessage();
+            setIsInitialLoad(false);
+            setIsLoading(false);
           }
         } catch (error) {
           console.error("Error parsing saved messages:", error);
-          sendWelcomeMessage();
+          setIsLoading(false);
+          toast({
+            title: "Error loading chat history",
+            description: "We couldn't load your previous messages. Starting a new chat.",
+            variant: "destructive"
+          });
+          await sendWelcomeMessage();
+          setIsInitialLoad(false);
         }
       } else {
         // If we have no saved messages at all, send a welcome message
         console.log(`No saved messages for ${courseKey}, sending welcome message`);
-        sendWelcomeMessage();
+        await sendWelcomeMessage();
+        setIsInitialLoad(false);
+        setIsLoading(false);
       }
     };
 
@@ -64,7 +79,8 @@ export const useChatHistory = (
     chatMessages,
     setChatMessages,
     isInitialLoad,
-    setIsInitialLoad
+    setIsInitialLoad,
+    isLoading
   };
 };
 

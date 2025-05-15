@@ -1,46 +1,62 @@
 
-import React from 'react';
-import { Button } from "@/components/ui/button";
-import { getSendButtonText, getPlaceholderText } from '../chatTranslations';
-import { Textarea } from "@/components/ui/textarea";
+import React, { FormEvent } from 'react';
 import { Send } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ChatFormProps {
   message: string;
   setMessage: (message: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (e: FormEvent) => void;
   isLoading: boolean;
   coachName: string;
   currentLanguage: string;
+  disabled?: boolean;
 }
 
-const ChatForm: React.FC<ChatFormProps> = ({
-  message,
-  setMessage,
-  onSubmit,
+const ChatForm: React.FC<ChatFormProps> = ({ 
+  message, 
+  setMessage, 
+  onSubmit, 
   isLoading,
   coachName,
-  currentLanguage
+  currentLanguage,
+  disabled = false
 }) => {
+  // Get placeholder text based on language
+  const getPlaceholder = () => {
+    switch(currentLanguage) {
+      case 'yoruba':
+        return `Bèèrè ìbéèrè lọ́wọ́ ${coachName}...`;
+      case 'hausa':
+        return `Tambaye ${coachName} tambaya...`;
+      case 'igbo':
+        return `Jụọ ${coachName} ajụjụ...`;
+      default:
+        return `Ask ${coachName} a question...`;
+    }
+  };
+  
   return (
-    <form onSubmit={onSubmit} className="flex flex-col sm:flex-row w-full gap-1 sticky bottom-0 bg-muted pt-1">
-      <Textarea
+    <form onSubmit={onSubmit} className="flex w-full gap-2">
+      <input
+        type="text"
         value={message}
         onChange={(e) => setMessage(e.target.value)}
-        placeholder={getPlaceholderText(coachName, currentLanguage)}
-        className="bg-black border-gray-700 flex-grow min-h-[28px] max-h-[50px] sm:min-h-[32px] resize-none p-1.5"
-        disabled={isLoading}
+        placeholder={getPlaceholder()}
+        className="flex-1 bg-background text-foreground px-4 py-2 rounded-full border border-input focus:outline-none focus:ring-1 focus:ring-electric"
+        disabled={isLoading || disabled}
       />
       <Button 
         type="submit" 
-        disabled={isLoading}
-        className="w-full sm:w-auto py-0.5 h-7"
-        size="sm"
+        size="icon" 
+        className="shrink-0 rounded-full bg-electric hover:bg-electric/80"
+        disabled={isLoading || !message.trim() || disabled}
       >
-        <Send className="h-3.5 w-3.5 mr-1" />
-        <span className="text-[10px]">
-          {getSendButtonText(currentLanguage)}
-        </span>
+        {isLoading ? (
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+        ) : (
+          <Send className="h-4 w-4" />
+        )}
       </Button>
     </form>
   );

@@ -21,14 +21,16 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current;
-      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      setTimeout(() => {
+        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+      }, 100);
     }
   }, [chatMessages, isLoading]);
 
   return (
     <ScrollArea 
       ref={scrollAreaRef}
-      className="h-[60vh] sm:h-[65vh] md:h-[70vh] mb-2 p-2 overflow-y-auto"
+      className="h-[65vh] sm:h-[68vh] md:h-[72vh] mb-2 p-2 overflow-y-auto"
       scrollHideDelay={100}
     >
       <div className="flex flex-col space-y-3 pb-4">

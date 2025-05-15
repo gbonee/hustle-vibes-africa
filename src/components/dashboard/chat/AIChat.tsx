@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -22,6 +22,7 @@ import ChatContainer from './components/ChatContainer';
 import QuickActionButtons from './components/QuickActionButtons';
 import ChatForm from './components/ChatForm';
 import { AIChatProps } from './types';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const { userPrefs } = useUserPreferences();
@@ -52,7 +53,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const {
     message,
     setMessage,
-    isLoading,
+    isLoading: isSending,
     handleMessageSend,
     sendWelcomeMessage
   } = useChatInteraction({
@@ -66,7 +67,8 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   const { 
     chatMessages, 
     setChatMessages, 
-    isInitialLoad 
+    isInitialLoad,
+    isLoading: isHistoryLoading
   } = useChatHistory(
     currentCourseKey, 
     currentCourse, 
@@ -88,6 +90,9 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setMessage(actionMessage);
   };
 
+  // Combined loading state
+  const isLoading = isSending || isHistoryLoading || isInitialLoad;
+
   return (
     <Card className="bg-muted border-electric flex flex-col h-full">
       <ChatHeader 
@@ -100,11 +105,18 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
       />
       
       <CardContent className="flex-grow p-3 pb-0 overflow-hidden">
-        <ChatContainer 
-          chatMessages={chatMessages}
-          isLoading={isLoading}
-          courseAvatar={courseAvatar}
-        />
+        {isInitialLoad ? (
+          <div className="flex flex-col space-y-4 p-4">
+            <Skeleton className="h-12 w-3/4 mb-2" />
+            <Skeleton className="h-20 w-1/2" />
+          </div>
+        ) : (
+          <ChatContainer 
+            chatMessages={chatMessages}
+            isLoading={isLoading}
+            courseAvatar={courseAvatar}
+          />
+        )}
       </CardContent>
       
       <CardFooter className="flex flex-col gap-1 p-3 pt-1 mt-auto pb-safe">
@@ -123,6 +135,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
           isLoading={isLoading}
           coachName={coachName}
           currentLanguage={currentLanguage}
+          disabled={isInitialLoad}
         />
       </CardFooter>
     </Card>
