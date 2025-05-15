@@ -28,7 +28,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   return (
     <ScrollArea 
       ref={scrollAreaRef}
-      className="h-[60vh] mb-4 p-2 overflow-y-auto"
+      className="h-[70vh] mb-2 p-2 overflow-y-auto"
       scrollHideDelay={100}
     >
       <div className="flex flex-col space-y-6 pb-6">

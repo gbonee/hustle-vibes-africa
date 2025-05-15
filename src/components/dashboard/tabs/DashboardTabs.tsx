@@ -135,7 +135,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         )}
       </TabsContent>
       
-      <TabsContent value="chat" className="mt-6 flex-1 flex flex-col h-[calc(85vh-100px)]">
+      <TabsContent value="chat" className="mt-6 flex-1 flex flex-col h-[calc(100vh-180px)]">
         <AIChat 
           courseAvatar={courseAvatar} 
           userName={userName}

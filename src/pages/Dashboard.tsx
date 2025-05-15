@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
@@ -109,7 +108,7 @@ const Dashboard = () => {
         progress={courseProgress.progress}
       />
       
-      <div className="container mx-auto px-4 mb-16">
+      <div className="container mx-auto px-4 mb-2">
         <DashboardTabs 
           activeTab={activeTab}
           setActiveTab={setActiveTab}
