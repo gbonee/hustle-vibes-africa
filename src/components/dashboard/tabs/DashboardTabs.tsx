@@ -88,7 +88,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
       defaultValue="lessons"
       value={activeTab}
       onValueChange={setActiveTab}
-      className="mt-6"
+      className="mt-6 h-full flex flex-col"
     >
       <TabsList className="grid w-full grid-cols-2">
         <TabsTrigger value="lessons" className="text-xs sm:text-base">
@@ -101,7 +101,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         </TabsTrigger>
       </TabsList>
       
-      <TabsContent value="lessons" className="mt-6 space-y-6">
+      <TabsContent value="lessons" className="mt-6 space-y-6 flex-1">
         {isLoading ? (
           <div className="space-y-4">
             <Skeleton className="h-8 w-32 rounded-md" />
@@ -135,7 +135,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         )}
       </TabsContent>
       
-      <TabsContent value="chat" className="mt-6 h-[calc(80vh-120px)] md:h-[calc(70vh-120px)]">
+      <TabsContent value="chat" className="mt-6 flex-1 flex flex-col h-[calc(85vh-120px)] md:h-[calc(80vh-120px)]">
         <AIChat 
           courseAvatar={courseAvatar} 
           userName={userName}
