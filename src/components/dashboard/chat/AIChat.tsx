@@ -112,7 +112,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         />
       </CardContent>
       
-      <CardFooter className="flex flex-col gap-3 p-4 pt-2 mt-auto">
+      <CardFooter className="flex flex-col gap-3 p-4 pt-2">
         {/* Quick action buttons */}
         <QuickActionButtons 
           currentLanguage={currentLanguage}
