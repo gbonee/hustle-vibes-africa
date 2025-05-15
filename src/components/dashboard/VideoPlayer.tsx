@@ -27,6 +27,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
     setIsLoading(true);
     
     try {
+      // Fallback to YouTube for specific modules - check this first for faster loading
+      if (module.id === 1 && module.title === "Intro to Digital Marketing the Naija Way") {
+        setVideoUrl("https://www.youtube.com/embed/tlCqenvEmNg");
+        setIsLoading(false);
+        return;
+      }
+      
       // If there's no course preference, we can't fetch the video
       if (!userPrefs?.course) {
         setIsLoading(false);
@@ -37,40 +44,30 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
       const userLanguage = userPrefs?.language || 'pidgin';
       console.log(`Looking for ${userLanguage} videos for module ${module.id} in course ${userPrefs.course}`);
       
-      // First try the direct approach - list files in the course folder
+      // Look for videos in the format: courseId/moduleId-language-filename
       const { data, error } = await supabase
         .storage
         .from('module-videos')
         .list(userPrefs.course);
         
-      if (error) {
-        console.error("Error listing files:", error);
-        throw error;
-      }
+      if (error) throw error;
       
-      console.log(`Found ${data?.length || 0} files in the ${userPrefs.course} folder`);
-      console.log("Available files:", data?.map(file => file.name));
+      console.log(`Found ${data.length} files in the ${userPrefs.course} folder`);
       
-      // Try multiple naming patterns to be more flexible
-      let moduleVideo = null;
-      
-      // Pattern 1: moduleId-language-filename (primary format)
-      moduleVideo = data?.find(file => 
+      // Two potential naming patterns:
+      // 1. moduleId-language-filename (new format)
+      // 2. moduleId-filename-language (potential old format)
+      // Focus on new format first
+      let moduleVideo = data.find(file => 
         file.name.startsWith(`${module.id}-${userLanguage}`)
       );
       
-      // Pattern 2: Check for any file that contains the module ID and language
+      // If not found, try to match by checking if language code exists anywhere in the filename
       if (!moduleVideo) {
-        moduleVideo = data?.find(file => 
-          file.name.includes(`${module.id}-`) && 
+        moduleVideo = data.find(file => 
+          file.name.startsWith(`${module.id}-`) && 
           file.name.includes(`-${userLanguage}`)
         );
-      }
-      
-      // Pattern 3: Just try to match the module ID for any language if desperate
-      if (!moduleVideo && userPrefs.course === 'importation' && module.id >= 200) {
-        // Special handling for importation course (has IDs like 201, 202, etc.)
-        moduleVideo = data?.find(file => file.name.startsWith(`${module.id}-`));
       }
       
       if (moduleVideo) {
@@ -79,44 +76,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
           .from('module-videos')
           .getPublicUrl(`${userPrefs.course}/${moduleVideo.name}`);
           
-        console.log(`Found video for module ${module.id}: ${moduleVideo.name}`);
-        console.log(`Public URL: ${publicUrl}`);
+        console.log(`Found ${userLanguage} video for module ${module.id}: ${moduleVideo.name}`);
         setVideoUrl(publicUrl);
       } else {
-        // As a backup approach, try listing all files and finding matches
-        console.log("No direct match found, trying broader search");
-        const { data: allData, error: allError } = await supabase
-          .storage
-          .from('module-videos')
-          .list();
+        // Debug output to help diagnose the issue
+        console.log(`No ${userLanguage} video found for module ${module.id}. Available files:`, 
+          data.map(file => file.name));
         
-        if (!allError && allData) {
-          console.log("All files in storage:", allData.map(f => f.name));
-          // Just try to find anything with the module ID
-          const anyMatch = allData.find(file => 
-            file.name.includes(`${module.id}-`) || 
-            file.name.startsWith(`${module.id}_`)
-          );
-          
-          if (anyMatch) {
-            const { data: { publicUrl } } = supabase
-              .storage
-              .from('module-videos')
-              .getPublicUrl(anyMatch.name);
-              
-            console.log(`Found alternative match: ${anyMatch.name}`);
-            setVideoUrl(publicUrl);
-          } else {
-            // Debug output to help diagnose the issue
-            console.log(`No ${userLanguage} video found for module ${module.id}.`);
-            
-            // Store debug info for display to admin users
-            const debug = await debugVideoAvailability(userPrefs.course, userLanguage);
-            setDebugInfo(debug);
-            
-            setVideoUrl(null);
-          }
-        }
+        // Store debug info for display to admin users
+        const debug = await debugVideoAvailability(userPrefs.course, userLanguage);
+        setDebugInfo(debug);
+        
+        setVideoUrl(null);
       }
     } catch (error) {
       console.error("Error fetching module video:", error);
@@ -138,7 +109,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ module }) => {
     );
   }
 
-  // YouTube video embed - removed special case for intro module
+  // YouTube video embed
   if (videoUrl?.includes('youtube.com')) {
     return (
       <div className="aspect-video bg-black rounded-lg flex items-center justify-center border border-gray-800">
