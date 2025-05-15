@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ChatMessage as ChatMessageType } from '../types';
 
 interface ChatMessageProps {
@@ -13,6 +13,27 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   courseAvatar, 
   isLoading = false 
 }) => {
+  const gifRef = useRef<HTMLImageElement>(null);
+  
+  // Add onLoad event handler for GIF images to trigger scroll update
+  useEffect(() => {
+    if (message.gif && gifRef.current) {
+      const img = gifRef.current;
+      img.onload = () => {
+        // Find the ScrollArea parent and scroll it to bottom
+        let parent = img.parentElement;
+        while (parent && !parent.classList.contains('overflow-y-auto')) {
+          parent = parent.parentElement;
+        }
+        if (parent) {
+          setTimeout(() => {
+            parent.scrollTop = parent.scrollHeight;
+          }, 100);
+        }
+      };
+    }
+  }, [message.gif]);
+
   if (message.isUser) {
     return (
       <div className="flex justify-end mb-5">
@@ -35,7 +56,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       </div>
       {message.gif && (
         <div className="ml-13 mt-2 max-w-[300px]">
-          <img src={message.gif} alt="Giphy reaction" className="rounded-lg w-full" />
+          <img 
+            ref={gifRef}
+            src={message.gif} 
+            alt="Giphy reaction" 
+            className="rounded-lg w-full" 
+          />
         </div>
       )}
     </div>

@@ -17,14 +17,23 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
-  // Auto-scroll to bottom when messages change - improved implementation
+  // Enhanced auto-scroll implementation that accounts for GIFs and dynamic content
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current;
-      // Add a small delay to ensure DOM updates before scrolling
-      setTimeout(() => {
+      
+      // Use a longer delay to ensure GIFs have started loading
+      const scrollToBottom = () => {
         scrollElement.scrollTop = scrollElement.scrollHeight;
-      }, 50);
+      };
+      
+      // Initial scroll attempt
+      scrollToBottom();
+      
+      // Multiple delayed attempts to handle different content loading speeds
+      setTimeout(scrollToBottom, 100);
+      setTimeout(scrollToBottom, 300);
+      setTimeout(scrollToBottom, 500);
     }
   }, [chatMessages, isLoading]);
 
@@ -34,7 +43,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       className="h-[80vh] mb-2 p-2 overflow-y-auto"
       scrollHideDelay={100}
     >
-      <div className="flex flex-col space-y-6 pb-10">
+      <div className="flex flex-col space-y-6 pb-16">
         {chatMessages.map((msg, index) => (
           <ChatMessage 
             key={index}
