@@ -149,7 +149,13 @@ const useChatInteraction = ({
         text: getLanguageSpecificErrorMessage(currentLanguage),
         timestamp: Date.now()
       }]);
-      toast.error(getLanguageSpecificErrorToast(currentLanguage));
+      
+      // Use the correct toast API format for errors
+      toast({
+        title: "Error",
+        description: getLanguageSpecificErrorToast(currentLanguage),
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
