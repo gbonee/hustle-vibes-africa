@@ -3,3 +3,4 @@
 // For better code organization, import directly from the progress directory
 
 export * from './progress';
+export * from './progress/leaderboardProgress';
