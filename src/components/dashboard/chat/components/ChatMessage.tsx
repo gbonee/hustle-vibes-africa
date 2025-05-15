@@ -34,8 +34,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         </div>
       </div>
       {message.gif && (
-        <div className="ml-13 mt-2 max-w-[200px]">
-          <img src={message.gif} alt="Giphy reaction" className="rounded-lg" />
+        <div className="ml-13 mt-2 max-w-[300px]">
+          <img src={message.gif} alt="Giphy reaction" className="rounded-lg w-full" />
         </div>
       )}
     </div>

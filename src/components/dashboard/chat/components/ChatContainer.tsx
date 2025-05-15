@@ -17,21 +17,24 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
-  // Auto-scroll to bottom when messages change
+  // Auto-scroll to bottom when messages change - improved implementation
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current;
-      scrollElement.scrollTop = scrollElement.scrollHeight;
+      // Add a small delay to ensure DOM updates before scrolling
+      setTimeout(() => {
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+      }, 50);
     }
   }, [chatMessages, isLoading]);
 
   return (
     <ScrollArea 
       ref={scrollAreaRef}
-      className="h-[70vh] mb-2 p-2 overflow-y-auto"
+      className="h-[80vh] mb-2 p-2 overflow-y-auto"
       scrollHideDelay={100}
     >
-      <div className="flex flex-col space-y-6 pb-6">
+      <div className="flex flex-col space-y-6 pb-10">
         {chatMessages.map((msg, index) => (
           <ChatMessage 
             key={index}
