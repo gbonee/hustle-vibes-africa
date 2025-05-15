@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useIsMobile } from '@/hooks/use-mobile';

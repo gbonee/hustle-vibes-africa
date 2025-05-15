@@ -8,7 +8,7 @@ import AIChat from '@/components/dashboard/chat/AIChat';
 import { Module } from '@/components/dashboard/ModulesList';
 import { Quiz } from '@/types/quiz';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/components/ui/use-toast';
 import { getTranslatedQuizzes } from '@/utils/quizHelper';
 
 interface DashboardTabsProps {
@@ -135,7 +135,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
         )}
       </TabsContent>
       
-      <TabsContent value="chat" className="mt-6 flex-1 flex flex-col h-[calc(85vh-120px)] md:h-[calc(80vh-120px)]">
+      <TabsContent value="chat" className="mt-6 flex-1 flex flex-col h-[calc(82vh-120px)] md:h-[calc(77vh-120px)]">
         <AIChat 
           courseAvatar={courseAvatar} 
           userName={userName}
