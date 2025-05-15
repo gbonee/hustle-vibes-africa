@@ -26,7 +26,7 @@ export const useDashboardData = () => {
     avatar: 'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1'
   });
   
-  // Get current language for translations (default to English if not set)
+  // Get current language for translations (default to pidgin if not set)
   const currentLanguage = userPrefs?.language || 'pidgin';
   const courseId = userPrefs?.course || 'digital-marketing';
 
@@ -78,7 +78,9 @@ export const useDashboardData = () => {
 
   // Get current course information based on user preferences
   const currentCourse = useMemo(() => {
-    return courses[courseId] || courses['digital-marketing'];
+    // Default to digital-marketing if courseId is undefined
+    const validCourseId = courseId || 'digital-marketing';
+    return courses[validCourseId] || courses['digital-marketing'];
   }, [courseId]);
 
   return {

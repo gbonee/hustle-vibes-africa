@@ -31,7 +31,9 @@ const Dashboard = () => {
   } = useDashboardData();
   
   // Get UI text translations
-  const texts = uiTranslations[currentLanguage as keyof typeof uiTranslations] || uiTranslations.english;
+  const texts = useMemo(() => {
+    return uiTranslations[currentLanguage as keyof typeof uiTranslations] || uiTranslations.english;
+  }, [currentLanguage]);
   
   // Use the module progress hook
   const { 
@@ -51,8 +53,9 @@ const Dashboard = () => {
       setCourseSelectionOpen(true);
       
       // Clean up URL
-      searchParams.delete('selectCourse');
-      const newUrl = `${location.pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+      const newSearchParams = new URLSearchParams(location.search);
+      newSearchParams.delete('selectCourse');
+      const newUrl = `${location.pathname}${newSearchParams.toString() ? `?${newSearchParams.toString()}` : ''}`;
       window.history.replaceState({}, '', newUrl);
     }
   }, [location.search]);
@@ -65,7 +68,9 @@ const Dashboard = () => {
   
   // Update modules with completion status and unlocking logic
   const updatedModules = useMemo(() => {
-    if (!currentCourse) return [];
+    if (!currentCourse || !currentCourse.modules) {
+      return [];
+    }
     
     // Create a copy of the modules array
     return currentCourse.modules.map((module, index) => {
@@ -95,6 +100,11 @@ const Dashboard = () => {
       fetchCourseProgress();
     }
   }, [fetchCourseProgress, isPreviewMode]);
+  
+  // If still loading, show nothing to prevent rendering errors
+  if (isLoading || !currentCourse || !currentCourse.modules) {
+    return null;
+  }
   
   return (
     <DashboardLayout 
