@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { BookOpen, Award, ArrowRight } from "lucide-react";
-import { getLanguageSpecificAction, getQuickActionButtonText } from '../chatTranslations';
+import { getQuickActionButtonText } from '../chatTranslations';
 
 interface QuickActionButtonsProps {
   currentLanguage: string;
@@ -10,45 +10,39 @@ interface QuickActionButtonsProps {
   isMobile: boolean;
 }
 
-const QuickActionButtons: React.FC<QuickActionButtonsProps> = ({
-  currentLanguage,
+const QuickActionButtons: React.FC<QuickActionButtonsProps> = ({ 
+  currentLanguage, 
   onActionSelect,
   isMobile
 }) => {
   return (
-    <div className="flex flex-wrap gap-1 mb-1">
+    <div className="grid grid-cols-3 gap-2 mb-4">
       <Button 
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('next-lesson')}
-        className="flex items-center justify-center h-5 px-1.5"
+        className="flex items-center justify-center"
       >
-        <BookOpen className="h-3 w-3 mr-1" />
-        <span className={isMobile ? "text-[7px]" : "text-xs"}>
-          {getQuickActionButtonText('next-lesson', currentLanguage)}
-        </span>
+        <BookOpen className="h-4 w-4 mr-1" />
+        <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('next-lesson', currentLanguage)}</span>
       </Button>
       <Button 
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('take-quiz')}
-        className="flex items-center justify-center h-5 px-1.5"
+        className="flex items-center justify-center"
       >
-        <Award className="h-3 w-3 mr-1" />
-        <span className={isMobile ? "text-[7px]" : "text-xs"}>
-          {getQuickActionButtonText('take-quiz', currentLanguage)}
-        </span>
+        <Award className="h-4 w-4 mr-1" />
+        <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('take-quiz', currentLanguage)}</span>
       </Button>
       <Button 
         variant="outline" 
         size="sm"
         onClick={() => onActionSelect('challenge')}
-        className="flex items-center justify-center h-5 px-1.5"
+        className="flex items-center justify-center"
       >
-        <ArrowRight className="h-3 w-3 mr-1" />
-        <span className={isMobile ? "text-[7px]" : "text-xs"}>
-          {getQuickActionButtonText('challenge', currentLanguage)}
-        </span>
+        <ArrowRight className="h-4 w-4 mr-1" />
+        <span className={isMobile ? "text-[10px]" : "text-xs"}>{getQuickActionButtonText('challenge', currentLanguage)}</span>
       </Button>
     </div>
   );

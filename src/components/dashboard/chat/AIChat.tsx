@@ -1,31 +1,44 @@
 
-import React, { useEffect, useCallback } from 'react';
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import React, { useState, useEffect, useRef } from 'react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { supabase } from "@/integrations/supabase/client";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
+import { toast } from "sonner";
 import { useIsMobile } from '@/hooks/use-mobile';
+import PreviewMode from '@/components/common/PreviewMode';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 // Import types and helper functions
+import { AIChatProps, ChatMessage as IChatMessage, Progress } from './types';
 import { 
   getTranslatedCoachName, 
   getCourseSpecificGreeting 
 } from './coachHelpers';
-import { getLanguageSpecificAction } from './chatTranslations';
+import {
+  getLanguageSpecificErrorMessage,
+  getLanguageSpecificErrorToast,
+  getLanguageSpecificAction,
+  getLanguageSpecificGreeting,
+  getChatWithCoachText
+} from './chatTranslations';
 
 // Import custom hooks
 import useChatHistory from './hooks/useChatHistory';
-import useChatInteraction from './hooks/useChatInteraction';
-import useUserSession from './hooks/useUserSession';
 
 // Import components
-import ChatHeader from './components/ChatHeader';
-import ChatContainer from './components/ChatContainer';
+import ChatMessage, { LoadingChatMessage } from './components/ChatMessage';
 import QuickActionButtons from './components/QuickActionButtons';
 import ChatForm from './components/ChatForm';
-import { AIChatProps } from './types';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
+  const [message, setMessage] = useState("");
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { userPrefs } = useUserPreferences();
+  const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [currentCourseKey, setCurrentCourseKey] = useState<string>('');
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const isMobile = useIsMobile();
   
   // Make sure we're using the current course from userPrefs
@@ -39,89 +52,171 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   console.log("Coach name:", coachName);
   console.log("Current language:", currentLanguage);
 
-  // Get user session information
-  const { 
-    userId, 
-    currentCourseKey, 
-    isPreviewMode 
-  } = useUserSession({ 
-    currentCourse, 
-    currentLanguage 
-  });
-
-  // Initialize chat interactions with a placeholder setChatMessages
-  const chatInteraction = useChatInteraction({
-    setChatMessages: () => {}, // Will be overridden
-    currentCourse,
-    currentLanguage,
-    userName
-  });
-  
-  // Extract the sendWelcomeMessage function from the chatInteraction
-  const { sendWelcomeMessage } = chatInteraction;
-  
   // Get chat history using our custom hook
   const { 
     chatMessages, 
     setChatMessages, 
-    isInitialLoad,
-    isLoading: isHistoryLoading
-  } = useChatHistory(
-    currentCourseKey, 
-    currentCourse, 
-    currentLanguage, 
-    userName,
-    sendWelcomeMessage
-  );
+    isInitialLoad 
+  } = useChatHistory(currentCourseKey, currentCourse, currentLanguage, userName);
 
-  // Get chat interaction logic with the real setChatMessages
-  const {
-    message,
-    setMessage,
-    isLoading: isSending,
-    handleMessageSend
-  } = useChatInteraction({
-    setChatMessages,
-    currentCourse,
-    currentLanguage,
-    userName
-  });
+  // Initialize user ID and check preview mode
+  useEffect(() => {
+    const getUserId = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        setUserId(user.id);
+        // Create a unique key for this user+course combination
+        const courseKey = `${user.id}_${currentCourse}_${currentLanguage}`;
+        setCurrentCourseKey(courseKey);
+        console.log("Setting course key for logged in user:", courseKey);
+      } else {
+        // Handle preview mode or user not logged in
+        const courseKey = `preview_${currentCourse}_${currentLanguage}`;
+        setCurrentCourseKey(courseKey);
+        console.log("Setting course key for preview mode:", courseKey);
+      }
+    };
+
+    // Check if we're in preview mode
+    const urlParams = new URLSearchParams(window.location.search);
+    const preview = urlParams.get('forcePreview') === 'true';
+    setIsPreviewMode(preview);
+
+    getUserId();
+  }, [currentCourse, currentLanguage]); // Make sure this re-runs when currentCourse or language changes
+
+  // Scroll to bottom of chat area when messages change
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    }
+  }, [chatMessages]);
+
+  // Mock progress data - in a real app, this would come from the database
+  const getUserProgress = (): Progress => {
+    // For now, return mock data
+    return {
+      completed: 2,
+      total: 5,
+      percentage: 40
+    };
+  };
+
+  // Format chat history for API
+  const formatChatHistoryForApi = () => {
+    // Only send the last 10 messages to keep context manageable
+    const recentMessages = chatMessages.slice(-10);
+    return recentMessages.map(msg => ({
+      role: msg.isUser ? 'user' : 'assistant',
+      content: msg.text
+    }));
+  };
+
+  const handleMessageSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!message.trim()) return;
+
+    // Add user message to chat
+    setChatMessages(prev => [...prev, { 
+      isUser: true, 
+      text: message,
+      timestamp: Date.now()
+    }]);
+    
+    // Store the message to clear the input
+    const sentMessage = message;
+    setMessage('');
+    setIsLoading(true);
+
+    try {
+      const progress = getUserProgress();
+      const previousMessages = formatChatHistoryForApi();
+
+      console.log("Sending message to AI with course:", currentCourse, "language:", currentLanguage);
+
+      // Call the edge function for AI response
+      const { data, error } = await supabase.functions.invoke('chat-with-ai', {
+        body: { 
+          message: sentMessage, 
+          course: currentCourse,
+          language: currentLanguage,
+          userName,
+          progress,
+          previousMessages
+        }
+      });
+
+      if (error) throw error;
+
+      // Add AI response to chat
+      setChatMessages(prev => [...prev, { 
+        isUser: false, 
+        text: data.response,
+        gif: data.gif,
+        timestamp: Date.now()
+      }]);
+    } catch (error) {
+      console.error('Error calling AI function:', error);
+      // Add fallback response in the chosen language
+      setChatMessages(prev => [...prev, { 
+        isUser: false, 
+        text: getLanguageSpecificErrorMessage(currentLanguage),
+        timestamp: Date.now()
+      }]);
+      toast.error(getLanguageSpecificErrorToast(currentLanguage));
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleQuickAction = (action: string) => {
     const actionMessage = getLanguageSpecificAction(action, currentLanguage);
     setMessage(actionMessage);
   };
 
-  // Combined loading state
-  const isLoading = isSending || isHistoryLoading;
-
   return (
-    <Card className="bg-muted border-electric flex flex-col h-full">
-      <ChatHeader 
-        courseAvatar={courseAvatar}
-        coachName={coachName}
-        userName={userName}
-        courseSpecificGreeting={courseSpecificGreeting}
-        currentLanguage={currentLanguage}
-        isPreviewMode={isPreviewMode}
-      />
+    <Card className="bg-muted border-electric">
+      {isPreviewMode && (
+        <PreviewMode 
+          onLanguageChange={(lang) => {}} 
+          currentLanguage={currentLanguage}
+        />
+      )}
       
-      <CardContent className="flex-grow p-3 pb-0 overflow-hidden">
-        {isInitialLoad ? (
-          <div className="flex flex-col space-y-4 p-4">
-            <Skeleton className="h-12 w-3/4 mb-2" />
-            <Skeleton className="h-20 w-1/2" />
+      <CardHeader>
+        <div className="flex items-center">
+          <Avatar className="mr-3">
+            <AvatarImage src={courseAvatar} />
+            <AvatarFallback>AI</AvatarFallback>
+          </Avatar>
+          <div>
+            <CardTitle>{getChatWithCoachText(coachName, currentLanguage)}</CardTitle>
+            <CardDescription>{getLanguageSpecificGreeting(userName, courseSpecificGreeting, currentLanguage)}</CardDescription>
           </div>
-        ) : (
-          <ChatContainer 
-            chatMessages={chatMessages}
-            isLoading={isLoading}
-            courseAvatar={courseAvatar}
-          />
-        )}
-      </CardContent>
-      
-      <CardFooter className="flex flex-col gap-1 p-3 pt-1 mt-auto pb-safe">
+        </div>
+      </CardHeader>
+      <CardContent className="p-4">
+        <ScrollArea 
+          ref={scrollAreaRef}
+          className="h-80 mb-4 p-2"
+          scrollHideDelay={100}
+        >
+          <div className="flex flex-col space-y-4">
+            {chatMessages.map((msg, index) => (
+              <ChatMessage 
+                key={index}
+                message={msg}
+                courseAvatar={courseAvatar}
+              />
+            ))}
+            {isLoading && (
+              <LoadingChatMessage courseAvatar={courseAvatar} />
+            )}
+          </div>
+        </ScrollArea>
+        
         {/* Quick action buttons */}
         <QuickActionButtons 
           currentLanguage={currentLanguage}
@@ -133,13 +228,12 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         <ChatForm
           message={message}
           setMessage={setMessage}
-          onSubmit={(e) => handleMessageSend(e, chatMessages)}
+          onSubmit={handleMessageSend}
           isLoading={isLoading}
           coachName={coachName}
           currentLanguage={currentLanguage}
-          disabled={isInitialLoad}
         />
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 };
