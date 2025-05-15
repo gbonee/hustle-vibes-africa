@@ -5,8 +5,8 @@ import { Quiz } from '@/types/quiz';
 export interface Course {
   id: string;
   title: string;
+  description: string; // Added description field
   avatar: string;
-  progress: number;
   modules: Module[];
   translations: {
     [key: string]: {
