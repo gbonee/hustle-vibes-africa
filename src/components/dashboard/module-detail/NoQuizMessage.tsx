@@ -18,6 +18,7 @@ const NoQuizMessage: React.FC<NoQuizMessageProps> = ({ onMarkComplete, language 
       'yoruba': isMobile ? 'Ko si idanwo' : 'Ko si idanwo ti o wa fun modulu yii sibẹsibẹ.',
       'hausa': isMobile ? 'Babu gwaji' : 'Babu gwaji mai samuwa don wannan module har yanzu.',
       'igbo': isMobile ? 'O nweghị quiz' : 'O nweghị quiz dị maka module a ugbua.',
+      'english': isMobile ? 'No quiz yet' : 'No quiz is available for this module yet.',
     };
     
     return (texts as any)[language] || texts.pidgin;
@@ -30,6 +31,7 @@ const NoQuizMessage: React.FC<NoQuizMessageProps> = ({ onMarkComplete, language 
       'yoruba': 'Fi àmì sí bí Àṣẹṣẹ́',
       'hausa': 'Yi Alamar Cika',
       'igbo': 'Makị dịka Emezuru',
+      'english': 'Mark as Complete',
     };
     
     return (texts as any)[language] || texts.pidgin;

@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 
-export type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
+export type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo' | 'english';
 
 interface LanguageSelectorProps {
   selectedLanguage: Language | null;
@@ -23,6 +23,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     { id: 'yoruba', name: 'Yoruba', flag: '🧙‍♂️' },
     { id: 'hausa', name: 'Hausa', flag: '🌵' },
     { id: 'igbo', name: 'Igbo', flag: '🌟' },
+    { id: 'english', name: 'English', flag: '🇬🇧' },
   ];
 
   if (mode === 'inline') {

@@ -7,6 +7,7 @@ export const getBackButtonText = (language: string, defaultText: string = 'Back 
     'yoruba': 'Pada si Gbogbo Modulu',
     'hausa': 'Koma Zuwa Duk Modules',
     'igbo': 'Laghachi na Modules Nile',
+    'english': 'Back to All Modules',
   };
   
   return (backTexts as any)[language] || backTexts.pidgin;

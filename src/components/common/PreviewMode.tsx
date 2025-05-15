@@ -32,6 +32,7 @@ const PreviewMode: React.FC<PreviewModeProps> = ({
               <SelectItem value="yoruba">Yoruba</SelectItem>
               <SelectItem value="hausa">Hausa</SelectItem>
               <SelectItem value="igbo">Igbo</SelectItem>
+              <SelectItem value="english">English</SelectItem>
             </SelectContent>
           </Select>
         </div>

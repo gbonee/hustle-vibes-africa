@@ -31,6 +31,11 @@ const courseTranslations = {
     'digital-marketing': "Mgbasa ozi dijitalu n'uzo Naija",
     'pastry-biz': "Malite azumaahia pastry site na ulo nri gi",
     'importation': "Bubata site na China & Ree na WhatsApp"
+  },
+  english: {
+    'digital-marketing': 'Digital Marketing the Nigerian Way',
+    'pastry-biz': 'Pastry Business Masterclass',
+    'importation': 'Import From China & Sell on WhatsApp'
   }
 };
 
@@ -41,6 +46,7 @@ const getCompleteText = (language: string): string => {
     yoruba: 'ti parí',
     hausa: 'an kammala',
     igbo: 'emezuru',
+    english: 'complete',
   };
   
   return translations[language as keyof typeof translations] || 'complete';

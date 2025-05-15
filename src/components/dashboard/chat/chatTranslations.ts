@@ -10,6 +10,8 @@ export const getLanguageSpecificErrorMessage = (currentLanguage: string): string
       return "Kai! Na'urar ta lalace! Ka sake gwadawa daga baya!";
     case 'igbo':
       return "Chei! Igwe ahụ adaala! Biko gbalịa ọzọ mgbe e mesịrị!";
+    case 'english':
+      return "Sorry! The system is experiencing issues. Please try again later.";
     default:
       return "Chai! System don hang o! Try again later, my people!";
   }
@@ -26,6 +28,8 @@ export const getLanguageSpecificErrorToast = (currentLanguage: string): string =
       return "Mai koyarwa na AI bai haɗa ba. Ka sake gwadawa!";
     case 'igbo':
       return "Onye nkuzi AI ejighị njikọ. Biko gbalịa ọzọ!";
+    case 'english':
+      return "AI coach connection failed. Please try again.";
     default:
       return "AI coach no connect. Make you try again!";
   }
@@ -33,7 +37,20 @@ export const getLanguageSpecificErrorToast = (currentLanguage: string): string =
 
 // Language-specific quick actions
 export const getLanguageSpecificAction = (action: string, currentLanguage: string): string => {
-  if (currentLanguage === 'pidgin') {
+  if (currentLanguage === 'english') {
+    switch(action) {
+      case 'next-lesson':
+        return "Please show me the next lesson I should take.";
+      case 'take-quiz':
+        return "I want to take a quiz to test my knowledge.";
+      case 'help':
+        return "I need help with this course. Some things aren't clear.";
+      case 'challenge':
+        return "Give me a challenge to practice what I've learned.";
+      default:
+        return "";
+    }
+  } else if (currentLanguage === 'pidgin') {
     switch(action) {
       case 'next-lesson':
         return "Abeg show me the next lesson wey I need to take.";
@@ -101,6 +118,8 @@ export const getLanguageSpecificGreeting = (userName: string, courseSpecificGree
       return `Sannu ${userName}, za ka iya tambaye ni komai game da ${courseSpecificGreeting}`;
     case 'igbo':
       return `Kedụ ${userName}, ị nwere ike ịjụ m ihe ọbụla gbasara ${courseSpecificGreeting}`;
+    case 'english':
+      return `Hello ${userName}, you can ask me anything about ${courseSpecificGreeting}`;
     default:
       return `How far ${userName}, you fit ask me anything about ${courseSpecificGreeting}`;
   }
@@ -114,18 +133,21 @@ export const getQuickActionButtonText = (actionType: string, currentLanguage: st
       yoruba: 'Ẹ̀kọ́ Tókàn',
       hausa: 'Darasin Gaba',
       igbo: 'Ihe Ọmụmụ Ozugbo',
+      english: 'Next Lesson',
     },
     'take-quiz': {
       pidgin: 'Take Quiz',
       yoruba: 'Ṣe Idánwò',
       hausa: 'Yi Gwaji',
       igbo: 'Were Quiz',
+      english: 'Take Quiz',
     },
     'challenge': {
       pidgin: 'Challenge',
       yoruba: 'Ìdánwò',
       hausa: 'Kalubale',
       igbo: 'Ịma Aka',
+      english: 'Challenge',
     },
   };
   
@@ -141,6 +163,7 @@ export const getChatWithCoachText = (coachName: string, currentLanguage: string)
     yoruba: `Bá ${coachName} sọ̀rọ̀`,
     hausa: `Yi magana da ${coachName}`,
     igbo: `Soro ${coachName} kparịta ụka`,
+    english: `Chat with ${coachName}`,
   };
   
   return translations[currentLanguage as keyof typeof translations] || translations.pidgin;
@@ -153,6 +176,7 @@ export const getPlaceholderText = (coachName: string, currentLanguage: string): 
     yoruba: `Bi ${coachName} ìbéèrè kan...`,
     hausa: `Tambayi ${coachName} tambaya...`,
     igbo: `Jụọ ${coachName} ajụjụ...`,
+    english: `Ask ${coachName} a question...`,
   };
   
   return translations[currentLanguage as keyof typeof translations] || translations.pidgin;
@@ -163,5 +187,6 @@ export const getSendButtonText = (currentLanguage: string): string => {
   return currentLanguage === 'pidgin' ? 'Send' : 
          currentLanguage === 'yoruba' ? 'Firánṣẹ́' :
          currentLanguage === 'hausa' ? 'Aika' :
-         currentLanguage === 'igbo' ? 'Zipu' : 'Send';
+         currentLanguage === 'igbo' ? 'Zipu' :
+         currentLanguage === 'english' ? 'Send' : 'Send';
 };

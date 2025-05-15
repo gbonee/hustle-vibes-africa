@@ -3,7 +3,15 @@ import { getCourseSpecificGreeting } from './coachHelpers';
 
 // Fixed welcome messages for each avatar and language
 export const getFixedWelcomeMessage = (course: string, language: string): string => {
-  if (language === 'pidgin') {
+  if (language === 'english') {
+    if (course === 'digital-marketing') {
+      return "Welcome! I'm Digital Mama and I'm here to teach you how to earn money in the digital space!";
+    } else if (course === 'pastry-biz') {
+      return "Hello there! I'm Baker Amara and I'm here to teach you how to turn your baking passion into profit!";
+    } else if (course === 'importation') {
+      return "Greetings! I'm Uncle Musa and I'm ready to show you how to import products from China and sell them profitably!";
+    }
+  } else if (language === 'pidgin') {
     if (course === 'digital-marketing') {
       return "Ah! You don land! Digital Mama don show to teach you how to hammer for online space! No dull!";
     } else if (course === 'pastry-biz') {

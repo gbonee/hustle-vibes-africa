@@ -19,6 +19,7 @@ const QuizButton: React.FC<QuizButtonProps> = ({ onClick, moduleTopic, language 
       'yoruba': isMobile ? 'Ṣe Idanwo' : 'Ṣe Idanwo lori',
       'hausa': isMobile ? 'Yi Gwaji' : 'Yi Gwaji akan',
       'igbo': isMobile ? 'Were Quiz' : 'Were Quiz na',
+      'english': isMobile ? 'Take Quiz' : 'Take Quiz on',
     };
     
     const selected = (baseText as any)[language] || baseText.pidgin;
