@@ -41,43 +41,40 @@ const AdminDashboard = () => {
     const initStorage = async () => {
       setIsLoading(true);
       try {
-        // First check if bucket exists before trying to create it
-        const { data: buckets, error: listError } = await supabase.storage.listBuckets();
+        // Create bucket if it doesn't exist
+        const { data: bucketData, error: bucketError } = await supabase.storage.createBucket('module-videos', {
+          public: false,
+          fileSizeLimit: 50 * 1024 * 1024, // 50MB
+        });
         
-        if (listError) throw listError;
-        
-        const bucketExists = buckets?.some(bucket => bucket.name === 'module-videos');
-        
-        // Only try to create if it doesn't exist
-        if (!bucketExists) {
-          const { data: bucketData, error: bucketError } = await supabase.storage.createBucket('module-videos', {
-            public: false,
-            fileSizeLimit: 50 * 1024 * 1024, // 50MB
-          });
-          
-          if (bucketError && !bucketError.message.includes('already exists')) {
+        if (bucketError) {
+          // If error is "Bucket already exists", that's fine - continue
+          if (!bucketError.message.includes('already exists')) {
             throw bucketError;
           }
-          
-          // Verify bucket was created
-          const { data: checkBuckets, error: checkError } = await supabase.storage.listBuckets();
-          if (checkError) throw checkError;
-          
-          if (!checkBuckets?.some(bucket => bucket.name === 'module-videos')) {
-            throw new Error("Failed to create storage bucket");
-          }
+        }
+        
+        // Check if bucket exists
+        const { data, error } = await supabase.storage.listBuckets();
+        
+        if (error) {
+          throw error;
+        }
+        
+        const bucketExists = data?.some(bucket => bucket.name === 'module-videos');
+        
+        if (!bucketExists) {
+          throw new Error("Storage bucket could not be initialized");
         }
 
         setStorageInitialized(true);
         console.log("Storage bucket initialized successfully");
       } catch (error: any) {
         console.error("Error initializing storage:", error);
-        // Even if there's an error, allow the user to continue
-        // The bucket might exist but have some permission issues
         setStorageInitialized(false);
         toast({
-          title: "Storage initialization issue",
-          description: "There was an issue with storage initialization, but you can still manage courses.",
+          title: "Storage initialization failed",
+          description: "There was an error setting up storage. Please try again later.",
           variant: "destructive"
         });
       } finally {
