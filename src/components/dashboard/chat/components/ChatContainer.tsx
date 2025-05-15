@@ -17,13 +17,11 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
-  // Auto-scroll to bottom when new messages arrive
+  // Auto-scroll to bottom when new messages arrive or loading state changes
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current;
-      setTimeout(() => {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
-      }, 100);
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
     }
   }, [chatMessages, isLoading]);
 
@@ -36,7 +34,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       <div className="flex flex-col space-y-3 pb-4">
         {chatMessages.map((msg, index) => (
           <ChatMessage 
-            key={index}
+            key={`msg-${index}-${msg.timestamp}`}
             message={msg}
             courseAvatar={courseAvatar}
           />

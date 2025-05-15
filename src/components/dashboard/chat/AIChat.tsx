@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -49,20 +49,17 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     currentLanguage 
   });
 
-  // Get chat interaction logic from custom hook
-  const {
-    message,
-    setMessage,
-    isLoading: isSending,
-    handleMessageSend,
-    sendWelcomeMessage
-  } = useChatInteraction({
-    setChatMessages: () => {}, // This will be overridden in useChatHistory
+  // Initialize chat interactions with a placeholder setChatMessages
+  const chatInteraction = useChatInteraction({
+    setChatMessages: () => {}, // Will be overridden
     currentCourse,
     currentLanguage,
     userName
   });
-
+  
+  // Extract the sendWelcomeMessage function from the chatInteraction
+  const { sendWelcomeMessage } = chatInteraction;
+  
   // Get chat history using our custom hook
   const { 
     chatMessages, 
@@ -77,8 +74,13 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     sendWelcomeMessage
   );
 
-  // Update the setChatMessages reference in the chat interaction hook
-  useChatInteraction({
+  // Get chat interaction logic with the real setChatMessages
+  const {
+    message,
+    setMessage,
+    isLoading: isSending,
+    handleMessageSend
+  } = useChatInteraction({
     setChatMessages,
     currentCourse,
     currentLanguage,
@@ -91,7 +93,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
   };
 
   // Combined loading state
-  const isLoading = isSending || isHistoryLoading || isInitialLoad;
+  const isLoading = isSending || isHistoryLoading;
 
   return (
     <Card className="bg-muted border-electric flex flex-col h-full">

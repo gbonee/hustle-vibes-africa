@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { ChatMessage, Progress } from '../types';
@@ -46,7 +46,7 @@ const useChatInteraction = ({
   };
 
   // Generate a welcome message using the AI
-  const sendWelcomeMessage = async () => {
+  const sendWelcomeMessage = useCallback(async () => {
     setIsLoading(true);
     
     try {
@@ -95,9 +95,9 @@ const useChatInteraction = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentCourse, currentLanguage, setChatMessages]);
 
-  const handleMessageSend = async (e: React.FormEvent, chatMessages: ChatMessage[]) => {
+  const handleMessageSend = useCallback(async (e: React.FormEvent, chatMessages: ChatMessage[]) => {
     e.preventDefault();
     
     if (!message.trim()) return;
@@ -159,7 +159,7 @@ const useChatInteraction = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [message, currentCourse, currentLanguage, userName, setChatMessages]);
 
   return {
     message,
