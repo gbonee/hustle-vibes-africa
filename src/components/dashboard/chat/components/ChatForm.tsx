@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { getSendButtonText, getPlaceholderText } from '../chatTranslations';
 import { Textarea } from "@/components/ui/textarea";
@@ -22,7 +23,7 @@ const ChatForm: React.FC<ChatFormProps> = ({
   currentLanguage
 }) => {
   return (
-    <form onSubmit={onSubmit} className="flex flex-col sm:flex-row w-full gap-2">
+    <form onSubmit={onSubmit} className="flex flex-col sm:flex-row w-full gap-2 mt-2">
       <Textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
