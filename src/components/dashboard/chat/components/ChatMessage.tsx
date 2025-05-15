@@ -94,6 +94,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               // Additional inline onload handler as a fallback
               const scrollToBottomOnce = () => {
                 let currentElement = e.currentTarget;
+                // Fixed TypeScript error by correctly handling the type
                 while (currentElement.parentElement) {
                   currentElement = currentElement.parentElement;
                   if (currentElement.classList.contains('overflow-y-auto')) {
