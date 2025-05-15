@@ -185,7 +185,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         />
       )}
       
-      <CardHeader>
+      <CardHeader className="pb-2">
         <div className="flex items-center">
           <Avatar className="mr-3">
             <AvatarImage src={courseAvatar} />
@@ -198,13 +198,13 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 flex-grow overflow-hidden">
+      <CardContent className="flex-grow p-4 pb-0 overflow-hidden">
         <ScrollArea 
           ref={scrollAreaRef}
-          className="h-[40vh] sm:h-[50vh] mb-4 p-2 overflow-y-auto"
+          className="h-[45vh] sm:h-[55vh] mb-2 p-2 overflow-y-auto"
           scrollHideDelay={100}
         >
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-4 pb-4">
             {chatMessages.map((msg, index) => (
               <ChatMessage 
                 key={index}
@@ -219,7 +219,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
         </ScrollArea>
       </CardContent>
       
-      <CardFooter className="flex flex-col gap-4 p-4 pt-0">
+      <CardFooter className="flex flex-col gap-3 p-4 pt-2 mt-auto">
         {/* Quick action buttons */}
         <QuickActionButtons 
           currentLanguage={currentLanguage}
