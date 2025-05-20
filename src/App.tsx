@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +11,7 @@ import Manifesto from "./pages/Manifesto";
 import Enterprise from "./pages/Enterprise";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import CHFIAuth from "./pages/CHFIAuth";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Leaderboard from "./pages/Leaderboard";
@@ -106,6 +106,18 @@ const App = () => {
                   session ? (
                     isNewUser ? <Navigate to="/onboarding" /> : <Navigate to="/dashboard" />
                   ) : <Auth />
+                )
+              } 
+            />
+            
+            {/* CHFI Auth Route - new dedicated authentication page */}
+            <Route 
+              path="/chfi-auth" 
+              element={
+                forcePreview ? <CHFIAuth /> : (
+                  session ? (
+                    isNewUser ? <Navigate to="/onboarding" /> : <Navigate to="/dashboard" />
+                  ) : <CHFIAuth />
                 )
               } 
             />
