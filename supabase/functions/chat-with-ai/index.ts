@@ -10,6 +10,63 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Nigerian comedy search terms - prioritized by popularity and humor
+const nigerianComedyTerms = [
+  "aki and pawpaw nigerian comedy",
+  "mama g nigerian comedy",
+  "wedding party nigerian movie funny",
+  "nigerian nollywood comedy",
+  "osita iheme chinedu ikedieze",
+  "nigerian funny dance",
+  "african comedy reaction",
+  "nollywood funny scenes",
+  "nigerian wedding funny",
+  "african humor meme"
+];
+
+const getRandomNigerianGif = async () => {
+  if (!giphyApiKey) return null;
+  
+  // Try multiple search terms to get variety
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const randomTerm = nigerianComedyTerms[Math.floor(Math.random() * nigerianComedyTerms.length)];
+      const randomOffset = Math.floor(Math.random() * 20); // Get from first 20 results
+      
+      const giphyResponse = await fetch(
+        `https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(randomTerm)}&limit=10&offset=${randomOffset}&rating=pg-13&lang=en&bundle=messaging_non_clips`
+      );
+      
+      const giphyData = await giphyResponse.json();
+      
+      if (giphyData.data && giphyData.data.length > 0) {
+        // Filter for more relevant results by checking title/description
+        const relevantGifs = giphyData.data.filter(gif => {
+          const title = (gif.title || '').toLowerCase();
+          const isRelevant = title.includes('african') || 
+                           title.includes('nigerian') || 
+                           title.includes('nollywood') ||
+                           title.includes('comedy') ||
+                           title.includes('funny') ||
+                           title.includes('dance') ||
+                           title.includes('wedding');
+          return isRelevant;
+        });
+        
+        // Use relevant GIFs if found, otherwise use any from the search
+        const gifsToUse = relevantGifs.length > 0 ? relevantGifs : giphyData.data;
+        const randomIndex = Math.floor(Math.random() * gifsToUse.length);
+        return gifsToUse[randomIndex].images.fixed_height.url;
+      }
+    } catch (error) {
+      console.error(`Attempt ${attempt + 1} failed:`, error);
+      continue;
+    }
+  }
+  
+  return null;
+};
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -21,7 +78,6 @@ serve(async (req) => {
 
     // Define system prompt based on course and language
     let systemPrompt = "";
-    const searchTerm = "aki and pawpaw nigerian comedy";
     
     if (course === 'digital-marketing') {
       systemPrompt = `You are Digital Mama, a Nigerian digital marketing expert with a bold, no-nonsense, Lagos tech babe personality. 
@@ -137,10 +193,12 @@ serve(async (req) => {
         welcomeMessage = `Welcome! I am a Nigerian business coach. Let's talk about ${course}!`;
       }
       
-      // Skip GIF for welcome messages to speed up response
+      // Get Nigerian comedy GIF for welcome message
+      const gifUrl = await getRandomNigerianGif();
+      
       return new Response(JSON.stringify({ 
         response: welcomeMessage,
-        gif: null
+        gif: gifUrl
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -172,22 +230,8 @@ serve(async (req) => {
     
     const generatedResponse = data.choices[0].message.content;
 
-    // Try to get GIF but don't block response if it fails
-    let gifUrl = null;
-    if (giphyApiKey) {
-      try {
-        const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=5&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
-        const giphyData = await giphyResponse.json();
-        
-        if (giphyData.data && giphyData.data.length > 0) {
-          const randomIndex = Math.floor(Math.random() * Math.min(5, giphyData.data.length));
-          gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
-        }
-      } catch (giphyError) {
-        // Fail silently for GIFs to not slow down response
-        gifUrl = null;
-      }
-    }
+    // Get Nigerian comedy GIF for regular responses
+    const gifUrl = await getRandomNigerianGif();
 
     return new Response(JSON.stringify({ 
       response: generatedResponse,
