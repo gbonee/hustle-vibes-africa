@@ -15,52 +15,33 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
 }) => {
   const gifRef = useRef<HTMLImageElement>(null);
   
-  // Enhanced image loading handler for better scroll behavior
+  // Remove aggressive auto-scrolling for GIFs - let user control scroll
   useEffect(() => {
     if (!message.gif || !gifRef.current) return;
     
     const img = gifRef.current;
     
     const handleImageLoad = () => {
-      // Find all ScrollArea parents and scroll them to bottom
-      let parent = img.parentElement;
-      const scrollParents = [];
-      
-      // Collect all potential scroll containers
-      while (parent) {
-        if (parent.classList.contains('overflow-y-auto') || 
-            parent.classList.contains('scroll-area') ||
-            parent.getAttribute('data-radix-scroll-area-viewport') !== null) {
-          scrollParents.push(parent);
+      // Only do a gentle scroll adjustment, not forcing to bottom
+      // This allows users to see the response content first
+      const scrollParent = img.closest('.overflow-y-auto');
+      if (scrollParent && !message.isUser) {
+        // For AI messages with GIFs, only scroll if user is already near bottom
+        const isNearBottom = scrollParent.scrollTop + scrollParent.clientHeight >= scrollParent.scrollHeight - 100;
+        if (isNearBottom) {
+          setTimeout(() => {
+            scrollParent.scrollTop = scrollParent.scrollHeight;
+          }, 200);
         }
-        parent = parent.parentElement;
       }
-      
-      // Scroll all potential containers to bottom with multiple attempts
-      scrollParents.forEach(scrollParent => {
-        const scrollToBottom = () => {
-          scrollParent.scrollTop = scrollParent.scrollHeight;
-        };
-        
-        // Multiple scroll attempts with increasing delays
-        scrollToBottom();
-        setTimeout(scrollToBottom, 50);
-        setTimeout(scrollToBottom, 150);
-        setTimeout(scrollToBottom, 300);
-      });
     };
     
-    // Add event listeners
     img.addEventListener('load', handleImageLoad);
-    
-    // Also set a fallback timer in case the load event doesn't fire
-    const fallbackTimer = setTimeout(handleImageLoad, 1000);
     
     return () => {
       img.removeEventListener('load', handleImageLoad);
-      clearTimeout(fallbackTimer);
     };
-  }, [message.gif]);
+  }, [message.gif, message.isUser]);
 
   if (message.isUser) {
     return (
@@ -90,28 +71,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             alt="Giphy reaction" 
             className="rounded-lg w-full" 
             loading="eager"
-            onLoad={(e) => {
-              // Additional inline onload handler as a fallback
-              const scrollToBottomOnce = () => {
-                // Start with the image element itself
-                const imgElement = e.currentTarget;
-                // Find a parent with overflow-y-auto class
-                let element = imgElement.parentElement;
-                
-                while (element) {
-                  if (element.classList.contains('overflow-y-auto')) {
-                    // Once found, scroll to the bottom
-                    element.scrollTop = element.scrollHeight;
-                    break;
-                  }
-                  element = element.parentElement;
-                }
-              };
-              
-              // Multiple scroll attempts
-              scrollToBottomOnce();
-              setTimeout(scrollToBottomOnce, 100);
-            }}
           />
         </div>
       )}

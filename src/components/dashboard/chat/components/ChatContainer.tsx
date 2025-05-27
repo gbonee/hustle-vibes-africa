@@ -16,25 +16,35 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   courseAvatar
 }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
   
-  // Optimized auto-scroll with single timeout
+  // Only auto-scroll for user messages, not AI responses
   useEffect(() => {
-    if (!scrollAreaRef.current) return;
+    if (!scrollAreaRef.current || chatMessages.length === 0) return;
     
-    const scrollToBottom = () => {
-      if (!scrollAreaRef.current) return;
+    const lastMessage = chatMessages[chatMessages.length - 1];
+    
+    // Only auto-scroll if the last message is from the user
+    if (lastMessage.isUser) {
+      const scrollToBottom = () => {
+        if (!scrollAreaRef.current) return;
+        const scrollElement = scrollAreaRef.current;
+        scrollElement.scrollTop = scrollElement.scrollHeight;
+      };
+
+      scrollToBottom();
+      const timeout = setTimeout(scrollToBottom, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [chatMessages]);
+
+  // Auto-scroll only when loading starts (user message sent)
+  useEffect(() => {
+    if (isLoading && scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current;
       scrollElement.scrollTop = scrollElement.scrollHeight;
-    };
-
-    // Single immediate scroll
-    scrollToBottom();
-    
-    // One delayed scroll for content that loads asynchronously
-    const timeout = setTimeout(scrollToBottom, 100);
-    
-    return () => clearTimeout(timeout);
-  }, [chatMessages, isLoading]);
+    }
+  }, [isLoading]);
 
   return (
     <ScrollArea 
@@ -44,11 +54,15 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     >
       <div className="flex flex-col space-y-6 pb-24">
         {chatMessages.map((msg, index) => (
-          <ChatMessage 
-            key={`${msg.timestamp}-${index}`} // More efficient key
-            message={msg}
-            courseAvatar={courseAvatar}
-          />
+          <div 
+            key={`${msg.timestamp}-${index}`}
+            ref={index === chatMessages.length - 1 ? lastMessageRef : null}
+          >
+            <ChatMessage 
+              message={msg}
+              courseAvatar={courseAvatar}
+            />
+          </div>
         ))}
         {isLoading && (
           <LoadingChatMessage courseAvatar={courseAvatar} />

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -224,9 +223,14 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     }
   }, [chatMessages, currentCourseKey]);
 
-  // Scroll to bottom of chat area when messages change
+  // Modified scroll behavior - only scroll for user messages, not AI responses
   useEffect(() => {
-    if (scrollAreaRef.current) {
+    if (!scrollAreaRef.current || chatMessages.length === 0) return;
+    
+    const lastMessage = chatMessages[chatMessages.length - 1];
+    
+    // Only auto-scroll if the last message is from the user
+    if (lastMessage.isUser) {
       scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
   }, [chatMessages]);
@@ -321,6 +325,13 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
     setMessage('');
     setIsLoading(true);
 
+    // Scroll to show user message immediately
+    setTimeout(() => {
+      if (scrollAreaRef.current) {
+        scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+      }
+    }, 100);
+
     try {
       const progress = getUserProgress();
       const previousMessages = formatChatHistoryForApi();
@@ -341,7 +352,7 @@ const AIChat: React.FC<AIChatProps> = ({ courseAvatar, userName }) => {
 
       if (error) throw error;
 
-      // Add AI response to chat
+      // Add AI response to chat - no auto-scroll, let user see from start
       setChatMessages(prev => [...prev, { 
         isUser: false, 
         text: data.response,
