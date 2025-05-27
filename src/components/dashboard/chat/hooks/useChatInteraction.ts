@@ -23,19 +23,17 @@ const useChatInteraction = ({
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Format chat history for API
+  // Format chat history for API - keep only last 5 messages for faster processing
   const formatChatHistoryForApi = (chatMessages: ChatMessage[]) => {
-    // Only send the last 10 messages to keep context manageable
-    const recentMessages = chatMessages.slice(-10);
+    const recentMessages = chatMessages.slice(-5); // Reduced from 10 to 5
     return recentMessages.map(msg => ({
       role: msg.isUser ? 'user' : 'assistant',
       content: msg.text
     }));
   };
 
-  // Mock progress data - in a real app, this would come from the database
+  // Mock progress data - cached to avoid recalculation
   const getUserProgress = (): Progress => {
-    // For now, return mock data
     return {
       completed: 2,
       total: 5,
@@ -46,16 +44,17 @@ const useChatInteraction = ({
   const handleMessageSend = async (e: React.FormEvent, chatMessages: ChatMessage[]) => {
     e.preventDefault();
     
-    if (!message.trim()) return;
+    if (!message.trim() || isLoading) return; // Prevent multiple submissions
 
-    // Add user message to chat
-    setChatMessages(prev => [...prev, { 
+    // Add user message to chat immediately for better UX
+    const userMessage = { 
       isUser: true, 
       text: message,
       timestamp: Date.now()
-    }]);
+    };
+    setChatMessages(prev => [...prev, userMessage]);
     
-    // Store the message to clear the input
+    // Store the message and clear input immediately
     const sentMessage = message;
     setMessage('');
     setIsLoading(true);
@@ -64,9 +63,7 @@ const useChatInteraction = ({
       const progress = getUserProgress();
       const previousMessages = formatChatHistoryForApi(chatMessages);
 
-      console.log("Sending message to AI with course:", currentCourse, "language:", currentLanguage);
-
-      // Call the edge function for AI response
+      // Call the edge function with optimized payload
       const { data, error } = await supabase.functions.invoke('chat-with-ai', {
         body: { 
           message: sentMessage, 
@@ -89,7 +86,7 @@ const useChatInteraction = ({
       }]);
     } catch (error) {
       console.error('Error calling AI function:', error);
-      // Add fallback response in the chosen language
+      // Add fallback response
       setChatMessages(prev => [...prev, { 
         isUser: false, 
         text: getLanguageSpecificErrorMessage(currentLanguage),

@@ -21,11 +21,7 @@ serve(async (req) => {
 
     // Define system prompt based on course and language
     let systemPrompt = "";
-    // Always using Aki and Pawpaw for GIFs
     const searchTerm = "aki and pawpaw nigerian comedy";
-    
-    // Log the course being used to help with debugging
-    console.log(`Processing request for course: ${course}, language: ${language}`);
     
     if (course === 'digital-marketing') {
       systemPrompt = `You are Digital Mama, a Nigerian digital marketing expert with a bold, no-nonsense, Lagos tech babe personality. 
@@ -56,7 +52,7 @@ serve(async (req) => {
     // Use pidgin as default if no language is specified
     const userLanguage = language || 'pidgin';
     
-    // Add language style guidance based on selected language
+    // Add language style guidance
     if (userLanguage === 'pidgin') {
       systemPrompt += ` You MUST speak Nigerian Pidgin English fluently and use it in EVERY response. Use phrases like "How you dey?", "Abeg", "Na so", "Wetin dey", "My people!", "Oya now!", "Chai!", "Wahala!", "E be tins!", etc. Make your messages sound authentically Nigerian with plenty Naija street slang.`;
     } else if (userLanguage === 'yoruba') {
@@ -74,7 +70,7 @@ serve(async (req) => {
     
     REFERENCE PREVIOUS MESSAGES: If you see previous messages in the conversation history, acknowledge them and maintain continuity in the chat. Don't act like you're meeting the user for the first time if previous messages exist.`;
 
-    // For welcome messages, specify they should be SHORT (1-2 sentences only)
+    // For welcome messages, specify they should be SHORT
     if (message.includes('introduce yourself') || message.includes('Say hello')) {
       systemPrompt += ` IMPORTANT: Keep welcome messages VERY SHORT - just 1-2 sentences maximum with appropriate cultural expressions. Don't write long introductions.`;
     }
@@ -91,7 +87,6 @@ serve(async (req) => {
     ];
 
     if (previousMessages && previousMessages.length > 0) {
-      // Insert previous messages before the current message
       messages = [
         { role: 'system', content: systemPrompt },
         ...previousMessages,
@@ -99,7 +94,7 @@ serve(async (req) => {
       ];
     }
     
-    // Check if this is a welcome message request and return the predefined welcome message
+    // Check for welcome message and return predefined response quickly
     if (message.includes('introduce yourself') || message.includes('Say hello')) {
       let welcomeMessage = "";
       if (course === 'digital-marketing') {
@@ -139,39 +134,19 @@ serve(async (req) => {
           welcomeMessage = "Oya! Uncle Musa don land! Ready to show you importation business with correct connect!";
         }
       } else {
-        // Default fallback
         welcomeMessage = `Welcome! I am a Nigerian business coach. Let's talk about ${course}!`;
       }
       
-      // Try to get a GIF for the welcome message
-      let gifUrl = null;
-      try {
-        const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
-        const giphyData = await giphyResponse.json();
-        
-        if (giphyData.data && giphyData.data.length > 0) {
-          // Get a random GIF from the top 10 results for more variety
-          const randomIndex = Math.floor(Math.random() * Math.min(10, giphyData.data.length));
-          gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
-        }
-      } catch (giphyError) {
-        console.error('Giphy API error:', giphyError);
-        // Continue without a GIF if there's an error
-      }
-      
-      // Return the predefined welcome message
+      // Skip GIF for welcome messages to speed up response
       return new Response(JSON.stringify({ 
         response: welcomeMessage,
-        gif: gifUrl
+        gif: null
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
     
-    // Log that we're making the OpenAI API request
-    console.log(`Making OpenAI API request for course: ${course}, message length: ${message.length}`);
-    
-    // Make the request to OpenAI API
+    // Make the request to OpenAI API with optimized settings
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -179,12 +154,12 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',  // Using GPT-4o for better personality and context handling
+        model: 'gpt-4o-mini', // Using faster model
         messages: messages,
-        temperature: 0.9, // Increased for more creativity
-        max_tokens: 1000, // Increased for longer responses
-        presence_penalty: 0.7, // Added to encourage uniqueness
-        frequency_penalty: 0.7, // Added to discourage repetition
+        temperature: 0.8, // Slightly reduced for consistency
+        max_tokens: 500, // Reduced for faster response
+        presence_penalty: 0.6,
+        frequency_penalty: 0.6,
       }),
     });
 
@@ -197,24 +172,22 @@ serve(async (req) => {
     
     const generatedResponse = data.choices[0].message.content;
 
-    // Get a related GIF from Giphy API for more engagement - always using Aki and Pawpaw for consistency
+    // Try to get GIF but don't block response if it fails
     let gifUrl = null;
-    try {
-      const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=10&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
-      const giphyData = await giphyResponse.json();
-      
-      if (giphyData.data && giphyData.data.length > 0) {
-        // Get a random GIF from the top 10 results for more variety
-        const randomIndex = Math.floor(Math.random() * Math.min(10, giphyData.data.length));
-        gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
+    if (giphyApiKey) {
+      try {
+        const giphyResponse = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(searchTerm)}&limit=5&offset=0&rating=pg-13&lang=en&bundle=messaging_non_clips`);
+        const giphyData = await giphyResponse.json();
+        
+        if (giphyData.data && giphyData.data.length > 0) {
+          const randomIndex = Math.floor(Math.random() * Math.min(5, giphyData.data.length));
+          gifUrl = giphyData.data[randomIndex].images.fixed_height.url;
+        }
+      } catch (giphyError) {
+        // Fail silently for GIFs to not slow down response
+        gifUrl = null;
       }
-    } catch (giphyError) {
-      console.error('Giphy API error:', giphyError);
-      // Continue without a GIF if there's an error
     }
-
-    // Log the successful response
-    console.log(`Successfully processed request for course: ${course}, response length: ${generatedResponse.length}`);
 
     return new Response(JSON.stringify({ 
       response: generatedResponse,

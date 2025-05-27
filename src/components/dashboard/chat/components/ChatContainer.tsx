@@ -17,7 +17,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   
-  // Comprehensive auto-scroll implementation with multiple fallbacks
+  // Optimized auto-scroll with single timeout
   useEffect(() => {
     if (!scrollAreaRef.current) return;
     
@@ -27,18 +27,13 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       scrollElement.scrollTop = scrollElement.scrollHeight;
     };
 
-    // Immediate scroll
+    // Single immediate scroll
     scrollToBottom();
     
-    // Multiple delayed attempts to handle different content loading speeds
-    const timeouts = [50, 100, 300, 500, 1000].map(delay => 
-      setTimeout(scrollToBottom, delay)
-    );
+    // One delayed scroll for content that loads asynchronously
+    const timeout = setTimeout(scrollToBottom, 100);
     
-    // Clean up timeouts
-    return () => {
-      timeouts.forEach(timeout => clearTimeout(timeout));
-    };
+    return () => clearTimeout(timeout);
   }, [chatMessages, isLoading]);
 
   return (
@@ -50,7 +45,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       <div className="flex flex-col space-y-6 pb-24">
         {chatMessages.map((msg, index) => (
           <ChatMessage 
-            key={index}
+            key={`${msg.timestamp}-${index}`} // More efficient key
             message={msg}
             courseAvatar={courseAvatar}
           />
