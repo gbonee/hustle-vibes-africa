@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ const CHFISignupForm: React.FC = () => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -129,16 +130,25 @@ const CHFISignupForm: React.FC = () => {
       </div>
       <div className="space-y-2">
         <Label htmlFor="chfi-signup-password">Password</Label>
-        <Input 
-          id="chfi-signup-password"
-          type="password" 
-          placeholder="••••••••" 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          disabled={loading}
-          className="bg-black/50 border-gray-700"
-        />
+        <div className="relative">
+          <Input 
+            id="chfi-signup-password"
+            type={showPassword ? "text" : "password"}
+            placeholder="••••••••" 
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            disabled={loading}
+            className="bg-black/50 border-gray-700 pr-10"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
       </div>
       <Button type="submit" className="w-full bg-electric hover:bg-electric/80 text-black font-bold" disabled={loading}>
         {loading ? (
