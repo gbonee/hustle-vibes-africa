@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutDashboard, Trophy, User } from 'lucide-react';
+import { LayoutDashboard, Trophy, User, Users } from 'lucide-react';
 import { useUserPreferences } from '@/hooks/useUserPreferences';
 
 interface BottomNavigationProps {
@@ -22,6 +22,12 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
         hausa: 'Koyo',
         igbo: 'Mụta',
       },
+      community: {
+        pidgin: 'Community',
+        yoruba: 'Àwùjọ',
+        hausa: 'Al\'umma',
+        igbo: 'Obodo',
+      },
       ranks: {
         pidgin: 'Ranks',
         yoruba: 'Ipò',
@@ -38,6 +44,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
     
     return {
       learn: (navigationLabels.learn as any)[currentLanguage] || navigationLabels.learn.pidgin,
+      community: (navigationLabels.community as any)[currentLanguage] || navigationLabels.community.pidgin,
       ranks: (navigationLabels.ranks as any)[currentLanguage] || navigationLabels.ranks.pidgin,
       profile: (navigationLabels.profile as any)[currentLanguage] || navigationLabels.profile.pidgin,
     };
@@ -54,8 +61,18 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
             isActive('/dashboard') ? 'text-electric' : 'text-gray-400'
           }`}
         >
-          <LayoutDashboard size={24} />
+          <LayoutDashboard size={20} />
           <span className="text-xs mt-1">{labels.learn}</span>
+        </Link>
+        
+        <Link 
+          to="/community" 
+          className={`flex flex-col items-center justify-center p-2 flex-1 ${
+            isActive('/community') ? 'text-electric' : 'text-gray-400'
+          }`}
+        >
+          <Users size={20} />
+          <span className="text-xs mt-1">{labels.community}</span>
         </Link>
         
         <Link 
@@ -64,7 +81,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
             isActive('/leaderboard') ? 'text-electric' : 'text-gray-400'
           }`}
         >
-          <Trophy size={24} />
+          <Trophy size={20} />
           <span className="text-xs mt-1">{labels.ranks}</span>
         </Link>
         
@@ -74,7 +91,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ currentPath }) => {
             isActive('/profile') ? 'text-electric' : 'text-gray-400'
           }`}
         >
-          <User size={24} />
+          <User size={20} />
           <span className="text-xs mt-1">{labels.profile}</span>
         </Link>
       </div>
