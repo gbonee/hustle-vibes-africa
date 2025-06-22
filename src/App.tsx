@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,7 +14,6 @@ import Auth from "./pages/Auth";
 import CHFIAuth from "./pages/CHFIAuth";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
-import Community from "./pages/Community";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -148,16 +146,6 @@ const App = () => {
                 forcePreview ? <Dashboard /> : (
                   session ? (
                     isNewUser ? <Navigate to="/onboarding" /> : <Dashboard />
-                  ) : <Navigate to="/auth" />
-                )
-              }
-            />
-            <Route 
-              path="/community" 
-              element={
-                forcePreview ? <Community /> : (
-                  session ? (
-                    isNewUser ? <Navigate to="/onboarding" /> : <Community />
                   ) : <Navigate to="/auth" />
                 )
               }

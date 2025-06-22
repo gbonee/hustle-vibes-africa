@@ -9,36 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      affiliate_clicks: {
-        Row: {
-          affiliate_url: string
-          clicked_at: string
-          commission_amount: number | null
-          converted: boolean | null
-          id: string
-          tool_name: string
-          user_id: string | null
-        }
-        Insert: {
-          affiliate_url: string
-          clicked_at?: string
-          commission_amount?: number | null
-          converted?: boolean | null
-          id?: string
-          tool_name: string
-          user_id?: string | null
-        }
-        Update: {
-          affiliate_url?: string
-          clicked_at?: string
-          commission_amount?: number | null
-          converted?: boolean | null
-          id?: string
-          tool_name?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       app_users: {
         Row: {
           auth_id: string
@@ -76,33 +46,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      behavioral_triggers: {
-        Row: {
-          action_taken: string | null
-          converted: boolean | null
-          id: string
-          trigger_type: string
-          triggered_at: string
-          user_id: string | null
-        }
-        Insert: {
-          action_taken?: string | null
-          converted?: boolean | null
-          id?: string
-          trigger_type: string
-          triggered_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          action_taken?: string | null
-          converted?: boolean | null
-          id?: string
-          trigger_type?: string
-          triggered_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
       }
       challenge_submissions: {
         Row: {
@@ -337,36 +280,6 @@ export type Database = {
         }
         Relationships: []
       }
-      one_time_purchases: {
-        Row: {
-          amount: number
-          created_at: string
-          id: string
-          product_name: string
-          status: string
-          stripe_payment_intent_id: string | null
-          user_id: string | null
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          id?: string
-          product_name: string
-          status?: string
-          stripe_payment_intent_id?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          id?: string
-          product_name?: string
-          status?: string
-          stripe_payment_intent_id?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       organizations: {
         Row: {
           created_at: string
@@ -412,130 +325,31 @@ export type Database = {
         }
         Relationships: []
       }
-      skill_scan_results: {
-        Row: {
-          blueprints: Json
-          budget: string
-          created_at: string
-          current_situation: string
-          experience: string
-          goals: string
-          id: string
-          selected_persona: string
-          skills: string[]
-          time_available: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          blueprints: Json
-          budget: string
-          created_at?: string
-          current_situation: string
-          experience: string
-          goals: string
-          id?: string
-          selected_persona: string
-          skills: string[]
-          time_available: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          blueprints?: Json
-          budget?: string
-          created_at?: string
-          current_situation?: string
-          experience?: string
-          goals?: string
-          id?: string
-          selected_persona?: string
-          skills?: string[]
-          time_available?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      subscription_tiers: {
-        Row: {
-          created_at: string
-          features: Json
-          id: string
-          name: string
-          price_monthly: number | null
-          price_yearly: number | null
-          stripe_price_id_monthly: string | null
-          stripe_price_id_yearly: string | null
-        }
-        Insert: {
-          created_at?: string
-          features?: Json
-          id?: string
-          name: string
-          price_monthly?: number | null
-          price_yearly?: number | null
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
-        }
-        Update: {
-          created_at?: string
-          features?: Json
-          id?: string
-          name?: string
-          price_monthly?: number | null
-          price_yearly?: number | null
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
-        }
-        Relationships: []
-      }
       user_progress: {
         Row: {
           completed: boolean
-          completed_days: number[] | null
           created_at: string
-          current_day: number | null
-          has_first_client: boolean | null
-          has_viral_post: boolean | null
           id: string
-          last_activity: string | null
           module_id: string
-          plateau_days: number | null
           progress: number
-          total_earned: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
           completed?: boolean
-          completed_days?: number[] | null
           created_at?: string
-          current_day?: number | null
-          has_first_client?: boolean | null
-          has_viral_post?: boolean | null
           id?: string
-          last_activity?: string | null
           module_id: string
-          plateau_days?: number | null
           progress?: number
-          total_earned?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
           completed?: boolean
-          completed_days?: number[] | null
           created_at?: string
-          current_day?: number | null
-          has_first_client?: boolean | null
-          has_viral_post?: boolean | null
           id?: string
-          last_activity?: string | null
           module_id?: string
-          plateau_days?: number | null
           progress?: number
-          total_earned?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -555,45 +369,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      user_subscriptions: {
-        Row: {
-          created_at: string
-          current_period_end: string | null
-          current_period_start: string | null
-          id: string
-          status: string
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
-          tier_name: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          current_period_end?: string | null
-          current_period_start?: string | null
-          id?: string
-          status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          tier_name: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          current_period_end?: string | null
-          current_period_start?: string | null
-          id?: string
-          status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          tier_name?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
       }
     }
     Views: {
