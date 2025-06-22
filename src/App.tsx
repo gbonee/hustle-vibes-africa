@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,8 +16,6 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Leaderboard from "./pages/Leaderboard";
 import Profile from "./pages/Profile";
-import Community from "./pages/Community";
-import BountyMarketplace from "./pages/BountyMarketplace";
 import AdminDashboard from "./pages/AdminDashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -169,26 +166,6 @@ const App = () => {
                 forcePreview ? <Profile /> : (
                   session ? (
                     isNewUser ? <Navigate to="/onboarding" /> : <Profile />
-                  ) : <Navigate to="/auth" />
-                )
-              }
-            />
-            <Route 
-              path="/community" 
-              element={
-                forcePreview ? <Community /> : (
-                  session ? (
-                    isNewUser ? <Navigate to="/onboarding" /> : <Community />
-                  ) : <Navigate to="/auth" />
-                )
-              }
-            />
-            <Route 
-              path="/bounties" 
-              element={
-                forcePreview ? <BountyMarketplace /> : (
-                  session ? (
-                    isNewUser ? <Navigate to="/onboarding" /> : <BountyMarketplace />
                   ) : <Navigate to="/auth" />
                 )
               }

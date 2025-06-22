@@ -1,45 +1,48 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from "@/components/ui/button";
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
-import DualTrackHero from '@/components/modern/DualTrackHero';
-import TracksComparison from '@/components/modern/TracksComparison';
-import FeaturesShowcase from '@/components/modern/FeaturesShowcase';
-import StatsSection from '@/components/modern/StatsSection';
-import TestimonialsSection from '@/components/modern/TestimonialsSection';
-import ProUpgradeSection from '@/components/modern/ProUpgradeSection';
+import AvatarSelector from '@/components/AvatarSelector';
+import WhyWeExist from '@/components/WhyWeExist';
+import TopCourses from '@/components/TopCourses';
+import Testimonials from '@/components/Testimonials';
+import ProofSection from '@/components/ProofSection';
+import PricingSection from '@/components/PricingSection';
+import CTASection from '@/components/CTASection';
 import Footer from '@/components/Footer';
 
 const Index = () => {
-  const [activeTrack, setActiveTrack] = useState<'core' | 'pro'>('core');
-
   const handleJoinWaitlist = () => {
     console.log("Join waitlist clicked from main CTA");
+    // Open the Google Form in a new tab
     window.open("https://docs.google.com/forms/d/e/1FAIpQLSddajKguRwE_0pfsDpHM6T3xIg26G89kQlvtn2uQK9P1IqTZA/viewform", "_blank");
   };
 
   return (
     <div className="bg-black min-h-screen">
       <Navbar />
+      <Hero />
       
-      {/* New Dual-Track Hero Section */}
-      <DualTrackHero activeTrack={activeTrack} setActiveTrack={setActiveTrack} />
+      <div className="meme-banner">
+        <h3 className="meme-banner-text">SCHOOL DEY WASTE TIME. HUSTLE DEY PAY BILLS.</h3>
+      </div>
       
-      {/* Tracks Comparison */}
-      <TracksComparison />
+      <AvatarSelector />
+      <WhyWeExist />
+      <TopCourses />
       
-      {/* Features Showcase */}
-      <FeaturesShowcase />
+      <Testimonials />
       
-      {/* Stats Section */}
-      <StatsSection />
+      <div className="meme-banner bg-electric">
+        <h3 className="meme-banner-text text-black">NO DEGREE NEEDED, JUST SKILLS WEY GO PAY.</h3>
+      </div>
       
-      {/* Pro Upgrade Section */}
-      <ProUpgradeSection />
+      <ProofSection />
       
-      {/* Testimonials */}
-      <TestimonialsSection />
+      <PricingSection />
+      
+      <CTASection handleJoinWaitlist={handleJoinWaitlist} />
       
       <Footer />
     </div>
