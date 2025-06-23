@@ -9,36 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      affiliate_clicks: {
-        Row: {
-          affiliate_url: string
-          clicked_at: string
-          commission_amount: number | null
-          converted: boolean | null
-          id: string
-          tool_name: string
-          user_id: string | null
-        }
-        Insert: {
-          affiliate_url: string
-          clicked_at?: string
-          commission_amount?: number | null
-          converted?: boolean | null
-          id?: string
-          tool_name: string
-          user_id?: string | null
-        }
-        Update: {
-          affiliate_url?: string
-          clicked_at?: string
-          commission_amount?: number | null
-          converted?: boolean | null
-          id?: string
-          tool_name?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       app_users: {
         Row: {
           auth_id: string
@@ -77,123 +47,6 @@ export type Database = {
           },
         ]
       }
-      behavioral_triggers: {
-        Row: {
-          action_taken: string | null
-          converted: boolean | null
-          id: string
-          trigger_type: string
-          triggered_at: string
-          user_id: string | null
-        }
-        Insert: {
-          action_taken?: string | null
-          converted?: boolean | null
-          id?: string
-          trigger_type: string
-          triggered_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          action_taken?: string | null
-          converted?: boolean | null
-          id?: string
-          trigger_type?: string
-          triggered_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      bounties: {
-        Row: {
-          assigned_to: string | null
-          category: string
-          client_id: string | null
-          created_at: string | null
-          currency: string | null
-          deadline: string | null
-          description: string
-          difficulty_level: string | null
-          id: string
-          language_requirement: string | null
-          path: string
-          reward_amount: number
-          skills_required: string[] | null
-          status: string | null
-          tags: string[] | null
-          title: string
-          updated_at: string | null
-        }
-        Insert: {
-          assigned_to?: string | null
-          category: string
-          client_id?: string | null
-          created_at?: string | null
-          currency?: string | null
-          deadline?: string | null
-          description: string
-          difficulty_level?: string | null
-          id?: string
-          language_requirement?: string | null
-          path: string
-          reward_amount: number
-          skills_required?: string[] | null
-          status?: string | null
-          tags?: string[] | null
-          title: string
-          updated_at?: string | null
-        }
-        Update: {
-          assigned_to?: string | null
-          category?: string
-          client_id?: string | null
-          created_at?: string | null
-          currency?: string | null
-          deadline?: string | null
-          description?: string
-          difficulty_level?: string | null
-          id?: string
-          language_requirement?: string | null
-          path?: string
-          reward_amount?: number
-          skills_required?: string[] | null
-          status?: string | null
-          tags?: string[] | null
-          title?: string
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
-      bounty_applications: {
-        Row: {
-          applicant_id: string | null
-          bounty_id: string | null
-          created_at: string | null
-          estimated_timeline: string | null
-          id: string
-          proposal: string
-          status: string | null
-        }
-        Insert: {
-          applicant_id?: string | null
-          bounty_id?: string | null
-          created_at?: string | null
-          estimated_timeline?: string | null
-          id?: string
-          proposal: string
-          status?: string | null
-        }
-        Update: {
-          applicant_id?: string | null
-          bounty_id?: string | null
-          created_at?: string | null
-          estimated_timeline?: string | null
-          id?: string
-          proposal?: string
-          status?: string | null
-        }
-        Relationships: []
-      }
       challenge_submissions: {
         Row: {
           challenge_id: string
@@ -221,33 +74,6 @@ export type Database = {
           submission_url?: string
           submitted_at?: string | null
           user_id?: string
-        }
-        Relationships: []
-      }
-      course_categories: {
-        Row: {
-          color_scheme: string | null
-          created_at: string | null
-          description: string | null
-          id: string
-          name: string
-          path: string
-        }
-        Insert: {
-          color_scheme?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name: string
-          path: string
-        }
-        Update: {
-          color_scheme?: string | null
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          name?: string
-          path?: string
         }
         Relationships: []
       }
@@ -454,36 +280,6 @@ export type Database = {
         }
         Relationships: []
       }
-      one_time_purchases: {
-        Row: {
-          amount: number
-          created_at: string
-          id: string
-          product_name: string
-          status: string
-          stripe_payment_intent_id: string | null
-          user_id: string | null
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          id?: string
-          product_name: string
-          status?: string
-          stripe_payment_intent_id?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          id?: string
-          product_name?: string
-          status?: string
-          stripe_payment_intent_id?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       organizations: {
         Row: {
           created_at: string
@@ -511,13 +307,6 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
-          is_pro_user: boolean | null
-          learning_path: string | null
-          preferred_languages: string[] | null
-          pro_subscription_active: boolean | null
-          pro_subscription_expires: string | null
-          subscription_tier: string | null
-          total_earnings: number | null
           updated_at: string
         }
         Insert: {
@@ -525,13 +314,6 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
-          is_pro_user?: boolean | null
-          learning_path?: string | null
-          preferred_languages?: string[] | null
-          pro_subscription_active?: boolean | null
-          pro_subscription_expires?: string | null
-          subscription_tier?: string | null
-          total_earnings?: number | null
           updated_at?: string
         }
         Update: {
@@ -539,221 +321,35 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
-          is_pro_user?: boolean | null
-          learning_path?: string | null
-          preferred_languages?: string[] | null
-          pro_subscription_active?: boolean | null
-          pro_subscription_expires?: string | null
-          subscription_tier?: string | null
-          total_earnings?: number | null
           updated_at?: string
         }
         Relationships: []
-      }
-      skill_scan_results: {
-        Row: {
-          blueprints: Json
-          budget: string
-          created_at: string
-          current_situation: string
-          experience: string
-          goals: string
-          id: string
-          selected_persona: string
-          skills: string[]
-          time_available: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          blueprints: Json
-          budget: string
-          created_at?: string
-          current_situation: string
-          experience: string
-          goals: string
-          id?: string
-          selected_persona: string
-          skills: string[]
-          time_available: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          blueprints?: Json
-          budget?: string
-          created_at?: string
-          current_situation?: string
-          experience?: string
-          goals?: string
-          id?: string
-          selected_persona?: string
-          skills?: string[]
-          time_available?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      subscription_tiers: {
-        Row: {
-          created_at: string
-          features: Json
-          id: string
-          name: string
-          price_monthly: number | null
-          price_yearly: number | null
-          stripe_price_id_monthly: string | null
-          stripe_price_id_yearly: string | null
-        }
-        Insert: {
-          created_at?: string
-          features?: Json
-          id?: string
-          name: string
-          price_monthly?: number | null
-          price_yearly?: number | null
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
-        }
-        Update: {
-          created_at?: string
-          features?: Json
-          id?: string
-          name?: string
-          price_monthly?: number | null
-          price_yearly?: number | null
-          stripe_price_id_monthly?: string | null
-          stripe_price_id_yearly?: string | null
-        }
-        Relationships: []
-      }
-      user_certifications: {
-        Row: {
-          badge_url: string | null
-          certification_name: string
-          certification_type: string
-          earned_at: string | null
-          expires_at: string | null
-          id: string
-          partner_name: string | null
-          user_id: string
-          verification_url: string | null
-        }
-        Insert: {
-          badge_url?: string | null
-          certification_name: string
-          certification_type: string
-          earned_at?: string | null
-          expires_at?: string | null
-          id?: string
-          partner_name?: string | null
-          user_id: string
-          verification_url?: string | null
-        }
-        Update: {
-          badge_url?: string | null
-          certification_name?: string
-          certification_type?: string
-          earned_at?: string | null
-          expires_at?: string | null
-          id?: string
-          partner_name?: string | null
-          user_id?: string
-          verification_url?: string | null
-        }
-        Relationships: []
-      }
-      user_earnings: {
-        Row: {
-          amount: number
-          bounty_id: string | null
-          created_at: string | null
-          currency: string | null
-          description: string | null
-          id: string
-          source: string
-          status: string | null
-          user_id: string
-        }
-        Insert: {
-          amount: number
-          bounty_id?: string | null
-          created_at?: string | null
-          currency?: string | null
-          description?: string | null
-          id?: string
-          source: string
-          status?: string | null
-          user_id: string
-        }
-        Update: {
-          amount?: number
-          bounty_id?: string | null
-          created_at?: string | null
-          currency?: string | null
-          description?: string | null
-          id?: string
-          source?: string
-          status?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_earnings_bounty_id_fkey"
-            columns: ["bounty_id"]
-            isOneToOne: false
-            referencedRelation: "bounties"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       user_progress: {
         Row: {
           completed: boolean
-          completed_days: number[] | null
           created_at: string
-          current_day: number | null
-          has_first_client: boolean | null
-          has_viral_post: boolean | null
           id: string
-          last_activity: string | null
           module_id: string
-          plateau_days: number | null
           progress: number
-          total_earned: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
           completed?: boolean
-          completed_days?: number[] | null
           created_at?: string
-          current_day?: number | null
-          has_first_client?: boolean | null
-          has_viral_post?: boolean | null
           id?: string
-          last_activity?: string | null
           module_id: string
-          plateau_days?: number | null
           progress?: number
-          total_earned?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
           completed?: boolean
-          completed_days?: number[] | null
           created_at?: string
-          current_day?: number | null
-          has_first_client?: boolean | null
-          has_viral_post?: boolean | null
           id?: string
-          last_activity?: string | null
           module_id?: string
-          plateau_days?: number | null
           progress?: number
-          total_earned?: number | null
           updated_at?: string
           user_id?: string
         }
@@ -773,45 +369,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      user_subscriptions: {
-        Row: {
-          created_at: string
-          current_period_end: string | null
-          current_period_start: string | null
-          id: string
-          status: string
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
-          tier_name: string
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          current_period_end?: string | null
-          current_period_start?: string | null
-          id?: string
-          status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          tier_name: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          current_period_end?: string | null
-          current_period_start?: string | null
-          id?: string
-          status?: string
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
-          tier_name?: string
-          updated_at?: string
-          user_id?: string | null
-        }
-        Relationships: []
       }
     }
     Views: {
