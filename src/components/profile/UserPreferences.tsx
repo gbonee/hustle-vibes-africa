@@ -222,7 +222,7 @@ const UserPreferences: React.FC<UserPreferencesProps> = ({
         <Label htmlFor="ai-coach">{texts.aiCoach}</Label>
         <div className="flex gap-2 mt-1">
           <div className="flex-1 bg-muted border border-gray-700 rounded-md p-3">
-            {userPrefs?.avatar_url ? avatarNames[userPrefs.avatar_url] || 'Custom Avatar' : texts.notSet}
+            {userPrefs?.avatar ? avatarNames[userPrefs.avatar] || 'Custom Avatar' : texts.notSet}
           </div>
           <Button 
             variant="outline"

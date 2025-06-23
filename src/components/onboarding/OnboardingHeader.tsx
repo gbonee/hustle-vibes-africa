@@ -3,10 +3,14 @@ import React from 'react';
 import { Progress } from "@/components/ui/progress";
 
 interface OnboardingHeaderProps {
-  step: number;
+  currentStep: number;
+  totalSteps: number;
+  selectedPath: 'core' | 'pro';
 }
 
-const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({ step }) => {
+const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({ currentStep, totalSteps, selectedPath }) => {
+  const progressValue = ((currentStep + 1) / (totalSteps + 1)) * 100;
+  
   return (
     <>
       <div className="flex justify-center mb-8">
@@ -23,7 +27,15 @@ const OnboardingHeader: React.FC<OnboardingHeaderProps> = ({ step }) => {
       </div>
 
       <div className="mb-8">
-        <Progress value={step === 1 ? 50 : 100} className="h-2" />
+        <div className="text-center mb-2">
+          <span className={`text-sm font-medium ${selectedPath === 'pro' ? 'text-yellow-400' : 'text-purple-400'}`}>
+            {selectedPath === 'pro' ? 'USABI Pro Setup' : 'USABI Core Setup'}
+          </span>
+        </div>
+        <Progress value={progressValue} className="h-2" />
+        <div className="text-center mt-2 text-xs text-gray-400">
+          Step {currentStep + 1} of {totalSteps + 1}
+        </div>
       </div>
     </>
   );

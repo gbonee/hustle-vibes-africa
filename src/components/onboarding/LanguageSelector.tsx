@@ -6,19 +6,28 @@ import { Check } from "lucide-react";
 export type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo' | 'english';
 
 interface LanguageSelectorProps {
-  selectedLanguage: Language | null;
-  onSelectLanguage: (language: Language) => void;
+  onLanguageSelect: (language: string) => void;
+  selectedPath: 'core' | 'pro';
+  selectedLanguage?: Language | null;
   mode?: 'grid' | 'inline';
   size?: 'small' | 'large';
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ 
-  selectedLanguage, 
-  onSelectLanguage,
+  onLanguageSelect,
+  selectedPath,
+  selectedLanguage = null,
   mode = 'grid',
   size = 'large'
 }) => {
-  const languages = [
+  // For Pro path, prioritize English but still show other languages
+  const languages = selectedPath === 'pro' ? [
+    { id: 'english', name: 'English', flag: '🇬🇧' },
+    { id: 'pidgin', name: 'Pidgin English', flag: '🇳🇬' },
+    { id: 'yoruba', name: 'Yoruba', flag: '🧙‍♂️' },
+    { id: 'hausa', name: 'Hausa', flag: '🌵' },
+    { id: 'igbo', name: 'Igbo', flag: '🌟' },
+  ] : [
     { id: 'pidgin', name: 'Pidgin English', flag: '🇳🇬' },
     { id: 'yoruba', name: 'Yoruba', flag: '🧙‍♂️' },
     { id: 'hausa', name: 'Hausa', flag: '🌵' },
@@ -32,7 +41,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
         {languages.map((lang) => (
           <Button
             key={lang.id}
-            onClick={() => onSelectLanguage(lang.id as Language)}
+            onClick={() => onLanguageSelect(lang.id)}
             variant={selectedLanguage === lang.id ? "default" : "outline"}
             size="sm"
             className={`flex items-center gap-1 ${
@@ -52,17 +61,22 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Choose Your Language</h2>
-        <p className="text-gray-400">Select the language your AI coach will speak</p>
+        <p className="text-gray-400">
+          {selectedPath === 'pro' 
+            ? 'Select the language for your AI learning journey' 
+            : 'Select the language your AI coach will speak'
+          }
+        </p>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
         {languages.map((lang) => (
           <Button
             key={lang.id}
-            onClick={() => onSelectLanguage(lang.id as Language)}
+            onClick={() => onLanguageSelect(lang.id)}
             className={`h-24 text-lg flex flex-col items-center justify-center transition-all ${
               selectedLanguage === lang.id 
-                ? 'bg-electric text-black border-2 border-white'
+                ? `${selectedPath === 'pro' ? 'bg-yellow-500 text-black' : 'bg-electric text-black'} border-2 border-white`
                 : 'bg-black hover:bg-gray-900 border border-gray-700 text-white'
             }`}
           >

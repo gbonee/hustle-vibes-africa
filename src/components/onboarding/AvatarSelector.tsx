@@ -1,49 +1,47 @@
 
 import React from 'react';
 import { Check } from "lucide-react";
+import { avatars } from './AvatarData';
 
 type Avatar = 'digital-mama' | 'baker-amara' | 'uncle-musa';
-type Language = 'pidgin' | 'yoruba' | 'hausa' | 'igbo';
-
-interface AvatarInfo {
-  id: Avatar;
-  name: string;
-  role: string;
-  image: string;
-  course: string;
-  intro: {
-    pidgin: string;
-    yoruba: string;
-    hausa: string;
-    igbo: string;
-  };
-}
 
 interface AvatarSelectorProps {
-  avatars: AvatarInfo[];
-  selectedAvatar: Avatar | null;
-  onSelectAvatar: (avatar: Avatar) => void;
+  onAvatarSelect: (avatar: string) => void;
+  selectedLanguage: string;
+  selectedPath: 'core' | 'pro';
+  selectedAvatar?: Avatar | null;
 }
 
 const AvatarSelector: React.FC<AvatarSelectorProps> = ({ 
-  avatars, 
-  selectedAvatar, 
-  onSelectAvatar 
+  onAvatarSelect,
+  selectedLanguage,
+  selectedPath,
+  selectedAvatar = null
 }) => {
+  // Filter avatars based on path - for now, show all avatars for both paths
+  const availableAvatars = avatars;
+
   return (
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Choose Your AI Coach</h2>
-        <p className="text-gray-400">Select who will guide you through your learning journey</p>
+        <p className="text-gray-400">
+          {selectedPath === 'pro' 
+            ? 'Select your AI mentor for building tech solutions'
+            : 'Select who will guide you through your learning journey'
+          }
+        </p>
       </div>
       
       <div className="space-y-4">
-        {avatars.map((av) => (
+        {availableAvatars.map((av) => (
           <div 
             key={av.id}
-            onClick={() => onSelectAvatar(av.id)}
+            onClick={() => onAvatarSelect(av.id)}
             className={`avatar-card p-4 cursor-pointer transition-all ${
-              selectedAvatar === av.id ? 'border-4 border-electric animate-pulse-glow' : ''
+              selectedAvatar === av.id ? 
+                `border-4 ${selectedPath === 'pro' ? 'border-yellow-400' : 'border-electric'} animate-pulse-glow` : 
+                'border border-gray-700 hover:border-gray-600'
             }`}
           >
             <div className="flex items-center gap-4">
@@ -55,12 +53,18 @@ const AvatarSelector: React.FC<AvatarSelectorProps> = ({
                   backgroundPosition: 'center'
                 }}
               />
-              <div>
+              <div className="flex-1">
                 <h3 className="font-bold text-lg">{av.name}</h3>
                 <p className="text-sm text-gray-400">{av.role}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {selectedLanguage && av.intro[selectedLanguage as keyof typeof av.intro] 
+                    ? av.intro[selectedLanguage as keyof typeof av.intro].substring(0, 60) + '...'
+                    : av.intro.pidgin.substring(0, 60) + '...'
+                  }
+                </p>
               </div>
               {selectedAvatar === av.id && (
-                <Check className="ml-auto text-electric w-6 h-6" />
+                <Check className={`w-6 h-6 ${selectedPath === 'pro' ? 'text-yellow-400' : 'text-electric'}`} />
               )}
             </div>
           </div>
